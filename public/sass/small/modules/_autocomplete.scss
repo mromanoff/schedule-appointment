@@ -1,0 +1,66 @@
+ul.autocompleteResults, ul.autocompleteDropdown {
+    max-height: 200px;
+    overflow: auto;
+    position: absolute;
+    left: 0;
+    top: 44px;
+    width: 100%;
+    z-index: 100;
+    -webkit-overflow-scrolling: touch;
+    > li {
+        text-align: left;
+        &:first-child {
+            a {
+                border-top: 0;
+            }
+        }
+        a {
+            background-color: #7c878e;
+            display: block;
+            color: #ffffff;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin-bottom: 0;
+            border-top: 1px solid #969fa5;
+            margin: 0.5em 2em;
+            padding: 1em;
+            &:after {
+                font-family: 'icomoon';
+                font-size: 16px;
+                color: #ffffff;
+                position: absolute;
+                right: 15px;
+            }
+        }
+    }
+}
+
+ul.autocompleteDropdown {
+    background-color: #7c878e;
+
+    li {
+        a {
+            margin: 1.5em 2em;
+            padding: 0;
+            border: none;
+            font-size: 16px;
+        }
+    }                        
+
+    .facility:after,
+    .item:after {
+        content: " " !important;
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        z-index: 30;
+        border: #dfdfdf solid 1px;
+    }
+}
+
+.favorites ul.autocompleteDropdown {
+    .facility:after,
+    .item:after {
+        display: none;
+    }
+}

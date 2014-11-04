@@ -1,0 +1,18 @@
+doctype html
+html
+    head
+        title= title
+        link(rel='stylesheet', href='/css/equinox.css', type="text/css")
+        link(rel='stylesheet', href='/css/equinox-medium.css', type="text/css", media="screen and (min-width: 768px)")
+        link(rel='stylesheet', href='/css/equinox-large.css', type="text/css", media="screen and (min-width: 1024px)")
+        link(rel='stylesheet', href='/css/equinox-extralarge.css', type="text/css", media="screen and (min-width: 1920px)")
+
+    body
+        include includes/header
+        block content
+        include includes/footer
+        script.
+            var APIEndpoint = '//' + window.location.host + '/v1';
+            var MainDomain = '//' + window.location.host;
+        block script
+

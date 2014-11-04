@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "benchmark.js",
+  "sourceRoot": "",
+  "sources": [
+    "benchmark.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,EAAA,MAAM,CAAC,OAAP,GAAiB,SAAA,GAAA;WAEf,IAAC,CAAA,MAAD,CAAQ,WAAR,EACE;AAAA,MAAA,OAAA,EACE;AAAA,QAAA,cAAA,EAAgB,IAAhB;OADF;AAAA,MAGA,GAAA,EACE;AAAA,QAAA,GAAA,EAAK,CAAC,qBAAD,CAAL;AAAA,QACA,IAAA,EAAM,mCADN;OAJF;KADF,EAFe;EAAA,CAAjB,CAAA;AAAA"
+}

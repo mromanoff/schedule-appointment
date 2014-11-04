@@ -1,0 +1,18 @@
+.classes-filter {
+    .classes-filter-inner {
+        background-color: #000;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+    }
+	h2 {
+		font-size: 36px;
+		letter-spacing: 0.15em;
+	}
+	
+    .filters {
+        > li {
+            width: 25%;
+        }
+    }
+}

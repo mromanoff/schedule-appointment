@@ -1,0 +1,48 @@
+.classes-calendar {
+    ul {
+        li {
+            &:nth-child(2), &:nth-child(3), &:nth-child(4), &:nth-child(5), &:nth-child(6) {
+                p {
+                  color: #333;
+                }
+                .classes-timeline {
+                    background: #494949;
+                    &:before, &:after {
+                        display: none;
+                    }
+                }
+            }
+            &:nth-child(7) {
+                p {
+                  color: #333;
+                }
+                .classes-timeline {
+//                    &:before {
+//                        content: " ";
+//                        position: absolute;
+//                        z-index: 10;
+//                        height: 10px;
+//                        width: 10px;
+//                        top: 50%;
+//                        left: 50%;
+//                        margin-left: -5px;
+//                        margin-top: -5px;
+//                        background: white;
+//                        border: 1px solid black;
+//                        border-radius: 100%;
+//                    }
+                    &:after {
+                        content: " ";
+                        position: absolute;
+                        background: #494949;
+                        height: 6px;
+                        width: 50%;
+                        top: 50%;
+                        left: 0;
+                        margin-top: -3px;
+                    } 
+                } 
+            }
+        }
+    }
+}

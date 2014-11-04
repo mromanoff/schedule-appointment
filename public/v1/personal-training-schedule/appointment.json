@@ -1,0 +1,20 @@
+{
+    "id": "BD345725-AFC3-4C5E-8DFD-5B9E10FEFCE5",
+    "trainerId": "35547e75-143b-48d9-aa67-38c208d03262",
+    "trainerFirstName": "Jane",
+    "trainerLastName": "Doe",
+    "trainerTier": "Tier 1",
+    "startDate": "2014-06-19T07:00:00",
+    "endDate": "2014-06-19T08:00:00",
+    "facilityName": "Equinox Corporate",
+    "timeZone": null,
+    "notes": [
+        "hey whats up man!",
+        "this place is nice."
+    ],
+    "sessionTypeId": "1155",
+    "canCancel": true,
+    "canCancelAll": true,
+    "canReschedule": true,
+    "warningMessage": "You are trying to cancel an appointment within 24 hours of the current time."
+}

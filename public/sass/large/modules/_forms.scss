@@ -1,0 +1,9 @@
+form {
+	&.login {
+		input[type="text"], input[type="password"], input[type="tel"], input[type="email"] {
+			height: 77px;
+			letter-spacing: 1px;
+            font-size: 22px;
+		}
+	}
+}

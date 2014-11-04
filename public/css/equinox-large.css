@@ -1,0 +1,1093 @@
+.page {
+  padding-top: 60px;
+}
+
+.page.wizard .rich-content header {
+  min-height: 185px;
+}
+.page.wizard .rich-content header .rich-content-title {
+  font-size: 38px;
+  width: 466px;
+}
+
+nav.main {
+  height: 60px;
+}
+nav.main .full-wrapper {
+  padding: 0 20px;
+}
+nav.main .logo {
+  float: left;
+  width: 140px;
+  height: 100%;
+  padding-top: 14px;
+}
+nav.main .main-links, nav.main .secondary-links {
+  margin: 0;
+}
+nav.main .main-links li, nav.main .secondary-links li {
+  margin: 0;
+}
+nav.main .main-links li a, nav.main .secondary-links li a {
+  line-height: 60px;
+}
+nav.main .main-links {
+  float: left;
+  margin-left: 20px;
+}
+nav.main .secondary-links {
+  position: static;
+  float: right;
+}
+
+footer h4 {
+  font-size: 16px;
+  color: #808080;
+  padding: 50px 0 35px;
+}
+footer .social-icons {
+  margin-bottom: 52px;
+}
+footer .social-icons li {
+  margin: 0 13px;
+}
+footer .footer-links {
+  width: 640px;
+}
+
+.columns-layout .big-circle-column .item-info .content {
+  height: 44%;
+  width: 88%;
+}
+.columns-layout .big-circle-column .item-info .content .content-wrapper {
+  max-width: 90%;
+}
+
+.rich-content header {
+  height: auto;
+  min-height: 500px;
+  max-height: 500px;
+}
+.rich-content header .rich-content-title {
+  width: 600px;
+}
+
+.carousel {
+  min-height: 500px;
+}
+
+.content-slider-item header {
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.cards-carousel h1, .cards-carousel .h1 {
+  font-size: 36px;
+}
+.cards-carousel h2, .cards-carousel .h2 {
+  font-size: 24px;
+}
+
+.range-selection {
+  width: 670px;
+}
+
+.html-callout {
+  padding: 20px;
+}
+
+.class-module {
+  padding: 20px 10%;
+}
+.class-module .prev-class {
+  left: 37px;
+  top: 282px;
+}
+.class-module .next-class {
+  right: 37px;
+  top: 282px;
+}
+.class-module p {
+  font-size: 13px;
+  margin-bottom: 23px;
+}
+.class-module .rounded {
+  border-top-left-radius: 100%;
+  border-top-right-radius: 100%;
+  border-bottom-left-radius: 100%;
+  border-bottom-right-radius: 100%;
+  border-radius: 100%;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 18px;
+}
+.class-module .rounded > span {
+  padding: 45px 0;
+}
+.class-module .class-detail li {
+  font-size: 14px;
+  line-height: 20px;
+}
+.class-module .class-detail li.big-font {
+  font-size: 45px;
+  line-height: 52px;
+  letter-spacing: 10px;
+}
+.class-module .class-detail li.medium-font {
+  font-size: 22px;
+  line-height: 33px;
+}
+.class-module .class-detail li.small-font {
+  font-size: 14px;
+}
+.class-module .underlined-small-link {
+  font-size: 12px;
+}
+
+.left-right-module .separator-title-container {
+  padding: 54px 0;
+}
+.left-right-module .separator-title-container h3 {
+  font-size: 35px;
+}
+.left-right-module .columnsContainer.short-height {
+  display: inline-block;
+  padding: 32px 0;
+}
+.left-right-module .columnsContainer .leftColumn.one-third {
+  width: 33%;
+}
+.left-right-module .columnsContainer .rightColumn.two-third {
+  width: 67%;
+}
+
+.instagram {
+  text-align: center;
+}
+.instagram.black-bg {
+  background: #000;
+}
+.instagram .instagram-main-container {
+  display: table;
+  height: 185px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 516px;
+}
+.instagram .instagram-main-container .instagram-container {
+  display: table-cell;
+  vertical-align: middle;
+}
+.instagram .instagram-main-container .instagram-container ul {
+  margin-bottom: 23px;
+}
+.instagram .instagram-main-container .instagram-container ul li {
+  display: inline-block;
+}
+.instagram .instagram-main-container .instagram-container .instagram-button-container > span {
+  color: #fff;
+  font-size: 16px;
+  vertical-align: middle;
+}
+.instagram .instagram-main-container .instagram-container .instagram-button-container a {
+  color: #fff;
+}
+.instagram .instagram-main-container .instagram-container .instagram-button-container a span {
+  font-size: 11px;
+  margin-left: 5px;
+  text-transform: uppercase;
+}
+
+.twitter .twitter-message-container {
+  height: 185px;
+  max-width: 445px;
+  margin: 0 auto;
+}
+.twitter .twitter-message-container .twitter-message p {
+  font-size: 16px;
+  letter-spacing: 2px;
+  line-height: 1.7em;
+}
+.twitter .twitter-message-container .twitter-message p.date {
+  font-size: 12px;
+  margin-bottom: 3.75em;
+}
+.twitter .twitter-message-container .twitter-message .twitter-button-container > span {
+  font-size: 16px;
+}
+.twitter .twitter-message-container .twitter-message .twitter-button-container a span {
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.paragraph {
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.carousel-hero .contents > div h1 {
+  margin-bottom: 53px;
+  margin-top: 33px;
+}
+
+.classes-list .classes-day-container .classes-day:nth-of-type(4) {
+  display: block;
+}
+.classes-list .day-dates li {
+  width: 25%;
+}
+.classes-list .day-dates li:nth-child(-n+4) {
+  display: block;
+}
+.classes-list .classes-day {
+  width: 25%;
+}
+
+.classes-calendar ul li:nth-child(2) .classes-timeline, .classes-calendar ul li:nth-child(3) .classes-timeline {
+  background: #494949;
+}
+.classes-calendar ul li:nth-child(2) .classes-timeline:before, .classes-calendar ul li:nth-child(2) .classes-timeline:after, .classes-calendar ul li:nth-child(3) .classes-timeline:before, .classes-calendar ul li:nth-child(3) .classes-timeline:after {
+  display: none;
+}
+.classes-calendar ul li:nth-child(4) p {
+  color: #333;
+}
+.classes-calendar ul li:nth-child(4) .classes-timeline:after {
+  content: " ";
+  position: absolute;
+  background: #494949;
+  height: 6px;
+  width: 50%;
+  top: 50%;
+  left: 0;
+  margin-top: -3px;
+}
+
+.group-title h2 {
+  font-size: 35px;
+  margin: 60px auto;
+}
+.group-title h2 span {
+  letter-spacing: 3px;
+}
+.group-title h2 small {
+  font-size: 12px;
+  width: 100%;
+  margin: 18px auto 0;
+}
+
+.group-options .options {
+  padding: 45px 0;
+}
+.group-options .options a span {
+  font-size: 11px;
+}
+
+.quilt-overlay {
+  height: 70%;
+}
+.quilt-overlay .quilt-overlay-info {
+  padding: 75px 100px;
+}
+.quilt-overlay .quilt-overlay-info span {
+  font-size: 84px;
+}
+
+.group-detail {
+  top: 60px;
+}
+.group-detail .side-content .upcoming .statics {
+  width: 250px;
+}
+
+form.login input[type="text"], form.login input[type="password"], form.login input[type="tel"], form.login input[type="email"] {
+  height: 77px;
+  letter-spacing: 1px;
+  font-size: 22px;
+}
+
+.classdetail .class-module p {
+  margin-bottom: 93px;
+}
+.classdetail .class-module .social-buttons {
+  padding: 15px 0 41px 0;
+}
+.classdetail .class-module .social-buttons a.black {
+  font-size: 22px;
+}
+.classdetail .class-module .underlined-small-link {
+  margin-top: 0;
+}
+
+.favorites-button {
+  top: 61px;
+}
+
+.favorites-list {
+  width: 300px;
+  top: 61px;
+}
+.favorites-list li a {
+  padding: 17px 25px;
+  font-size: 12px;
+}
+.favorites-list li a span {
+  font-size: 14px;
+  margin-top: -1px;
+}
+.favorites-list li a span:before {
+  width: 16px;
+}
+
+.favorites .header-container {
+  padding: 54px 100px;
+}
+.favorites .header-container h1 {
+  margin-bottom: 10px;
+}
+.favorites .header-container p {
+  font-size: 12px;
+}
+.favorites .favorites-filter-wrapper {
+  max-width: 1200px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module {
+  padding: 63px 28px;
+  min-width: 27%;
+  min-height: 260px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .rounded {
+  border-top-left-radius: 60px;
+  border-top-right-radius: 60px;
+  border-bottom-left-radius: 60px;
+  border-bottom-right-radius: 60px;
+  border-radius: 60px;
+  width: 102px;
+  height: 102px;
+  margin: 0 auto 29px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .rounded > span {
+  font-size: 33px;
+  padding: 36px 0;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .autocomplete-field {
+  padding: 12px 20px 0px 0px;
+  width: 233px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .autocomplete-field input[type="text"] {
+  font-size: 15px;
+  font-style: italic;
+  margin-left: 37px;
+  margin-bottom: 12px;
+  width: 200px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .autocomplete-field .add-filter {
+  font-size: 26px;
+  right: 23px;
+  margin-top: -16px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .autocomplete-field .close {
+  right: 24px;
+  top: 18px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .autocomplete-field.selected span:first-child {
+  left: 12px;
+  top: 13px;
+  font-size: 16px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .favorites-added {
+  margin-top: 13px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .favorites-added li {
+  line-height: 27px;
+  font-size: 11px;
+}
+.favorites .favorites-filter-wrapper .favorite-filter-module .underlined-link {
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 16px;
+}
+.favorites .favorites-filter-wrapper .favorite-wrapper.edit-mode-container {
+  top: 27px;
+  min-width: 17%;
+  padding: 30px 60px 36px;
+}
+.favorites .favorites-filter-wrapper .favorite-wrapper.edit-mode-container h3 {
+  font-size: 16px;
+  font-style: italic;
+}
+.favorites .favorites-filter-wrapper .favorite-wrapper.edit-mode-container .rounded {
+  margin-bottom: 47px;
+}
+.favorites .favorites-filter-wrapper .favorite-wrapper.edit-mode-container .favorites-added {
+  margin: 25px 0 55px;
+}
+.favorites ul.autocompleteResults {
+  top: 46px;
+  width: 100%;
+}
+
+.bar-chart .chart {
+  margin: 35px auto;
+}
+.bar-chart .chart .bar-container .label {
+  bottom: -40px;
+  font-size: 13px;
+}
+.bar-chart .description {
+  font-size: 14px;
+}
+
+.recommended-classes .carousel-container .button-container {
+  padding: 1.3em 5px;
+  margin: 30px auto 0;
+  max-width: 320px;
+}
+.recommended-classes .underlined-small-link {
+  font-size: 10px;
+  margin-bottom: 20px;
+}
+
+.home .recommended-classes .class-module {
+  padding: 20px 85px;
+}
+
+.classes-filter .classes-filter-inner {
+  background-color: #000;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+.classes-filter h2 {
+  font-size: 36px;
+  letter-spacing: 0.15em;
+}
+.classes-filter .filters > li {
+  width: 25%;
+}
+
+.profile .header-container {
+  padding: 46px 100px;
+}
+.profile .header-container p {
+  font-size: 12px;
+  margin-bottom: 38px;
+}
+.profile .header-container .rounded {
+  border-top-left-radius: 80px;
+  border-top-right-radius: 80px;
+  border-bottom-left-radius: 80px;
+  border-bottom-right-radius: 80px;
+  border-radius: 80px;
+  width: 137px;
+  height: 137px;
+  margin: 0 auto -112px;
+}
+.profile .module-container {
+  padding: 50px 74px 53px;
+}
+.profile .module-container.personal-info {
+  padding: 87px 100px 40px;
+}
+.profile .module-container h3 {
+  font-size: 29px;
+}
+.profile .module-container h3 span.suffix {
+  top: -8px;
+}
+.profile .module-container .half-container {
+  margin-right: 20px;
+}
+.profile .module-container .half-container .info .empty {
+  height: 43px;
+}
+.profile .module-container .half-container.birthdate, .profile .module-container .half-container.gender {
+  padding-top: 0;
+}
+.profile .module-container .half-container h3 {
+  font-size: 32px;
+  margin-bottom: 2px;
+}
+.profile .module-container .half-container.weight .input-container input, .profile .module-container .half-container.height .input-container.metric input {
+  width: 135px;
+}
+.profile .module-container .input-container {
+  width: 170px;
+}
+.profile .module-container .input-container input {
+  font-size: 24px;
+  width: 135px;
+  height: 42px;
+}
+.profile .module-container .input-container span {
+  margin-top: 7px;
+}
+.profile .module-container .underlined-link {
+  font-size: 10px;
+  margin-top: 19px;
+}
+.profile .module-container .circles-wrapper .goals-container .circles-container {
+  width: 16.5%;
+}
+.profile .module-container .circles-wrapper .goals-container .circles-container span {
+  font-size: 10px;
+  margin-top: 38px;
+  width: 87px;
+}
+.profile .module-container .circles-wrapper .goals-container .circles-container .rounded-button .rounded {
+  border-top-left-radius: 80px;
+  border-top-right-radius: 80px;
+  border-bottom-left-radius: 80px;
+  border-bottom-right-radius: 80px;
+  border-radius: 80px;
+  width: 87px;
+  height: 87px;
+}
+.profile .module-container .circles-wrapper .goals-container .circles-container .rounded-button .rounded > span {
+  font-size: 30px;
+  padding: 29px 0;
+  margin-top: 0;
+}
+.profile .module-container .circles-wrapper .circles-container span {
+  font-size: 10px;
+  margin-top: 38px;
+  width: 87px;
+}
+.profile .module-container .circles-wrapper .circles-container .rounded-button .rounded {
+  border-top-left-radius: 80px;
+  border-top-right-radius: 80px;
+  border-bottom-left-radius: 80px;
+  border-bottom-right-radius: 80px;
+  border-radius: 80px;
+  width: 87px;
+  height: 87px;
+}
+.profile .module-container .circles-wrapper .circles-container .rounded-button .rounded > span {
+  font-size: 30px;
+  padding: 29px 0;
+  margin-top: 0;
+}
+.profile .module-container .title-container {
+  padding-right: 20px;
+}
+.profile .module-container .title-container h3 {
+  font-size: 23px;
+}
+.profile .module-container .small-circles-wrapper {
+  width: 49%;
+}
+.profile .module-container .small-circles-wrapper .rounded-button .rounded {
+  width: 21px;
+  height: 21px;
+}
+.profile .module-container .small-circles-wrapper .rounded-button .rounded.color-circle span {
+  font-size: 13px;
+}
+.profile .module-container .small-circles-wrapper .small-circle-description span {
+  font-size: 10px;
+}
+.profile .athlete-level .range-selection .track-wrapper {
+  width: 42%;
+}
+
+.fb-sharing-overlay .fb-box {
+  padding: 48px 67px;
+  width: 510px;
+  margin-left: -255px;
+  margin-top: -255px;
+}
+.fb-sharing-overlay .fb-box a {
+  font-size: 12px;
+}
+.fb-sharing-overlay .fb-box img {
+  width: 90px;
+  height: 90px;
+}
+.fb-sharing-overlay .fb-box ul {
+  margin-bottom: 34px;
+  max-width: 400px;
+}
+.fb-sharing-overlay .fb-box ul li {
+  font-size: 13px;
+}
+.fb-sharing-overlay .fb-box ul li:first-child {
+  font-size: 17px;
+}
+.fb-sharing-overlay .fb-box p {
+  font-size: 22px;
+}
+.fb-sharing-overlay .fb-box form {
+  max-width: 377px;
+}
+.fb-sharing-overlay .fb-box form textarea {
+  font-size: 12px;
+  min-height: 96px;
+  margin: 28px 0;
+  padding: 12px;
+}
+
+ul.autocompleteResults, ul.autocompleteDropdown {
+  max-height: 282px;
+  top: 55px;
+  left: 0;
+}
+
+.separator-title-container {
+  padding: 86px 0;
+  padding-top: 25px;
+  position: relative;
+  margin: 0;
+}
+.separator-title-container h3 {
+  font-size: 22px;
+  margin-bottom: 0;
+}
+.separator-title-container .more-button-desktop {
+  display: block;
+  position: absolute;
+  z-index: 100;
+  width: 50px;
+  margin-left: -25px;
+  bottom: 16%;
+  left: 50%;
+  text-align: center;
+  color: #b2b2b2;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  -moz-transition: opacity 0.5s;
+  -o-transition: opacity 0.5s;
+  -webkit-transition: opacity 0.5s;
+  transition: opacity 0.5s;
+}
+.separator-title-container .more-button-desktop.scrolling {
+  opacity: 0;
+}
+.separator-title-container .more-button-desktop.hidden {
+  opacity: 0;
+}
+.separator-title-container .more-button-desktop span:before {
+  display: block;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.home-splash + .separator-title-container {
+  margin-top: -139px;
+  z-index: 300;
+  background: white;
+}
+
+.login .wrapper {
+  top: 80px;
+}
+.login .wrapper .simple-form .button.box.small {
+  font-size: 12px;
+}
+
+.onboarding .select-wrapper + input {
+  height: 75px;
+}
+.onboarding .select-wrapper.box {
+  height: 75px;
+  padding: 23px 0;
+}
+
+.bike-classes-component {
+  padding-bottom: 60px;
+  background-color: #efefef;
+}
+
+.bike-classes-container {
+  max-width: 95%;
+  margin: 0 auto;
+}
+
+.bike-classes li a {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.bike-classes li a .class-info h2, .bike-classes li a .class-info p {
+  font-size: 14px;
+}
+
+.page.image.bookabike .background img {
+  width: 100%;
+}
+
+.page .book-a-bike-detail .modals > div {
+  width: 764px;
+  margin: 0 auto;
+}
+.page .book-a-bike-detail .background {
+  top: 55px;
+}
+.page .book-a-bike-detail .head .confirmation {
+  padding: 50px 0 80px;
+}
+.page .book-a-bike-detail .head .details .expand .more-details p {
+  margin-bottom: 8px;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic {
+  height: 540px;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .bike {
+  font-size: 18px;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .bike:not(.unavailable):hover {
+  font-size: 0;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .bike:not(.unavailable):hover:before {
+  font-size: 28px;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .bike.selected {
+  font-size: 0;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .bike.selected:before {
+  font-size: 28px;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .bike.selected:hover {
+  font-size: 18px;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .door:before {
+  font-size: 32px;
+}
+.page .book-a-bike-detail .head .details .bikes-graphic .instructor-bike .icon-bike-2 {
+  padding-bottom: 6px;
+}
+.page .book-a-bike-detail .content .confirmation {
+  padding: 65px 0 40px;
+}
+.page .book-a-bike-detail .content .confirmation .share {
+  font-size: 14px;
+  text-indent: 0;
+  margin: 35px auto;
+}
+.page .book-a-bike-detail .content .confirmation .export {
+  margin-bottom: 50px;
+}
+.page .book-a-bike-detail .content .confirmation .reminder {
+  margin: 0 auto 55px;
+  font-size: 12px;
+  width: 50%;
+  line-height: 1.5em;
+}
+.page .book-a-bike-detail .content .confirmation .options a {
+  font-size: 15px;
+}
+
+.main-calendar header .main-calendar-header a.navigation {
+  display: block;
+}
+.main-calendar .day-detail-main-container {
+  width: 14.285%;
+}
+.main-calendar .day-detail-main-container .day-detail-container .events-container .event-view .instructors {
+  display: block;
+}
+.main-calendar .day-detail-main-container .day-detail-container .events-container .event-view .club-name {
+  display: inline-block;
+}
+.main-calendar .day-detail-main-container .day-detail-container .events-container .see-more-classes p {
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.main-calendar .day-detail-main-container .day-detail-container .events-container .see-more-classes p .classes-amount {
+  display: block;
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.main-calendar .day-detail-main-container .day-detail-container .events-container .see-more-classes p span {
+  margin-left: -3px;
+}
+.main-calendar .day-detail-main-container .day-detail-container .events-container .see-more-classes .more-classes {
+  display: block;
+  margin: 0 auto;
+  margin-top: 16px;
+  width: 90px;
+  text-align: center;
+}
+.main-calendar .day-detail-main-container .extra-event-container .extra-event-view small {
+  display: inline-block;
+}
+.main-calendar .day-detail-main-container .extra-event-container .extra-event-view .instructors {
+  display: block;
+}
+.main-calendar .day-detail-main-container .extra-event-container .extra-event-view .club-name {
+  display: inline-block;
+}
+
+.qblog {
+  padding: 60px 0 0;
+  background-color: #e6e6e6;
+  max-width: 980px;
+}
+
+.qblog-logo {
+  top: 60px;
+  left: 0;
+  width: 171px;
+  height: 171px;
+}
+
+.carousel .swipe-guide {
+  display: none;
+}
+
+.carousel-item .caption h2 {
+  font-size: 45px;
+  letter-spacing: 8.1px;
+}
+
+.qblog-content {
+  padding: 38px 0;
+}
+.qblog-content .article-container article .article-content .article-category, .qblog-content .article-container article .article-content .article-date, .qblog-content .article-container article .article-content p {
+  font-size: 12px;
+  letter-spacing: .96px;
+}
+.qblog-content aside .subscribe a, .qblog-content aside .article-excerpt a {
+  padding: 23px 60px;
+}
+.qblog-content aside .subscribe h2, .qblog-content aside .article-excerpt h2 {
+  font-size: 22px;
+}
+.qblog-content aside .subscribe p {
+  font-size: 11px;
+  font-weight: 400;
+}
+.qblog-content aside .article-excerpt p {
+  font-size: 22px;
+}
+
+.page.purchase .equifit .button.box {
+  margin-top: 10px;
+  display: inline-block;
+  border: none;
+}
+
+.page.schedule .appointments-list .day-dates li {
+  width: 25%;
+}
+.page.schedule .appointments-list .day-dates li:nth-child(-n+4) {
+  display: block;
+}
+.page.schedule .appointments-list .appointments-container li {
+  width: 25%;
+}
+.page.schedule .appointments-list .appointments-container li:nth-child(7n+4) {
+  display: block;
+}
+.page.schedule .appointments-list .appointments-container li:nth-child(7n+4).empty {
+  display: block;
+}
+
+.schedule-equifit .select-wrapper + input {
+  height: 75px;
+}
+.schedule-equifit .select-wrapper.box {
+  height: 75px;
+  padding: 23px 0;
+}
+
+.notification-container {
+  padding: 12px 40px;
+}
+.notification-container p {
+  font-size: 11px;
+}
+.notification-container a {
+  top: 8px;
+}
+.notification-container a span:before {
+  font-size: 11px;
+}
+
+.small-calendar {
+  width: 400px;
+}
+.small-calendar .calendar-box {
+  padding-top: 115px;
+}
+.small-calendar .calendar-container .no-classes-overlay {
+  top: 56px;
+}
+.small-calendar .calendar-container .no-classes-overlay .message-main-container {
+  height: 511px;
+}
+.small-calendar .calendar-container .no-classes-overlay .message-main-container .message-container {
+  padding: 0 40px;
+}
+.small-calendar .calendar-container .no-classes-overlay .message-main-container .message-container h6 {
+  font-size: 14px;
+}
+.small-calendar .calendar-container .no-classes-overlay .message-main-container .message-container p {
+  font-size: 24px;
+}
+.small-calendar .calendar-container table .day-detail-container {
+  border-bottom: 2px dotted #e0e0e0;
+}
+.small-calendar .calendar-container table .day-detail-container .day-left-container {
+  font-size: 16px;
+  padding: 24px 0;
+  width: 50px;
+}
+.small-calendar .calendar-container table .day-detail-container .classes-detail {
+  padding: 18px 33px;
+}
+.small-calendar .calendar-container table .day-detail-container .classes-detail ul {
+  margin-top: 20px;
+}
+.small-calendar .calendar-container table .day-detail-container .classes-detail ul li {
+  font-size: 14px;
+}
+.small-calendar .calendar-container table .day-detail-container .classes-detail ul li.class-date-location {
+  font-size: 12px;
+}
+.small-calendar .calendar-container table .day-detail-container .classes-detail ul li.class-title {
+  font-weight: bold;
+}
+.small-calendar .calendar-container table .day-detail-container .classes-detail ul li.class-title span {
+  margin-right: 5px;
+}
+.small-calendar .expand-collapse {
+  left: -32px;
+  padding: 19px 10px;
+}
+
+.search-menu {
+  height: auto;
+  padding: 35px 0;
+}
+.search-menu .search-container {
+  display: block;
+  border-bottom: 1px solid #404040;
+  margin: 0 auto 30px;
+  width: 262px;
+}
+.search-menu .search-container .search-field {
+  padding: 0;
+}
+.search-menu .search-container .search-field fieldset {
+  margin: 0;
+  width: 262px;
+}
+.search-menu .search-container .search-field fieldset span {
+  padding: 5px 0;
+}
+.search-menu .search-container .search-field fieldset input {
+  font-size: 21px;
+  width: 244px;
+  height: 30px;
+  padding: 5px 10px;
+}
+.search-menu ul {
+  display: block;
+  margin: 0 auto;
+  width: 590px;
+}
+.search-menu ul li {
+  display: inline-block;
+  float: none;
+  width: auto;
+}
+.search-menu ul li a {
+  padding: 0 18px;
+}
+.search-menu ul li a span {
+  font-size: 11px;
+}
+.search-menu ul li a span:before {
+  font-size: 13px;
+}
+
+.facebook-friends-classes .connect-fb .post-info-container .posts-info h3 {
+  font-size: 22px;
+  margin-bottom: 19px;
+}
+.facebook-friends-classes .connect-fb .post-info-container .posts-info p {
+  margin-bottom: 0;
+}
+.facebook-friends-classes .two-part-module h3 {
+  font-size: 19px;
+}
+.facebook-friends-classes .two-part-module .left-main-container {
+  width: 66.3%;
+}
+.facebook-friends-classes .two-part-module .left-main-container .left-container p {
+  margin-top: 29px;
+}
+.facebook-friends-classes .two-part-module .right-main-container {
+  width: 33%;
+}
+.facebook-friends-classes .one-friend-class .left-main-container {
+  width: 33%;
+}
+.facebook-friends-classes .one-friend-class .right-main-container {
+  width: 66.9%;
+}
+
+.q-blog .article-image-wrapper {
+  max-height: 414px;
+  height: auto;
+}
+.q-blog .blog-article-container .selected-article {
+  border-width: 0 20px 22px 20px;
+  top: -11px;
+  left: 39px;
+}
+.q-blog .blog-article-container .article-text-container {
+  padding: 37px 18px;
+  text-align: left;
+}
+.q-blog .blog-article-container .article-text-container .recommended {
+  font-size: 11px;
+}
+.q-blog .blog-article-container .article-text-container .category-font, .q-blog .blog-article-container .article-text-container p {
+  font-size: 12px;
+}
+.q-blog .blog-article-container .article-text-container h4 {
+  font-size: 14px;
+}
+
+.twitter .twitter-message-container {
+  height: 185px;
+  max-width: 445px;
+  margin: 0 auto;
+}
+.twitter .twitter-message-container .twitter-message p {
+  font-size: 16px;
+  letter-spacing: 2px;
+  line-height: 1.7em;
+}
+.twitter .twitter-message-container .twitter-message p.date {
+  font-size: 12px;
+  margin-bottom: 3.75em;
+}
+.twitter .twitter-message-container .twitter-message .twitter-button-container > span {
+  font-size: 16px;
+}
+.twitter .twitter-message-container .twitter-message .twitter-button-container a span {
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.is-tablet, .is-mobile {
+  display: none !important;
+}
+
+.is-desktop {
+  display: block !important;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+/*# sourceMappingURL=equinox-large.css.map */

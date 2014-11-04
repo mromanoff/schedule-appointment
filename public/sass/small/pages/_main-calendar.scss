@@ -1,0 +1,120 @@
+.tpl-calendar {
+	margin: 0;
+	padding: 0;
+}
+
+.loader-error-box {
+    min-height: 100px;
+    position: relative;
+}
+
+.main-calendar {
+	@include clearfix;
+    .small-calendar {
+        .calendar-box {
+            padding: 0;
+        }
+    }
+    .prev-month, .next-month {
+        cursor: pointer;
+    }
+    .prev-month {
+        width: 0; 
+        height: 0; 
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent; 
+        border-right:20px solid white; 
+        
+        position: absolute;
+        top: 205px;
+        left: 20px;
+    }
+    .next-month {
+        width: 0; 
+        height: 0; 
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-left: 20px solid white;
+
+        position: absolute;
+        top: 205px;
+        right: 20px;
+    }
+    header {
+        height: 150px;
+        overflow: hidden;
+        position: relative;
+		.main-calendar-header {
+			position: absolute;
+			top: 52%;
+			left: 50%;
+			text-align: center;
+            padding: 0 20px;
+            min-width: 230px; /* Fix for safari browsers not calculating title width correctly */
+			@include css-translate(-50%, -50%);
+			h2 {
+				font-size: 25px;
+				font-weight: 100;
+				color: #fff;
+			}
+			h3 {
+				color: #fff;
+				display:none;
+			}
+            a.navigation {
+                display: none;
+                color: #FFFFFF;
+                font-size: 20px;
+                position: absolute;
+                top: 6px;
+                &.prev {
+                    left: 0px;
+                }
+                &.next {
+                    right: 0px;
+                }
+            }
+		}
+	}
+}
+
+.mobile-calendar-small-container {
+	.controls {
+		background-color: #000;
+		font-size: 12px;
+		color: #fff;
+        height: 40px;
+		text-transform: uppercase;
+		text-align: center;
+		padding: 10px 0;
+		position: relative;
+		.current-week-text {
+            margin-top: 10px;
+			font-weight: 700;
+			span {
+				font-weight: 400;
+				display: block;
+			}
+		}
+		.prev-week, .next-week {
+			position: absolute;
+			top: 50%;
+			font-size: 16px;
+			cursor: pointer;
+			@include css-translate(0, -50%);
+			width: 60px;
+			height: 46px;
+
+			&:before {
+				display: block;
+				padding: 15px 0;
+			}
+		}
+		.prev-week {
+			left: 3px;
+		}
+		.next-week {
+			right: 3px;
+		}
+	}
+}

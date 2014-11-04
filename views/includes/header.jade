@@ -1,0 +1,74 @@
+nav(class="main-transparent is-mobile" data-component="navigation")
+    a(href="#" class="menu icon-menu is-mobile")
+    a(href="#" class="icon-close is-hidden")
+
+nav(class="main logged-out")
+    // Mobile Menu
+    div(class="links-wrapper is-mobile")
+        ul(class="main-links")
+            li
+                a(class="menu-clubs" href="/clubs") CLUBS
+            li
+                a(class="menu-classes" href="/group-fitness") CLASSES
+            li
+                a(class="menu-training" href="/personal-training") TRAINING
+            li
+                a(class="menu-pilates" href="/pilatesilates") PILATES
+            li
+                a(class="menu-spa" href="/spa") SPA
+            li
+                a(class="menu-q blog" href="http://q.equinox.com/") Q BLOG
+            li
+                a(class="menu-join" href="/join/step1") JOIN
+        ul.secondary-links
+            li
+                a(class="highlight menu-chat" href="#" style="visibility: hidden;") CHAT
+            li
+                a(class="highlight menu-visit us" href="/visit-us") VISIT US
+            li
+                a(class="highlight menu-login" href="/Login") LOGIN
+        ul.member-dropdown
+            li
+                a(href="#") My profile
+            li
+                a(href="#") Account Settings
+            li
+                a(href="#" class="logout-link" data-component="logout") Logout
+    // Login Button
+    div(class="login-tab is-tablet is-desktop")
+        a(href="https://myeq.equinox.com/login") Member Login
+    // Full Navigation
+    div.full-wrapper
+        h1.logo
+            a(href="/")
+                img(src="/images/equinox-logo.png" alt="Equinox")
+        div(class="links-wrapper is-tablet is-desktop")
+            ul.main-links
+                li
+                    a(class="menu-clubs" href="/clubs") CLUBS
+                li
+                    a(class="menu-classes" href="/group-fitness") CLASSES
+                li
+                    a(class="menu-training" href="/personal-training") TRAINING
+                li
+                    a(class="menu-pilates" href="/pilates") PILATES
+                li
+                    a(class="menu-spa" href="/spa") SPA
+                li
+                    a(class="menu-q blog" href="http://q.equinox.com/") Q BLOG
+                li
+                    a(class="menu-join" href="/join/step1") JOIN
+            ul.secondary-links
+                li
+                    a(class="menu-chat" href="#" style="visibility: hidden;") CHAT
+                li
+                    a(class="menu-visit us" href="/visit-us") VISIT US
+                li
+                    a(class="menu-login" href="/login") LOGIN
+            ul.member-dropdown
+                li
+                    a(href="#") My profile
+                li
+                    a(href="#") Account Settings
+                li
+                    a(href="#" class="logout-link" data-component="logout") Logout

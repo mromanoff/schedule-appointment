@@ -1,0 +1,465 @@
+.profile {
+	.header-container {
+		background: #000;
+		border-top: 1px solid #676767;
+		color: #fff;
+		padding: 28px 24px;
+		text-align: center;
+
+		h1 {
+			font-size: 25px;
+			font-weight: 200;
+			margin-bottom: 13px;
+		}
+
+		p {
+			font-size: 11px;
+			color: #636363;
+			letter-spacing: 1px;
+			line-height: 18px;
+			text-transform: uppercase;
+		}
+
+		.rounded {
+			display: block;
+			@include border-radius(80px);
+			width: 127px;
+			height: 127px;
+			margin: 18px auto -80px;
+		}
+	}
+
+	.module-container {
+		border-bottom: 1px solid #d9d9d9;
+		padding: 46px 33px 54px;
+		text-align: center;
+		text-transform: uppercase;
+
+		&.personal-info {
+			position: relative;
+			padding: 67px 15px 18px;
+		}
+
+		h3 {
+			font-size: 20px;
+			font-weight: 200;
+
+			span {
+				color: #c7c7c7;
+				font-weight: 700;
+
+				&.suffix {
+					position: relative;
+					top: -8px;
+					left: 2px;
+				}
+			}
+		}
+
+		.half-container {
+			display: inline-block;
+			text-align: center;
+
+			.info {
+				.empty {
+					height: 43px;
+					width: 28px;
+					margin: 0 auto;
+
+					span {
+						width: 60%;
+						height: 2px;
+						background-color: #a3a3a3;
+						display: block;
+						margin: 0 auto;
+						position: relative;
+						top: 50%;
+					}
+				}
+			}
+
+			.edit {
+				display: none;
+			}
+
+			&.editable {
+				display: block;
+				margin-top: 20px;
+			}
+
+			h3 {
+				font-size: 25px;
+				font-weight: 200;
+				letter-spacing: 2px;
+				margin: 0;
+			}
+
+			span {
+				font-size: 11px;
+				font-weight: 700;
+				letter-spacing: 1px;
+			}
+
+			&.gender {
+				float: right;
+				position: absolute;
+				top: 66px;
+				right: 12%;
+				width: 28%;
+			}
+
+			&.age {
+				float: left;
+				width: 48%;
+			}
+
+			&.weight, &.height {
+				width: 100%;
+				margin: 25px 0px;
+			}
+
+			&.weight .input-container input,
+			&.height .input-container.metric input {
+				width: 125px;
+			}
+		}
+
+		.input-container {
+			margin-top: 25px;
+
+			&.metric, &.imperial {
+				display: none;
+
+				input {
+					width: 54px;
+				}
+			}
+
+			input {
+				display: inline-block;
+				border: 1px solid #c7c7c7;
+				font-size: 25px;
+				font-weight: 200;
+				letter-spacing: 2px;
+				width: 50%;
+				height: 41px;
+				padding: 2px;
+			}
+
+			label {
+				&.suffix {
+					font-size: 10px;
+					font-weight: 700;
+					color: #C7C7C7;
+					margin-right: 4px;
+					position: relative;
+					top: -6px;
+				}
+			}
+
+			span {
+				display: block;
+				margin-top: 10px;
+				font-size: 11px;
+				font-weight: 700;
+				letter-spacing: 1px;
+			}
+
+
+			.select-wrapper {
+				font-size: 40px;
+				letter-spacing: 2px;
+				margin: 0 20px;
+
+				&.box {
+					border: 1px solid #c7c7c7;
+					height: 35px;
+					vertical-align: top;
+					width: 48%;
+					margin: 0 1px 2px;
+					padding: 2px;
+					padding-right: 10px;
+					display: inline-block;
+
+					select {
+						letter-spacing: 0;
+						text-transform: uppercase;
+					}
+
+					.option {
+						width: 100%;
+						font-size: 21px;
+						font-weight: 200;
+						letter-spacing: -1px;
+						margin-top: 0;
+
+						&:after {
+							font-size: 12px;
+							margin-top: -4px;
+							position: absolute;
+							right: 3px;
+							top: 50%;
+							color: #c7c7c7;
+						}
+					}
+				}
+			}
+
+		}
+
+		.half-container.age {
+			width: 50%;
+			.input-container {
+				width: 100%;
+				display: inline-block;
+			}
+		}
+
+		.half-container.height {
+			.info.imperial, .info.metric {
+				display: none;
+			}
+		}
+
+		.half-container.gender {
+			.input-container {
+				text-align: center;
+				font-size: 32px;
+				font-weight: 200;
+				color: #797979;
+				width: 110px;
+				margin-top: 58px;
+
+				label.gender-select {
+					cursor: pointer;
+					height: 40px;
+					display: inline-block;
+
+					&.selected {
+						color: #000;
+					}
+					input {
+						display: none;
+					}
+				}
+
+				span {
+					width: 100%;
+					color: #000;
+				}
+			}
+		}
+
+		a.edit-info {
+			display: none;
+		}
+
+		a.save-info {
+			display: none;
+			position: relative;
+			min-width: 70px;
+		}
+
+		.underlined-link {
+			display: block;
+			font-size: 11px;
+			font-weight: 700;
+			letter-spacing: 1px;
+			text-align: center;
+			text-decoration: underline;
+			text-transform: uppercase;
+			margin-top: 31px;
+		}
+
+		.circles-wrapper {
+			display: block;
+			margin: 0 auto;
+			max-width: 324px;
+			text-align: left;
+			
+			.goals-container {
+				display: block;
+			
+				.circles-container {
+					display: inline-block;
+					margin-bottom: 23px;
+					text-align: center;
+					vertical-align: top;
+					width: 49%;
+
+					&:last-child {
+						margin-bottom: 0;
+					}
+
+					.rounded-button {
+						span {
+							margin: 0 auto;
+						}
+					}
+
+					span {
+						display: block;
+						font-size: 10px;
+						margin: 12px auto 0;
+						width: 74px;
+					}
+				}
+			}
+
+			.circles-container {
+				display: inline-block;
+				margin-bottom: 0;
+				text-align: center;
+				vertical-align: top;
+				width: 49%;
+
+				.rounded-button {
+					span {
+						margin: 0 auto;
+					}
+
+					.add-goal {
+						color: #b2b2b2;
+						
+						span {
+							font-weight: 700;
+						}
+					}
+				}
+
+				span {
+					display: block;
+					font-size: 10px;
+					margin: 12px auto 0;
+					width: 74px;
+				}
+			}
+		}
+
+		.small-circles-container {
+			display: inline-block;
+			margin-bottom: 16px;
+			text-align: left;
+			width: 45%;
+
+			&:nth-child(odd) {
+				margin-right: 8%;
+			}
+
+			.rounded-button {
+				display: inline-block;
+				margin-right: 5px;
+				vertical-align: middle;
+
+				&.selected {
+					.color-circle {
+						span {
+							color: #fff;
+						}
+					}
+				}
+
+				.rounded {
+					width: 30px;
+					height: 30px;
+
+					&.color-circle {
+						> span {
+							font-size: 22px;
+							font-weight: 700;
+							padding: 5px 0;
+						}
+					}
+				}
+			}
+
+			.small-circle-description {
+				display: inline-block;
+				vertical-align: middle;
+				width: 60%;
+
+				span {
+					font-size: 11px;
+					font-weight: 700;
+					color: #7c878e;
+					vertical-align: middle;
+				}
+			}
+		}
+
+		.rounded-button {
+			display: block;
+
+			&.selected {
+				.rounded {
+					&.color-circle {
+						background: #7c878e;
+						border: 1px solid #7c878e;
+						color: #fff;
+					}
+				}
+			}
+
+			.rounded {
+				display: block;
+				@include border-radius(40px);
+				width: 74px;
+				height: 74px;
+				margin: 0 auto;
+
+				&.color-circle {
+					background: #fff;
+					border: 1px solid #b3b3b3;
+					color: #d9d9d9;
+
+					> span {
+						display: block;
+						font-size: 22px;
+						margin-top: 0;
+						padding: 27px 0;
+						text-align: center;
+					}
+				}
+			}
+		}
+
+		.small-circles-wrapper {
+			display: block;
+			margin: 0 auto;
+			max-width: 324px;
+			text-align: left;
+		}
+	}
+
+	.athlete-level {
+		padding: 46px 33px;
+		.range-selection {
+			.track-wrapper {
+				margin-bottom: 44px;
+				.track {
+					background: #d9d9d9;
+					.track-shadow {
+						background: transparent;
+
+						.thumb {
+							background: #7c878e;
+						}
+					}
+
+					.reference {
+						background: #7c878e;
+					}
+				}
+			}
+
+			.answers {
+				p {
+					font-size: 12px;
+					font-weight: 200;
+					text-transform: none;
+				}
+			}
+		}
+	}
+
+}

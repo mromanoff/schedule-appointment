@@ -1,0 +1,32 @@
+.q-blog {
+	.article-image-wrapper {
+		max-height: 414px;
+		height: auto;
+	}
+
+	.blog-article-container {
+
+		.selected-article {
+			border-width: 0 20px 22px 20px;
+			top: -11px;
+			left: 39px;
+		}
+		
+		.article-text-container {
+			padding: 37px 18px;
+			text-align: left;
+
+			.recommended {
+				font-size: 11px;
+			}
+
+			.category-font, p {
+				font-size: 12px
+			}
+
+			h4 {
+				font-size: 14px;
+			}
+		}
+	}
+}

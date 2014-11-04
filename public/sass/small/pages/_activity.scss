@@ -1,0 +1,637 @@
+#app-main.activity {
+	background: #000;
+	position: relative;
+	#activity-app-page-visual {
+		background: #000;
+		position: relative;
+	}
+	#activity-app-page-list {
+	}
+	#activity-app-page-loading {
+		height: 150px;
+		display: block;
+		position: relative;
+		display: none;
+	}
+	&+ footer {
+		margin-top: 0;
+	}
+}
+
+#activity-app-tour-overlay {
+	width: 100%;
+	position: absolute;
+	background: #000;
+	opacity: 0.5;
+	top: 0;
+}
+a.activity-tour-close {
+	width: 15px;
+	height: 11px;
+	background: url('../images/activity/date_selector_sprite.png') no-repeat 0 -18px;
+	background-size: 15px 30px;
+	position: absolute;
+	right: 10px;
+	display: block;
+	z-index: 10;
+}
+#activity-app-tour {
+	max-width: 320px;
+	margin: 0 auto;
+	display: block;
+	text-align: center;
+	background: #000 url(/assets/images/activity/tour_mobile.jpg) no-repeat center 120px;
+	background-size: 320px 136px;
+	color: #fff;
+	height: 415px;
+	position: relative;
+	z-index: 10;
+	> h1 {
+		font-weight: light;
+		font-size: 21px;
+		font-weight: 200;
+		margin: 30px 0 10px;
+	}
+	> p {
+		font-size: 11px;
+		text-transform: uppercase;
+		width: 80%;
+		margin: 0 auto 230px;
+	}
+	> a {
+		color: #fff;
+	}
+}
+
+#activity-app-nav {
+	width: 100%;
+	margin: 0 auto 15px;
+	text-align: center;
+	li {
+		display: inline-block;
+		margin-left: 15px;
+		a {
+			color: #878787;
+			text-transform: uppercase;
+			font-size: 12px;
+			font-weight: 700;
+			padding-bottom: 5px;
+			-webkit-text-size-adjust: none;
+			&:hover,
+			&.selected {
+				color: #fff;
+			}
+			&.selected {
+				border-bottom: 1px solid #fff;
+			}
+		}
+		&:first-child {
+			margin-left: 0;
+		}
+	}
+}
+
+#activity-app-timeframe-select {
+	width: 90%;
+	margin: 0 auto;
+	text-align: center;
+	position: relative;
+	z-index: 250;
+	.timeframe-select-current {
+		font-size: 20px;
+		color: #fff;
+		text-transform: uppercase;
+		padding: 15px 0;
+		height: 25px;
+		line-height: 25px;
+		border-bottom: 1px solid rgba(0, 0 , 0, 0);
+		transition-property: background, border-color;
+		transition-duration: .2s;
+		transition-delay: .3s;
+		cursor: pointer;
+		> span {
+			display: inline-block;
+			pointer-events: none;
+		}
+		.timeframe-select-current-arrow {
+			width: 15px;
+			height: 8px;
+			background: url('../images/activity/date_selector_sprite.png') no-repeat 0 -8px;
+			background-size: 15px 30px;
+			transition-property: background-position;
+			transition-duration: .2s;
+			position: relative;
+			top: -3px;
+			margin-left: 10px;
+		}
+	}
+	.timeframe-select-options {
+		display: none;
+		padding: 20px 0;
+		position: absolute;
+		width: 100%;
+		background-color: #7d888e;
+		max-height: 245px;
+		overflow-y: scroll;
+		.timeframe-select-option {
+			margin-bottom: 15px;
+			> a {
+				text-transform: uppercase;
+				font-size: 16px;
+				color: #cdd1d1;
+				&.selected,
+				&:hover {
+					color: #fff;
+				}
+			}
+			
+		}
+	}
+	&.open {
+		.timeframe-select-current {
+			background-color: #7d888e;
+			border-bottom-color: #99a3a8;
+			transition-delay: 0s;
+			.timeframe-select-current-arrow {
+				background-position: 0 0;
+			}
+		}
+	}
+}
+.timeframe-select-overlay {
+	position: absolute;
+	width: 100%;
+	height: 420px;
+	top: 0;
+	z-index: 1;
+	display: none;
+}
+
+#activity-app-page-visual {
+	.activity-session-drilldown {
+		position: absolute;
+		top: -55px;
+		display: block;
+		width: 100%;
+		font-size: 20px;
+		color: #fff;
+		text-transform: uppercase;
+		text-align: center;
+		padding: 15px 0;
+		height: 25px;
+		background: #000;
+		z-index: 255;
+		> span {
+			display: inline-block;
+			pointer-events: none;
+		}
+		.activity-session-drilldown-icon {
+			width: 15px;
+			height: 11px;
+			background: url('../images/activity/date_selector_sprite.png') no-repeat 0 -18px;
+			background-size: 15px 30px;
+			position: relative;
+			top: -3px;
+			margin-left: 10px;
+		}
+	}
+	#activity-canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	#activity-canvas-labels {
+		position: absolute;
+		top: 0;
+		left: 0;
+		p.label {
+			position: absolute;
+			margin: 0;
+			color: #fff;
+			width: 20px;
+			line-height: 20px;
+			height: 20px;
+			font-size: 14px;
+			font-weight: 700;
+			text-align: center;
+			pointer-events: none;
+			&.small {
+				font-size: 8px;
+			}
+		}
+	}
+	.activity-canvas-info-wrapper {
+		position: absolute;
+		width: 100%;
+		top: 105px;
+		pointer-events: none;
+		.activity-canvas-info {
+			width: 90px;
+			margin: 0 auto;
+			text-align: center;
+			text-transform: uppercase;
+			font-weight: 700;
+			font-size: 8px;
+			color: #fff;
+			padding-top: 50px;
+			background: no-repeat top center;
+			background-size: 40px 40px;
+		}
+	}
+}
+
+#activity-app-page-visual {
+	.no-sessions-activity {
+		background: url(/assets/images/activity/zero_sessions_mobile.jpg) no-repeat top center;
+		background-size: 264px 261px;
+		height: 11px;
+		margin: 20px 0 40px;
+		padding: 125px 0;
+		width: 100%;
+		font-size: 8px;
+		font-weight: 400;
+		color: #fff;
+		text-transform: uppercase;
+		text-align: center;
+	}
+	#activity-svg-container {
+		overflow-x: scroll;
+		padding-bottom: 25px;
+		#activity-svg {
+			circle {
+				fill: #333f48;
+				cursor: pointer;
+				&.circle-empty {
+					fill: #000;
+					stroke: #414547;
+					stroke-width: 2px;
+					cursor: default;
+				}
+			}
+			text {
+				fill: #82898e;
+				font-weight: 700;
+				//font-size: 11px;
+				font-size: 8px;
+				text-transform: uppercase;
+				pointer-events: none;
+			}
+			image {
+				pointer-events: none;
+			}
+		}
+	}
+}
+
+#activity-app-page-list {
+	color: $swatch-2;
+	background: #efefef;
+	position: relative;
+	padding: 50px 0;
+	.list-title {
+		font-size: 15px;
+		font-weight: 400;
+		margin-bottom: 40px;
+	}
+	.list-sub-title {
+		font-size: 12px;
+		font-weight: 700;
+		color: #525252;
+		width: 80px;
+		margin: 0 0 15px 5px;
+		text-align: center;
+	}
+	.list-top-arrow {
+		position: absolute;
+		top: -7px;
+		left: 49%;
+		width: 0px;
+		height: 0px;
+		border-style: solid;
+		border-width: 0 8px 7px 8px;
+		border-color: transparent transparent #efefef transparent;
+	}
+	.list-container {
+		width: 100%;
+		position: relative;
+		.list-timeline {
+			height: 100%;
+			width: 0px;
+			border-right: 2px solid #d0d3d3;
+			position: absolute;
+			left: 42px;
+		}
+		.list-item {
+			width: 100%;
+			margin-top: 20px;
+			position: relative;
+			.list-item-date {
+				margin-left: 25px;
+				display: inline-block;
+				float: left;
+				.list-item-date-circle {
+					width: 38px;
+					margin: 0 auto;
+					height: 12px;
+					line-height: 12px;
+					background: #333f48;
+					text-align: center;
+					border-radius: 19px;
+					color: #fff;
+					font-size: 12px;
+					font-weight: 700;
+					padding: 13px 0;
+				}
+			}
+			.list-item-info {
+				margin: -10px 0 0 20px;
+				display: inline-block;
+				max-width: 65%;
+				position: relative;
+				.list-item-info-arrow {
+					width: 0px;
+					height: 0px;
+					border-style: solid;
+					position: absolute;
+					top: 20px;
+					left: -10px;
+					border-width: 8px 10px 8px 0;
+					border-color: transparent #fff transparent transparent;
+				}
+				.list-item-info-values {
+					padding: 20px;
+					background: #fff;
+					font-size: 12px;
+					font-weight: 400;
+					text-transform: uppercase;
+					span {
+						display: block;
+					}
+					.list-item-info-name {
+						font-weight: 700;
+					}
+				}
+			}
+		}
+	}
+}
+
+#activity-app-page-visual {
+	.activity-bar-chart {
+		width: 90%;
+		margin: 0 auto;
+		position: relative;
+		height: 190px;
+		margin-bottom: 20px;
+		.activity-bar-chart-axis {
+			position: absolute;
+			width: 100%;
+			.activity-bar-chart-axis-label {
+				height: 39px;
+				border-bottom: 1px solid #666666;
+				width: 100%;
+				position: relative;
+				.activity-bar-chart-axis-label-value {
+					position: absolute;
+					font-size: 10px;
+					width: 20px;
+					text-align: right;
+					left: -25px;
+					bottom: -.5em;
+					color: #888888;
+				}
+				&:first-child {
+					height: 0px;
+				}
+			}
+		}
+		.activity-bar-chart-bars {
+			width: 100%;
+			position: relative;
+			.activity-bar-chart-bar {
+				width: 2%;
+				margin: 0 .6%;
+				display: block;
+				float: left;
+				.activity-bar-chart-bar-activities {
+					.activity-bar-chart-bar-activity {
+						background: #323f48;
+						&.app {
+							background: #7d888e;
+						}
+					}
+				}
+				.activity-bar-chart-bar-label {
+					font-size: 10px;
+					color: #000;
+					font-weight: 700;
+					margin-top: 5px;
+					.activity-bar-chart-bar-label-today {
+						text-transform: uppercase;
+						position: relative;
+						left: -20px;
+						top: 15px;
+					}
+					&.highlight-monday {
+						color: #7f7f7f;
+					}
+					&.highlight-today {
+						color: #fff;
+					}
+				}
+			}
+		}
+		.activity-bar-chart-best {
+			display: none;
+		}
+		.activity-bar-chart-tooltip {
+			display: none;
+		}
+	}
+	.activity-bar-chart-info {
+		width: 90%;
+		margin: 0 auto;
+		.activity-bar-chart-total {
+			text-align: center;
+			color: #fff;
+			text-transform: uppercase;
+			margin-bottom: 30px;
+			.activity-bar-chart-total-label {
+				display: inline-block;
+				text-align: right;
+				opacity: .7;
+				font-size: 9px;
+				font-weight: 700;
+				width: 50px;
+				margin-right: 10px;
+			}
+			.activity-bar-chart-total-value {
+				font-size: 25px;
+				font-weight: 200;
+			}
+			.activity-bar-chart-total-metric {
+				font-size: 9px;
+				font-weight: 200;
+			}
+		}
+		.activity-bar-chart-key {
+			text-align: center;
+			margin-bottom: 30px;
+			.activity-bar-chart-key-item {
+				color: #c3c5c5;
+				font-size: 11px;
+				font-weight: 700;
+				text-transform: uppercase;
+				display: inline-block;
+				.activity-bar-chart-key-item-color {
+					width: 10px;
+					height: 10px;
+					border-radius: 5px;
+					display: inline-block;
+					background: #323f48;
+					margin-right: 6px;
+					&.app {
+						background: #7d888e;
+					}
+				}
+				&:first-child {
+					margin-right: 10px;
+				}
+			}
+		}
+	}
+}
+
+
+
+#activity-app-page-visual {
+	#activity-best-progress {
+		margin: 0 auto 30px;
+	}
+	.activity-current-best {
+		width: 100%;
+		text-align: center;
+		color: #d0d3d3;
+		font-size: 12px;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+	.activity-current-progress {
+		width: 100%;
+		position: absolute;
+		text-align: center;
+		color: #000;
+		top: 120px;
+		.activity-current-progress-total {
+			text-transform: uppercase;
+			color: #a5a5a5;
+			font-size: 14px;
+			font-weight: 400;
+			margin-bottom: 0px;
+		}
+		.activity-current-progress-new {
+			text-transform: uppercase;
+			color: #ff5c1c;
+			font-weight: 700;
+			font-size: 16px;
+			display: none;
+			margin-bottom: 0px;
+		}
+		.activity-current-progress-value {
+			font-weight: 200;
+			text-transform: uppercase;
+			.activity-current-progress-amount {
+				font-size: 74px;
+				line-height: 60px;
+				letter-spacing: -4px;
+			}
+			.activity-current-progress-unit {
+				font-size: 18px;
+				margin-left: 10px;
+			}
+		}
+	}
+}
+
+#activity-app-page-connect {
+	color: #fff;
+	text-align: center;
+	max-width: 300px;
+	margin: 0 auto;
+	padding: 40px 0;
+	> h3 {
+		font-size: 15px;
+		font-weight: 200;
+		text-transform: uppercase;
+		margin-bottom: 40px;
+	}
+	.activity-connect-section {
+		display: block;
+		padding: 20px 0;
+		> h4 {
+			font-size: 12px;
+			font-weight: 700;
+			text-transform: uppercase;
+			margin-bottom: 15px;
+		}
+		> p {
+			font-size: 12px;
+			line-height: 21px;
+			font-weight: 400;
+			margin-bottom: 25px;
+		}
+		.activity-connect-apps {
+			margin-bottom: 30px;
+			li {
+				font-size: 11px;
+				font-weight: 200;
+				text-transform: uppercase;
+				display: inline-block;
+				width: 25%;
+				color: #a3a3a3;
+				span {
+					display: block;
+					width: 30px;
+					height: 30px;
+					margin: 5px auto 10px;
+					background: url(/assets/images/activity/connect_devices_mobile.jpg) no-repeat top left;
+					background-size: 126px 26px;
+				}
+				&.activity-connect-img-fitbit span {
+					background-position: 0 2px;
+				}
+				&.activity-connect-img-withings span {
+					background-position: -29px 2px;
+				}
+				&.activity-connect-img-jawbone span {
+					width: 40px;
+					background-position: -64px 2px;
+				}
+				&.activity-connect-img-more span {
+					width: 20px;
+					background-position: -107px 2px;
+				}
+			}
+		}
+		> a {
+			text-decoration: underline;
+			font-size: 12px;
+			font-weight: 400;
+			text-transform: uppercase;
+			color: #fff;
+			display: block;
+			margin-bottom: 25px;
+		}
+		&.connect-apps {
+			&:after {
+				content: "";
+				width: 50px;
+				height: 1px;
+				display: block;
+				background: #fff;
+				margin: 0 auto;
+			}
+		}
+	}
+	
+}

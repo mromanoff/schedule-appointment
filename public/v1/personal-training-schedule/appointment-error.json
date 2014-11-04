@@ -1,0 +1,9 @@
+{
+    "error": {
+        "message": "Appointment not found.",
+        "code": 500,
+        "exception": "No additional details",
+        "data": null,
+        "messageId": 0
+    }
+}
