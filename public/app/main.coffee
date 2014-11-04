@@ -24,7 +24,7 @@ define 'bootstrap', (require) ->
   #navigation from this instance.
     App.Router = new Router()
     App.scheduleCriteria = options.scheduleCriteria
-    App.APIEndpoint = options.APIEndpoint
+    App.APIEndpoint = if _.isNull options.APIEndpoint  then null else options.APIEndpoint + '/personal-training-schedule/'
     App.MainDomain = options.MainDomain
 
     #Trigger the initial route and enable HTML5 History API support, set the

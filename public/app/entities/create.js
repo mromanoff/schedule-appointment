@@ -16,7 +16,7 @@ define(function (require) {
         },
 
         url: function () {
-            return App.APIEndpoint + '/personal-training-schedule/create';
+            return App.APIEndpoint + 'create';
         }
     });
 

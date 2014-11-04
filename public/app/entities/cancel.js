@@ -14,7 +14,7 @@ define(function (require) {
         },
 
         url: function () {
-            return App.APIEndpoint + '/personal-training-schedule/cancel';
+            return App.APIEndpoint + 'cancel';
         }
     });
 

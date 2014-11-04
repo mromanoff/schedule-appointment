@@ -20,7 +20,7 @@
     App.addInitializer(function(options) {
       App.Router = new Router();
       App.scheduleCriteria = options.scheduleCriteria;
-      App.APIEndpoint = options.APIEndpoint;
+      App.APIEndpoint = _.isNull(options.APIEndpoint) ? null : options.APIEndpoint + '/personal-training-schedule/';
       App.MainDomain = options.MainDomain;
       return Backbone.history.start({
         pushState: true,
