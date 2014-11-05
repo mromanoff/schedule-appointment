@@ -45,7 +45,7 @@
         return deferred.promise();
       }
     };
-    return msgBus.reqres.setHandler('entities:appointments', function() {
+    msgBus.reqres.setHandler('entities:appointments', function() {
       return API.getAppointments();
     });
   });

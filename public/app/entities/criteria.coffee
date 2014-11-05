@@ -1,47 +1,29 @@
-define (require) ->
+define (require, exports, module) ->
 
-  App = require 'app'
   msgBus = require 'msgbus'
-  Loading = require 'views/spinner'
+  Backbone = require 'backbone'
 
-  loadingView = new Loading
-  Model = Backbone.Model.extend
+  module.exports = Backbone.Model.extend
     defaults:
       trainerId: null
+      trainerName: null
       sessionTypeId: null
+      duration: null
       startDate: null
-      endDate: null
-      message: null
-
-    url: () ->
-      return App.APIEndpoint + 'create';
 
 
+    initialize: () ->
+      @on 'change', @updateCalendar
 
 
-  API =
-    ###*
-    * @name createAppointment
-    * @function
-    * @returns {object} promise object
-    ###
-    createAppointment: (data) ->
-      model = new Model
-      deferred = $.Deferred
+    updateCalendar: () ->
+      msgBus.reqres.request 'schedule:calendar',
+        startDate: this.get('startDate')
+        trainerId: this.get('trainerId')
+        sessionTypeId: this.get('sessionTypeId')
 
-      App.layout.content.show loadingView
+  return
 
-      #setTimeout () ->
-      model.save data,
-          success: deferred.resolve
-          error: deferred.reject
-
-      #, 2000
-      deferred.promise
-
-
-  msgBus.reqres.setHandler 'entities:create:appointment', (data) ->
-    API.createAppointment data
 
 
 

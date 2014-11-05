@@ -42,6 +42,7 @@ define (require) ->
 
       deferred.promise()
 
-  msgBus.reqres.setHandler('entities:appointments', () ->
+  msgBus.reqres.setHandler 'entities:appointments', () ->
     API.getAppointments()
-  )
+
+  return

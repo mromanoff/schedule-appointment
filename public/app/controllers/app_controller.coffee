@@ -23,7 +23,7 @@ define (require, exports, module) ->
     * @param {string} [date] - date in 2014-05-31 format
     ###
     create: (date) ->
-      require ['controllers/create/index'], (Controller) ->
+      require ['controllers/create'], (Controller) ->
         controller = new Controller()
         controller.index date
 
@@ -33,7 +33,7 @@ define (require, exports, module) ->
      * @param {object} appointment - Selected Appointment model
     ###
     createReview: (appointment) ->
-      require ['controllers/create/index'], (Controller) ->
+      require ['controllers/create'], (Controller) ->
         controller = new Controller()
         controller.review appointment
 
@@ -42,7 +42,7 @@ define (require, exports, module) ->
      * @param {object} appointment - Selected Appointment model
     ###
     createConfirmation: (appointment) ->
-      require ['controllers/create/index'], (Controller) ->
+      require ['controllers/create'], (Controller) ->
         controller = new Controller()
         controller.confirmation appointment
 
@@ -51,7 +51,7 @@ define (require, exports, module) ->
     * @param {id} id - Appointment ID
     ###
     cancel: (id) ->
-      require ['controllers/cancel/index'], (Controller) ->
+      require ['controllers/cancel'], (Controller) ->
         controller = new Controller()
         controller.index id
         
@@ -60,7 +60,7 @@ define (require, exports, module) ->
     * @param {object} appointment - Selected Appointment model
     ###
     cancelReview: (appointment) ->
-      require ['controllers/cancel/index'], (Controller) ->
+      require ['controllers/cancel'], (Controller) ->
       controller = new Controller()
       controller.review appointment
 
@@ -70,7 +70,7 @@ define (require, exports, module) ->
     * @param {object} appointment - Selected Appointment model
     ###
     cancelConfirmation: (appointment) ->
-      require ['controllers/cancel/index'], (Controller) ->
+      require ['controllers/cancel'], (Controller) ->
         controller = new Controller()
         controller.confirmation appointment
 
@@ -114,7 +114,7 @@ define (require, exports, module) ->
      * render calendar component
     ###
     calendar: () ->
-      require ['controllers/calendar/index'], (Controller) ->
+      require ['controllers/calendar'], (Controller) ->
         controller = new Controller()
         controller.index()
 
@@ -123,7 +123,7 @@ define (require, exports, module) ->
     * @param {object} options - Options object
     ###
     navigation: (options) ->
-      require ['controllers/calendar/navigation'], (Controller) ->
+      require ['controllers/calendar-navigation'], (Controller) ->
         controller = new Controller(options)
         controller.index options
 
@@ -150,7 +150,7 @@ define (require, exports, module) ->
     * @param {object} options - Options object
     ###
     error: (options) ->
-      require ['controllers/error/index'], (Controller) ->
+      require ['controllers/error'], (Controller) ->
         controller = new Controller(options)
         controller.initialize options
 

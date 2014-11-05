@@ -19,11 +19,15 @@
           defaultDuration: App.filterCriteria.get('duration')
         });
       },
-      onRender: function() {}
-    }, _.isEqual(1, _.size(this.model.get('trainers'))) ? (this.ui.selectTrainer.closest('div').hide(), this.ui.selectDuration.closest('div').css({
-      'float': 'none',
-      'margin': '0 auto'
-    })) : void 0, {
+      onRender: function() {
+        if (_.isEqual(1, _.size(this.model.get('trainers')))) {
+          this.ui.selectTrainer.closest('div').hide();
+          return this.ui.selectDuration.closest('div').css({
+            'float': 'none',
+            'margin': '0 auto'
+          });
+        }
+      },
       ui: {
         selectDuration: 'select.select-duration',
         selectTrainer: 'select.select-trainer'

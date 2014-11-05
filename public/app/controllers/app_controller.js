@@ -26,7 +26,7 @@
       * @param {string} [date] - date in 2014-05-31 format
        */
       create: function(date) {
-        return require(['controllers/create/index'], function(Controller) {
+        return require(['controllers/create'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.index(date);
@@ -38,7 +38,7 @@
        * @param {object} appointment - Selected Appointment model
        */
       createReview: function(appointment) {
-        return require(['controllers/create/index'], function(Controller) {
+        return require(['controllers/create'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.review(appointment);
@@ -50,7 +50,7 @@
        * @param {object} appointment - Selected Appointment model
        */
       createConfirmation: function(appointment) {
-        return require(['controllers/create/index'], function(Controller) {
+        return require(['controllers/create'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.confirmation(appointment);
@@ -62,7 +62,7 @@
       * @param {id} id - Appointment ID
        */
       cancel: function(id) {
-        return require(['controllers/cancel/index'], function(Controller) {
+        return require(['controllers/cancel'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.index(id);
@@ -75,7 +75,7 @@
        */
       cancelReview: function(appointment) {
         var controller;
-        require(['controllers/cancel/index'], function(Controller) {});
+        require(['controllers/cancel'], function(Controller) {});
         controller = new Controller();
         return controller.review(appointment);
       },
@@ -85,7 +85,7 @@
       * @param {object} appointment - Selected Appointment model
        */
       cancelConfirmation: function(appointment) {
-        return require(['controllers/cancel/index'], function(Controller) {
+        return require(['controllers/cancel'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.confirmation(appointment);
@@ -144,7 +144,7 @@
        * render calendar component
        */
       calendar: function() {
-        return require(['controllers/calendar/index'], function(Controller) {
+        return require(['controllers/calendar'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.index();
@@ -156,7 +156,7 @@
       * @param {object} options - Options object
        */
       navigation: function(options) {
-        return require(['controllers/calendar/navigation'], function(Controller) {
+        return require(['controllers/calendar-navigation'], function(Controller) {
           var controller;
           controller = new Controller(options);
           return controller.index(options);
@@ -191,7 +191,7 @@
       * @param {object} options - Options object
        */
       error: function(options) {
-        return require(['controllers/error/index'], function(Controller) {
+        return require(['controllers/error'], function(Controller) {
           var controller;
           controller = new Controller(options);
           return controller.initialize(options);

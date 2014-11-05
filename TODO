@@ -1,0 +1,2 @@
+1. rename helpers to components
+2. fix calendar navigation bug, after cliking i get cannot read property 'reset'

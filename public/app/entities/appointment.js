@@ -24,7 +24,7 @@ define(function (require) {
 
             App.layout.content.show(loadingView);
             appointment.urlRoot = function () {
-                return App.APIEndpoint + '/personal-training-appointments';
+                return App.APIEndpoint + 'appointments';
             };
 
             //setTimeout(function () {
