@@ -11,11 +11,9 @@
         action: '',
         availSlots: ''
       },
-      initialize: (function(_this) {
-        return function() {
-          return _this.on('change:action', _this.save);
-        };
-      })(this),
+      initialize: function() {
+        return this.on('change:action', this.save, this);
+      },
       save: function() {
         return window.tagData.ptSchedule = this.toJSON();
       }
@@ -24,4 +22,4 @@
 
 }).call(this);
 
-//# sourceMappingURL=analitics.js.map
+//# sourceMappingURL=analytics.js.map

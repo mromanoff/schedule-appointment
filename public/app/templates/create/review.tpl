@@ -24,5 +24,5 @@
     <nav class="buttons">
         <a href="#" class="button black small box inline half-button schedule">Schedule Session</a>
     </nav>
-    <a href="/personal-training/schedule" class="underlined-small-link black">cancel</a>
+    <a href="/" class="underlined-small-link black">cancel</a>
 </section>

@@ -12,8 +12,8 @@ define (require, exports, module) ->
       availSlots: '' #TODO wishlist
 
 
-    initialize: () =>
-      @.on('change:action', @save)
+    initialize: () ->
+      @on('change:action', @save, @)
 
 
     save: () ->
