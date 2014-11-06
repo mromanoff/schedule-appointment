@@ -6,13 +6,11 @@ define (require, exports, module) ->
   View = require 'views/header'
 
   model = new Model()
-  view = new View(
+  view = new View
     model: model
-  )
 
-  module.exports = Marionette.Controller.extend(
+  module.exports = Marionette.Controller.extend
       initialize: (options) ->
-        model.set(options)
+        model.set options
 
-        App.layout.header.show(view)
-  )
+        App.layout.header.show view

@@ -17,7 +17,7 @@ define (require, exports, module) ->
 
   Marionette = require 'marionette'
 
-  module.exports = Marionette.Controller.extend(
+  module.exports = Marionette.Controller.extend
     ###*
     * render index page for schedule appointment flow
     * @param {string} [date] - date in 2014-05-31 format
@@ -79,7 +79,7 @@ define (require, exports, module) ->
     * @param {string} id - Selected Appointment ID
     ###
     update: (id) ->
-      require ['controllers/update/index'], (Controller) ->
+      require ['controllers/update'], (Controller) ->
         controller = new Controller()
         controller.index id
 
@@ -88,7 +88,7 @@ define (require, exports, module) ->
     * @param {object} appointment - Selected Appointment model
     ###
     updateReview: (appointment) ->
-      require ['controllers/update/index'], (Controller) ->
+      require ['controllers/update'], (Controller) ->
         controller = new Controller()
         controller.review appointment
 
@@ -97,7 +97,7 @@ define (require, exports, module) ->
     * @param {object} appointment - Selected Appointment model
     ###
     updateConfirmation: (appointment) ->
-      require ['controllers/update/index'], (Controller) ->
+      require ['controllers/update'], (Controller) ->
         controller = new Controller()
         controller.confirmation appointment
 
@@ -106,7 +106,7 @@ define (require, exports, module) ->
      * @param {string} id - Selected Appointment ID
     ###
     detail: (id) ->
-      require ['controllers/detail/index'], (Controller) ->
+      require ['controllers/detail'], (Controller) ->
         controller = new Controller(id)
         controller.index id
 
@@ -132,7 +132,7 @@ define (require, exports, module) ->
     * @param {object} options - Options object
     ###
     header: (options) ->
-      require ['controllers/header/index'], (Controller) ->
+      require ['controllers/header'], (Controller) ->
         controller = new Controller(options)
         controller.initialize options
 
@@ -141,7 +141,7 @@ define (require, exports, module) ->
      * Create filter component, filter by Trainer and Duration
     ###
     trainerFilter: () ->
-      require ['controllers/filter/trainer'], (Controller) ->
+      require ['controllers/trainer'], (Controller) ->
         controller = new Controller()
         controller.initialize()
 
@@ -176,7 +176,5 @@ define (require, exports, module) ->
     defaultPage: () ->
       #update url if there is route doesn't exist. go to schedule default page
       Backbone.history.navigate '',  trigger: true
-
-  )
 
   return

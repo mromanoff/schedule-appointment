@@ -2,7 +2,7 @@ define (require, exports, module) ->
 
   Marionette = require 'marionette'
   Layout = require 'views/layout'
-  Utils = require 'helpers/utils'
+  Utils = require 'components/utils'
   FilterCriteriaModel = require 'entities/criteria'
   Analytics = require 'entities/analytics'
 

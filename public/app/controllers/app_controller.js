@@ -97,7 +97,7 @@
       * @param {string} id - Selected Appointment ID
        */
       update: function(id) {
-        return require(['controllers/update/index'], function(Controller) {
+        return require(['controllers/update'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.index(id);
@@ -109,7 +109,7 @@
       * @param {object} appointment - Selected Appointment model
        */
       updateReview: function(appointment) {
-        return require(['controllers/update/index'], function(Controller) {
+        return require(['controllers/update'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.review(appointment);
@@ -121,7 +121,7 @@
       * @param {object} appointment - Selected Appointment model
        */
       updateConfirmation: function(appointment) {
-        return require(['controllers/update/index'], function(Controller) {
+        return require(['controllers/update'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.confirmation(appointment);
@@ -133,7 +133,7 @@
        * @param {string} id - Selected Appointment ID
        */
       detail: function(id) {
-        return require(['controllers/detail/index'], function(Controller) {
+        return require(['controllers/detail'], function(Controller) {
           var controller;
           controller = new Controller(id);
           return controller.index(id);
@@ -168,7 +168,7 @@
       * @param {object} options - Options object
        */
       header: function(options) {
-        return require(['controllers/header/index'], function(Controller) {
+        return require(['controllers/header'], function(Controller) {
           var controller;
           controller = new Controller(options);
           return controller.initialize(options);
@@ -179,7 +179,7 @@
        * Create filter component, filter by Trainer and Duration
        */
       trainerFilter: function() {
-        return require(['controllers/filter/trainer'], function(Controller) {
+        return require(['controllers/trainer'], function(Controller) {
           var controller;
           controller = new Controller();
           return controller.initialize();

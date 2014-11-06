@@ -4,7 +4,7 @@
     var Analytics, App, FilterCriteriaModel, Layout, Marionette, Utils;
     Marionette = require('marionette');
     Layout = require('views/layout');
-    Utils = require('helpers/utils');
+    Utils = require('components/utils');
     FilterCriteriaModel = require('entities/criteria');
     Analytics = require('entities/analytics');
     App = new Marionette.Application();

@@ -15,12 +15,13 @@
     view = new View({
       model: model
     });
-    return module.exports = Marionette.Controller.extend({
+    module.exports = Marionette.Controller.extend({
       initialize: function() {}
     }, model.set({
       trainers: App.scheduleCriteria.trainers,
       durations: App.scheduleCriteria.durations
-    }), App.layout.filter.show(view));
+    }));
+    App.layout.filter.show(view);
   });
 
 }).call(this);
