@@ -36,7 +36,7 @@ define 'bootstrap', (require) ->
 
   $ () ->
     App.start
-      root: '/',
+      root: '/personal-training/schedule',
       scheduleCriteria: window.scheduleCriteria || {},
       APIEndpoint: window.APIEndpoint || null,
       MainDomain: window.MainDomain || null

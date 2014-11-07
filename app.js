@@ -22,6 +22,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
+app.use('/personal-training/schedule', routes);
+app.use('/personal-training/rules', routes);
+
 app.use('/v1/personal-training-schedule/', api);
 
 

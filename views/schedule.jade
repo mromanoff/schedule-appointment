@@ -1,0 +1,34 @@
+extends layout
+block content
+    div#main
+    //div.page.schedule#app-main(data-apps='["core","schedule"]')
+    div.page.schedule#app-main(data-apps='["schedule"]', data-modules='["data_components"]')
+        //<p> Here is static content in the web page. You'll notice that it gets replaced by our app as soon as we start it.</p>
+block script
+    script(src="/vendor/bower_components/requirejs/require.js", data-main="/app/main")
+    //script(src="/assets/js/vendor/bower_components/requirejs/require.js", data-main="/assets/js/apps/core/main")
+    script.
+        var scheduleCriteria = {
+            trainers: [
+                {"trainerId": "111", "trainerFirstName": "Jane", "trainerLastName": "Doe"},
+                {"trainerId": "222", "trainerFirstName": "Michael", "trainerLastName": "Dewar"},
+                {"trainerId": "333", "trainerFirstName": "Ben", "trainerLastName": "Smith"},
+                {"trainerId": "444", "trainerFirstName": "James", "trainerLastName": "Bond"},
+                {"trainerId": "555", "trainerFirstName": "Merylan", "trainerLastName": "Manson"},
+                {"trainerId": "666", "trainerFirstName": "Sherlok", "trainerLastName": "Holms"},
+                {"trainerId": "777", "trainerFirstName": "Dr.", "trainerLastName": "Kavorkian"}
+            ],
+            durations: [
+                {"sessionTypeId": "1155", "duration": "60 Minute Session"},
+                {"sessionTypeId": "1154", "duration": "30 Minute Session"}
+            ]
+        };
+    script.
+        var tagData = {};
+        tagData.global = {
+            "pageArea": "pub",
+            "pageSection": "training",
+            "pageSubsection": "schedule",
+            "pageItem": "",
+            "serverName": "090-EQXCORPVM02"
+        };
