@@ -4,7 +4,7 @@ define (require, exports, module) ->
     App = require 'app'
     msgBus = require 'msgbus'
     moment = require 'moment'
-    View = require 'views/calendar/index'
+    View = require 'views/calendar'
 
     Model = Backbone.Model.extend()
     daysHeader = new Backbone.Collection()
