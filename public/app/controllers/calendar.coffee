@@ -28,7 +28,6 @@ define (require, exports, module) ->
 
         daysHeader.add model
         date.add 'days', 1
-        return
 
       daysHeader
 
@@ -37,7 +36,6 @@ define (require, exports, module) ->
           date = App.filterCriteria.get 'startDate'
 
           require ['entities/appointments'], () ->
-
             promise = msgBus.reqres.request 'entities:appointments', date
             promise.done (appointments) ->
               #reset collection
@@ -48,7 +46,6 @@ define (require, exports, module) ->
                 appointments: appointments
                 dates: daysHeader
               return
-
 
             promise.fail (model, jqXHR, textStatus) ->
               msgBus.reqres.request 'schedule:error',

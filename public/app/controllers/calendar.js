@@ -29,7 +29,6 @@
         });
         daysHeader.add(model);
         date.add('days', 1);
-        return;
       }
       return daysHeader;
     };
