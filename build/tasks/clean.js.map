@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "clean.js",
+  "sourceRoot": "",
+  "sources": [
+    "clean.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,EAAA,MAAM,CAAC,OAAP,GAAiB,SAAA,GAAA;AACf,IAAA,IAAC,CAAA,YAAD,CAAc,qBAAd,CAAA,CAAA;WAGA,IAAC,CAAA,MAAD,CAAQ,OAAR,EAAiB,CACf,cADe,EAEf,qBAFe,CAAjB,EAJe;EAAA,CAAjB,CAAA;AAAA"
+}
