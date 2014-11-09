@@ -4,16 +4,35 @@ module.exports = ->
   # Wipe out previous builds and test reporting.
   @config "browserify",
     vendor:
-      src: []
-      dest: 'public/vendor.js'
       options:
-        require: ['jquery']
-        alias: [
-          './lib/moments.js:momentWrapper'
-          'events:evt'
+        banner: "/* Library bundle */"
+        require: [
+          "jquery"
+          "underscore"
+          "backbone"
+          "backbone.wreqr"
+          "backbone.babysitter"
+          "backbone.marionette"
+          "moment"
+          "spinner"
         ]
+      src: []
+      dest: "public/vendor.js"
+
     client:
-      src: ['client/**/*.js']
-      dest: 'public/app.js'
       options:
-        external: ['jquery', 'momentWrapper']
+        transform: ["coffeeify", "hbsfy"]
+        watch: true
+        external: [
+          "jquery"
+          "underscore"
+          "backbone"
+          "backbone.marionette"
+          "backbone.wreqr"
+          "backbone.babysitter"
+          "moment"
+          "spinner"
+        ]
+      src: ["client/src/main.coffee"]
+      dest: "public/app.js"
+

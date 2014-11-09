@@ -4,13 +4,14 @@ module.exports = ->
   @loadTasks "build/tasks"
 
   @registerTask "development", [
-    "watch:css"
-    "watch:coffee"
+    "browserify:vendor"
+    "browserify:client"
+    "concat"
+    "watch:concat"
   ]
 
-  # When running the default Grunt command, just lint the code.
   @registerTask "default", [
-    "clean",
+    "clean"
     "coffee:build"
   ]
 

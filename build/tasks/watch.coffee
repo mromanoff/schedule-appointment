@@ -3,9 +3,9 @@ module.exports = ->
 
   # Wipe out previous builds and test reporting.
   @config "watch",
-    css:
-      files: ['less/**/*.less']
-      tasks: ['less:dev']
-    coffee:
-      files: ['public/app']
-      tasks: ['coffee']
+    concat:
+      files: [
+        "public/app.js",
+        "public/vendor.js"
+      ]
+      tasks: ["concat"]
