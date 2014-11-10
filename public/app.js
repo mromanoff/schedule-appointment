@@ -1898,17 +1898,22 @@ module.exports = Marionette.ItemView.extend({
 /**
   * Views Header Module
  */
-var Marionette;
+var Marionette, _;
+
+_ = require("underscore");
 
 Marionette = require("backbone.marionette");
 
 module.exports = Marionette.ItemView.extend({
-  template: require("../../templates/header.hbs")
+  initialize: function() {
+    return console.log("view header");
+  },
+  template: _.template("<h1>Hello there</h1>")
 });
 
 
 
-},{"../../templates/header.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/header.hbs","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/layout.coffee":[function(require,module,exports){
+},{"backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/layout.coffee":[function(require,module,exports){
 
 /**
   * Layout Module
@@ -2189,16 +2194,6 @@ var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<form class=\"large white\">\n    <fieldset>\n        <div>\n            <span class=\"dropdown block white\">\n                <span class=\"option\"><%= defaultTrainer %></span>\n                <select id=\"select-trainer\" class=\"select-trainer\" name=\"trainer\">\n                    <% _.each(trainers, function(item){ %>\n                        <option value=\"<%= item.trainerId %>\"><%= item.trainerFirstName %> <%= item.trainerLastName %></option>\n                    <% }); %>\n                </select>\n            </span>\n        </div>\n        <div>\n            <span class=\"dropdown block white\">\n                <span class=\"option\"><%= defaultDuration %></span>\n                <select id=\"select-duration\" class=\"select-duration\" name=\"duration\">\n                    <% _.each(durations, function(item){ %>\n                    <option value=\"<%= item.sessionTypeId %>\"><%= item.duration %></option>\n                    <% }); %>\n                </select>\n            </span>\n        </div>\n    </fieldset>\n</form>\n";
   },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/header.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "<h1>"
-    + escapeExpression(((helper = (helper = helpers.pageTitle || (depth0 != null ? depth0.pageTitle : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"pageTitle","hash":{},"data":data}) : helper)))
-    + "</h1>\n<div class=\"sub-header\">\n    <a href=\"/personal-training/rules\">see rules</a>\n</div>\n<% subTitle && print('<h3 class=\"title\">' + subTitle + '</h3>') %>\n\n\n\n";
-},"useData":true});
 
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/layout.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
