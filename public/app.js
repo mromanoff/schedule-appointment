@@ -66,9 +66,6 @@ App.on("initialize:after", function() {
     window.location.href = "/personal-training/schedule-equifit";
     return false;
   }
-  window.App = {
-    Components: {}
-  };
   App.filterCriteria.set({
     sessionTypeId: App.scheduleCriteria.durations[0].sessionTypeId,
     duration: App.scheduleCriteria.durations[0].duration,
@@ -84,6 +81,8 @@ App.on("initialize:after", function() {
   });
   return App.mainRegion.show(App.layout);
 });
+
+window.App = App;
 
 module.exports = App;
 
@@ -123,6 +122,12 @@ Utils.prototype = {
     isBefore = moment(date).isBefore(this.ENDDATE);
     isStart = moment(date).isSame(this.STARTDATE);
     isEnd = moment(date).isSame(this.ENDDATE);
+    console.log('Attr: date', date);
+    console.log('isAfter ', moment(date).isAfter(this.STARTDATE));
+    console.log('isBefore ', moment(date).isBefore(this.ENDDATE));
+    console.log('isSame as Start ', moment(date).isSame(this.STARTDATE));
+    console.log('isSame as End ', moment(date).isSame(this.ENDDATE));
+    console.log('Return', (isAfter && isBefore) || (isStart || isEnd));
     return (isAfter && isBefore) || (isStart || isEnd);
   }
 };
@@ -158,11 +163,9 @@ module.exports = Marionette.Controller.extend({
   * @param {string} [date] - date in 2014-05-31 format
    */
   create: function(date) {
-    return require("./create.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.index(date);
-    });
+    var controller, create;
+    controller = require("./create.coffee");
+    return create = new controller().index(date);
   },
 
   /**
@@ -300,11 +303,9 @@ module.exports = Marionette.Controller.extend({
   * @param {object} options - Options object
    */
   header: function(options) {
-    return require("./header.coffee", function(Controller) {
-      var controller;
-      controller = new Controller(options);
-      return controller.initialize(options);
-    });
+    var controller;
+    controller = require("./header.coffee");
+    return new controller().init(options);
   },
 
   /**
@@ -360,7 +361,9 @@ module.exports = Marionette.Controller.extend({
 /**
   * Controller Calendar Navigation Module
  */
-var App, Marionette, Model, View, collection, createCollection, moment;
+var App, Backbone, Marionette, Model, View, collection, createCollection, moment;
+
+Backbone = require("backbone");
 
 Marionette = require("backbone.marionette");
 
@@ -405,7 +408,7 @@ module.exports = Marionette.Controller.extend({
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/calendar/navigation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar/navigation.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/calendar/navigation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar/navigation.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar.coffee":[function(require,module,exports){
 
 /**
   * Controller Calendar Module
@@ -592,7 +595,7 @@ App.flow = "create";
 
 module.exports = Marionette.Controller.extend({
   index: function(date) {
-    console.log("Create: date attr", date);
+    console.log("Create: date attr ", date);
     date = App.utils.isValidDate(date) ? date : App.utils.TOMORROW;
     msgBus.reqres.request("schedule:header", {
       pageTitle: "Schedule Training"
@@ -756,7 +759,8 @@ view = new View({
 });
 
 module.exports = Marionette.Controller.extend({
-  initialize: function(options) {
+  init: function(options) {
+    console.log("in header");
     model.set(options);
     return App.layout.header.show(view);
   }
@@ -769,9 +773,11 @@ module.exports = Marionette.Controller.extend({
 /**
   * Controller Trainer Module
  */
-var App, Marionette, Model, View, model, view;
+var App, Backbone, Marionette, Model, View, model, view;
 
 Marionette = require("backbone.marionette");
+
+Backbone = require("backbone");
 
 App = require("../app.coffee");
 
@@ -801,7 +807,7 @@ App.layout.filter.show(view);
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/filter/trainer.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/filter/trainer.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/update.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/filter/trainer.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/filter/trainer.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/update.coffee":[function(require,module,exports){
 
 /**
   * Controller Update Module
@@ -1038,18 +1044,24 @@ define(function(require, exports, module) {
 
 
 },{"backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/header.coffee":[function(require,module,exports){
-define(function(require, exports, module) {
-  return module.exports = Backbone.Model.extend({
-    defaults: {
-      pageTitle: null,
-      subTitle: null
-    }
-  });
+
+/**
+  * Entities Header Module
+ */
+var Backbone;
+
+Backbone = require("backbone");
+
+module.exports = Backbone.Model.extend({
+  defaults: {
+    pageTitle: null,
+    subTitle: null
+  }
 });
 
 
 
-},{}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/update.coffee":[function(require,module,exports){
+},{"backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/update.coffee":[function(require,module,exports){
 define(function(require) {
   var API, App, Loading, Model, loadingView, msgBus;
   App = require("../app.coffee");
@@ -1173,6 +1185,7 @@ msgBus.reqres.setHandler("schedule:calendar:navigation", function(options) {
 });
 
 msgBus.reqres.setHandler("schedule:header", function(options) {
+  console.log("mesbuz header ", options);
   return controller.header(options);
 });
 
@@ -1406,9 +1419,11 @@ Item = Marionette.ItemView.extend({
   },
   onRender: function() {
     var date;
-    return date = this.model.get("dataDate");
-  }
-}, !App.utils.isValidDate(date) ? this.$el.addClass("disabled") : void 0, {
+    date = this.model.get("dataDate");
+    if (!App.utils.isValidDate(date)) {
+      return this.$el.addClass("disabled");
+    }
+  },
   updateCalendar: function(e) {
     var date;
     e.preventDefault();
@@ -1827,7 +1842,9 @@ module.exports = Marionette.ItemView.extend({
 /**
   * Views Filter Trainer Module
  */
-var App, Marionette;
+var App, Marionette, _;
+
+_ = require("underscore");
 
 Marionette = require("backbone.marionette");
 
@@ -1876,7 +1893,7 @@ module.exports = Marionette.ItemView.extend({
 
 
 
-},{"../../../templates/filter/trainer.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/filter/trainer.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/header.coffee":[function(require,module,exports){
+},{"../../../templates/filter/trainer.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/filter/trainer.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/header.coffee":[function(require,module,exports){
 
 /**
   * Views Header Module

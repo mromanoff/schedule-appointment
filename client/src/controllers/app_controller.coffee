@@ -21,9 +21,8 @@ module.exports = Marionette.Controller.extend
   * @param {string} [date] - date in 2014-05-31 format
   ###
   create: (date) ->
-    require "./create.coffee", (Controller) ->
-      controller = new Controller()
-      controller.index date
+    controller = require "./create.coffee"
+    create = new controller().index date
 
 
   ###*
@@ -130,9 +129,8 @@ module.exports = Marionette.Controller.extend
   * @param {object} options - Options object
   ###
   header: (options) ->
-    require "./header.coffee", (Controller) ->
-      controller = new Controller(options)
-      controller.initialize options
+    controller = require "./header.coffee"
+    new controller().init options
 
 
   ###*

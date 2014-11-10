@@ -2,6 +2,7 @@
   * Controller Trainer Module
 ###
 Marionette = require "backbone.marionette"
+Backbone = require "backbone"
 App = require "../app.coffee"
 View = require "../views/filter/trainer.coffee"
 
@@ -9,7 +10,6 @@ Model = Backbone.Model.extend
   defaults:
     durations: null
     trainers: null
-
 
 model = new Model()
 view = new View

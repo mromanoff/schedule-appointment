@@ -14,7 +14,7 @@ App.flow = "create"
 module.exports = Marionette.Controller.extend
 
   index: (date) ->
-    console.log "Create: date attr", date
+    console.log "Create: date attr ", date
 
     date = if App.utils.isValidDate date  then date else App.utils.TOMORROW
 

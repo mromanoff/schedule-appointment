@@ -11,7 +11,8 @@ view = new View
   model: model
 
 module.exports = Marionette.Controller.extend
-    initialize: (options) ->
+    init: (options) ->
+      console.log "in header"
       model.set options
 
       App.layout.header.show view

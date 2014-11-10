@@ -2,7 +2,7 @@
   * Views Filter Trainer Module
 ###
 
-
+_ = require "underscore"
 Marionette = require "backbone.marionette"
 App = require "../../app.coffee"
 

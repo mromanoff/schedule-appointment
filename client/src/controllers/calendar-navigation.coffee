@@ -2,6 +2,7 @@
   * Controller Calendar Navigation Module
 ###
 
+Backbone = require "backbone"
 Marionette = require "backbone.marionette"
 moment = require "moment"
 App = require "../app.coffee"

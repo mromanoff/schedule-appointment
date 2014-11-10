@@ -1,7 +1,10 @@
-define (require, exports, module) ->
+###*
+  * Entities Header Module
+###
 
-  module.exports = Backbone.Model.extend(
-    defaults:
-      pageTitle: null
-      subTitle: null
-  )
+Backbone = require "backbone"
+
+module.exports = Backbone.Model.extend
+  defaults:
+    pageTitle: null
+    subTitle: null

@@ -46,21 +46,21 @@ App.on "initialize:after", () ->
 
   #all the core meat goes here
   #create global App {} mimic legacy app.
-  window.App =
-    Components: {}
+  #window.App =
+    #Components: {}
 
 
   #require ["components"]
   #require ["helpers"]
 
-  App.filterCriteria.set(
+  App.filterCriteria.set
     sessionTypeId: App.scheduleCriteria.durations[0].sessionTypeId # first duration in the list is default session. 60 Min
     duration: App.scheduleCriteria.durations[0].duration
     trainerId: App.scheduleCriteria.trainers[0].trainerId  # first trainer in the list is default trainer
     trainerName: App.scheduleCriteria.trainers[0].trainerFirstName + " " + App.scheduleCriteria.trainers[0].trainerLastName
     ,
     silent: true
-  )
+
 
   App.analytics.set
     trainerId: App.scheduleCriteria.trainers[0].trainerId  # first trainer in the list is default trainer
@@ -69,5 +69,8 @@ App.on "initialize:after", () ->
     mainRegion: App.el
 
   App.mainRegion.show App.layout
+
+
+window.App = App
 
 module.exports = App

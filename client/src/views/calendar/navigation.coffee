@@ -16,8 +16,8 @@ Item = Marionette.ItemView.extend
     onRender: () ->
       date = @model.get "dataDate"
 
-    if !App.utils.isValidDate date
-      @$el.addClass "disabled"
+      if !App.utils.isValidDate date
+        @$el.addClass "disabled"
 
     updateCalendar: (e) ->
       e.preventDefault()
@@ -27,6 +27,7 @@ Item = Marionette.ItemView.extend
       if App.utils.isValidDate date
         App.filterCriteria.set
           startDate: date
+
         msgBus.reqres.request "schedule:calendar:navigation",
           startDate: date
 

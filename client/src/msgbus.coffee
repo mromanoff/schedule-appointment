@@ -20,6 +20,9 @@ msgBus.reqres.setHandler "schedule:calendar:navigation", (options) ->
 
 
 msgBus.reqres.setHandler "schedule:header", (options) ->
+
+  console.log "mesbuz header ", options
+
   controller.header options
 
 msgBus.reqres.setHandler "schedule:trainer:filter", () ->
