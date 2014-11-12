@@ -3,7 +3,7 @@
 ###
 
 Marionette = require "backbone.marionette"
-App = require "../app.coffee"
+app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 Model = require "../entities/error.coffee"
 View = require "../views/error.coffee"
@@ -19,12 +19,12 @@ module.exports = Marionette.Controller.extend
 
 
     #close filters if it was open before
-    App.layout.filter.close()
+    app.layout.filter.close()
 
     #close navigation if it was open before
-    App.layout.navigation.close()
+    app.layout.navigation.close()
 
     model.set options.error
 
-    App.layout.content.show new View
+    app.layout.content.show new View
       model: model

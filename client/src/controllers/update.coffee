@@ -3,15 +3,15 @@
 ###
 Marionette = require "backbone.marionette"
 moment = require "moment"
-App = require "../app.coffee"
+app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 ReviewView = require "../views/update/review.coffee"
 ConfirmationView = require "../views/update/confirmation.coffee"
 
 view = null
-originalAppointment = null
+originalappointment = null
 
-App.flow = "update"
+app.flow = "update"
 
 module.exports = Marionette.Controller.extend
 
@@ -19,7 +19,7 @@ module.exports = Marionette.Controller.extend
     require "../entities/appointment.coffee", () ->
       promise = msgBus.reqres.request "entities:appointment", id
       promise.done (appointment) ->
-        originalAppointment = appointment
+        originalappointment = appointment
         date = appointment.get "startDate"
 
         startDate = moment(date).format "YYYY-MM-DD"
@@ -33,7 +33,7 @@ module.exports = Marionette.Controller.extend
           startDate: startDate
 
 
-        App.filterCriteria.set
+        app.filterCriteria.set
           startDate: startDate
           trainerId: appointment.get "trainerId"
           trainerName: appointment.get "trainerFirstName" + " " + appointment.get "trainerLastName"
@@ -42,9 +42,9 @@ module.exports = Marionette.Controller.extend
 
         #if user clicked on "Edit Session" from Update reivew page.
         #trigger change on model. even model is still the same.
-        App.filterCriteria.trigger "change"
+        app.filterCriteria.trigger "change"
 
-        App.analytics.set
+        app.analytics.set
           action: "edit-start"
 
       promise.fail (model, jqXHR, textStatus) ->
@@ -60,19 +60,19 @@ module.exports = Marionette.Controller.extend
 
     view = new ReviewView
       model: appointment
-      original: originalAppointment
+      original: originalappointment
 
-    App.layout.navigation.close()
-    App.layout.content.show view
+    app.layout.navigation.close()
+    app.layout.content.show view
 
-    App.analytics.set
+    app.analytics.set
       action: "edit-review"
 
 
   confirmation: (appointment) ->
     #get id from original appointment and asign to new appointment
     appointment.set
-      id: originalAppointment.id
+      id: originalappointment.id
 
     #pick data.
     data = _.pick appointment.toJSON(), "id", "sessionTypeId", "trainerId", "startDate", "endDate", "message"
@@ -84,7 +84,7 @@ module.exports = Marionette.Controller.extend
       #update model with new id and pass APIEndpoint
       appointment.set
         id: response.id
-        APIEndpoint: App.APIEndpoint
+        APIEndpoint: app.APIEndpoint
 
 
       msgBus.reqres.request "schedule:header",
@@ -94,13 +94,13 @@ module.exports = Marionette.Controller.extend
 
       view = new ConfirmationView
         model: appointment
-        original: originalAppointment
+        original: originalappointment
 
 
-      App.layout.navigation.close()
-      App.layout.content.show view
+      app.layout.navigation.close()
+      app.layout.content.show view
 
-      App.analytics.set
+      app.analytics.set
         action: "edit-complete"
 
 

@@ -4,7 +4,7 @@
 
 Marionette = require "backbone.marionette"
 moment = require "moment"
-App = require "../../app.coffee"
+app = require "../../app.coffee"
 msgBus = require "../../msgbus.coffee"
 
 module.exports = Marionette.ItemView.extend
@@ -51,5 +51,5 @@ module.exports = Marionette.ItemView.extend
 
     update: (e) ->
       e.preventDefault()
-      App.navigate "update/" + @model.id, trigger: false
+      app.navigate "update/" + @model.id, trigger: false
       msgBus.reqres.request "schedule:update", @model.id

@@ -5,11 +5,15 @@
 Backbone = require "backbone"
 Marionette = require "backbone.marionette"
 moment = require "moment"
-App = require "../app.coffee"
+app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 View = require "../views/calendar.coffee"
 
-Model = Backbone.Model.extend()
+Appointments = require "../entities/appointments.coffee"
+
+
+class Model extends Backbone.Model
+
 daysHeader = new Backbone.Collection()
 
 ###*
@@ -34,24 +38,24 @@ getDates = (startDate) ->
 
   daysHeader
 
-module.exports = Marionette.Controller.extend
+class Controller extends Marionette.Controller
     index: () ->
-      date = App.filterCriteria.get "startDate"
+      date = app.filterCriteria.get "startDate"
 
-      require ["entities/appointments"], () ->
-        promise = msgBus.reqres.request "entities:appointments", date
-        promise.done (appointments) ->
-          #reset collection
-          daysHeader.reset()
-          daysHeader = getDates date
+      #require "../entities/appointments.coffee", () ->
+      promise = msgBus.reqres.request "entities:appointments", date
+      promise.done (appointments) ->
+        #reset collection
+        daysHeader.reset()
+        daysHeader = getDates date
 
-          module.exports = new View
-            appointments: appointments
-            dates: daysHeader
-          return
-
-        promise.fail (model, jqXHR, textStatus) ->
-          msgBus.reqres.request "schedule:error",
-            error: [model, jqXHR, textStatus]
+        module.exports = new View
+          appointments: appointments
+          dates: daysHeader
         return
 
+      promise.fail (model, jqXHR, textStatus) ->
+        msgBus.reqres.request "error",
+          error: [model, jqXHR, textStatus]
+
+module.exports = Controller

@@ -3,7 +3,7 @@
 ###
 
 Marionette = require "backbone.marionette"
-App = require "../app.coffee"
+app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 CancelView = require "../views/cancel/index.coffee"
 ReviewView = require "../views/cancel/review.coffee"
@@ -11,7 +11,7 @@ ConfirmationView = require "../views/cancel/confirmation.coffee"
 
 view = null
 
-App.flow = "cancel"
+app.flow = "cancel"
 
 module.exports = Marionette.Controller.extend
     index: (id) ->
@@ -24,9 +24,9 @@ module.exports = Marionette.Controller.extend
           view = new CancelView
             model: appointment
 
-          App.layout.content.show view
+          app.layout.content.show view
 
-          App.analytics.set
+          app.analytics.set
             action: "delete-start"
 
 
@@ -41,9 +41,9 @@ module.exports = Marionette.Controller.extend
       view = new ReviewView
         model: appointment
 
-      App.layout.content.show view
+      app.layout.content.show view
 
-      App.analytics.set
+      app.analytics.set
         action: "delete-review"
 
 
@@ -58,7 +58,7 @@ module.exports = Marionette.Controller.extend
           #update model with new id and pass APIEndpoint
           appointment.set
             id: response.id
-            APIEndpoint: App.APIEndpoint
+            APIEndpoint: app.APIEndpoint
 
 
           msgBus.reqres.request "schedule:header",
@@ -67,9 +67,9 @@ module.exports = Marionette.Controller.extend
           view = new ConfirmationView
             model: appointment
 
-          App.layout.content.show view
+          app.layout.content.show view
 
-          App.analytics.set
+          app.analytics.set
             action: "delete-complete"
 
         promise.fail (response) ->

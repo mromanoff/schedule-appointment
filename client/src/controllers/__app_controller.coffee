@@ -1,5 +1,5 @@
 ###*
- * App Controller Module
+ * app Controller Module
  *
  * This is the base controller for the account app. In here, we simply manage
  * the firing of the appropriate sub-controller logic for each page. Note how
@@ -8,8 +8,8 @@
  * will ensure the app does not load too much into memory.
  *
  * @augments Backbone.Model
- * @name ScheduleApp
- * @class AppController
+ * @name Scheduleapp
+ * @class appController
  * @return module
  ###
 
@@ -27,7 +27,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
    * render review page for schedule appointment flow
-   * @param {object} appointment - Selected Appointment model
+   * @param {object} appointment - Selected appointment model
   ###
   createReview: (appointment) ->
     require "./create.coffee", (Controller) ->
@@ -36,7 +36,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
    * render confirmation page for schedule appointment flow
-   * @param {object} appointment - Selected Appointment model
+   * @param {object} appointment - Selected appointment model
   ###
   createConfirmation: (appointment) ->
     require "./create.coffee", (Controller) ->
@@ -45,7 +45,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
   * render index page for cancel appointment flow
-  * @param {id} id - Appointment ID
+  * @param {id} id - appointment ID
   ###
   cancel: (id) ->
     require "./cancel.coffee", (Controller) ->
@@ -54,7 +54,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
   * render review page for cancel appointment flow
-  * @param {object} appointment - Selected Appointment model
+  * @param {object} appointment - Selected appointment model
   ###
   cancelReview: (appointment) ->
     require "./cancel.coffee", (Controller) ->
@@ -64,7 +64,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
   * render confirmation page for cancel appointment flow
-  * @param {object} appointment - Selected Appointment model
+  * @param {object} appointment - Selected appointment model
   ###
   cancelConfirmation: (appointment) ->
     require "./cancel.coffee", (Controller) ->
@@ -73,7 +73,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
   * render index page for update appointment flow
-  * @param {string} id - Selected Appointment ID
+  * @param {string} id - Selected appointment ID
   ###
   update: (id) ->
     require "./update.coffee", (Controller) ->
@@ -82,7 +82,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
   * render review page for update appointment flow
-  * @param {object} appointment - Selected Appointment model
+  * @param {object} appointment - Selected appointment model
   ###
   updateReview: (appointment) ->
     require "./update.coffee", (Controller) ->
@@ -91,7 +91,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
   * render confirmation page for update appointment flow
-  * @param {object} appointment - Selected Appointment model
+  * @param {object} appointment - Selected appointment model
   ###
   updateConfirmation: (appointment) ->
     require "./update.coffee", (Controller) ->
@@ -100,7 +100,7 @@ module.exports = Marionette.Controller.extend
 
   ###*
    * render index page for detail appointment flow
-   * @param {string} id - Selected Appointment ID
+   * @param {string} id - Selected appointment ID
   ###
   detail: (id) ->
     require "./detail.coffee", (Controller) ->

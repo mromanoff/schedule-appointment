@@ -1,44 +1,49 @@
-define (require) ->
+###*
+ * Entities Create Appointment
+ * @module entities/create
+###
 
-  App = require "../app.coffee"
-  msgBus = require '../msgbus.coffee'
-  Loading = require '../views/spinner.coffee'
+$ = require "jquery"
+Backbone = require "backbone"
+app = require "../app.coffee"
+msgBus = require '../msgbus.coffee'
+Loading = require '../views/spinner.coffee'
 
-  loadingView = new Loading()
-  Model = Backbone.Model.extend
-    defaults:
-      trainerId: null
-      sessionTypeId: null
-      startDate: null
-      endDate: null
-      message: null
+loadingView = new Loading()
 
-    url: () ->
-      App.APIEndpoint + 'create'
+class Model extends Backbone.Model
+  defaults:
+    trainerId: null
+    sessionTypeId: null
+    startDate: null
+    endDate: null
+    message: null
 
-  API =
-    ###*
-    * @name createAppointment
-    * @function
-    * @returns {object} promise object
-    ###
-    createAppointment: (data) ->
-      model = new Model()
-      deferred = $.Deferred()
+  url: () ->
+    app.APIEndpoint + '/create'
 
-      App.layout.content.show(loadingView)
+API =
+  ###*
+  * @name createAppointment
+  * @function
+  * @returns {object} promise object
+  ###
+  createAppointment: (data) ->
+    model = new Model
+    deferred = $.Deferred()
 
-      #setTimeout () ->
-      model.save data,
-        success: deferred.resolve
-        error: deferred.reject
+    app.layout.content.show loadingView
 
-      #}, 2000);
-      deferred.promise()
+    #setTimeout () ->
+    model.save data,
+      success: deferred.resolve
+      error: deferred.reject
 
+    #}, 2000);
+    deferred.promise()
 
-  msgBus.reqres.setHandler 'entities:create:appointment', (data) ->
-    API.createAppointment data
+msgBus.reqres.setHandler 'entities:create:appointment', (data) ->
+  API.createAppointment data
 
 
 

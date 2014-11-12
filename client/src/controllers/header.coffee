@@ -2,17 +2,17 @@
   * Controller Header Module
 ###
 Marionette = require "backbone.marionette"
-App = require "../app.coffee"
+app = require "../app.coffee"
 Model = require "../entities/header.coffee"
 View = require "../views/header.coffee"
 
-model = new Model()
+model = new Model
 view = new View
   model: model
 
-module.exports = Marionette.Controller.extend
+class Controller extends Marionette.Controller
     init: (options) ->
-      console.log "in header"
       model.set options
+      app.layout.header.show view
 
-      App.layout.header.show view
+module.exports = Controller

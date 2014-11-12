@@ -1,6 +1,6 @@
 define (require) ->
 
-  App = require "../app.coffee"
+  app = require "../app.coffee"
   msgBus = require '../msgbus.coffee'
   Loading = require '../views/spinner.coffee'
 
@@ -15,19 +15,19 @@ define (require) ->
       message: null
 
     url: () ->
-      App.APIEndpoint + 'update'
+      app.APIEndpoint + 'update'
 
     API =
       ###*
-      * @name updateAppointment
+      * @name updateappointment
       * @function
       * @returns {object} promise object
       ###
-      updateAppointment: (data) ->
+      updateappointment: (data) ->
         model = new Model()
         deferred = $.Deferred()
 
-        App.layout.content.show loadingView
+        app.layout.content.show loadingView
 
         #setTimeout () ->
         model.save data,
@@ -39,7 +39,7 @@ define (require) ->
 
 
     msgBus.reqres.setHandler 'entities:update:appointment', (data) ->
-      API.updateAppointment data
+      API.updateappointment data
 
 
 

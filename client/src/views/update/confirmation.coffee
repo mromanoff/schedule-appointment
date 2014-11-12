@@ -4,7 +4,7 @@
 
 
 Marionette = require "backbone.marionette"
-App = require "../../app.coffee"
+app = require "../../app.coffee"
 msgBus = require "../../msgbus.coffee"
 
 module.exports = Marionette.ItemView.extend
@@ -15,10 +15,10 @@ module.exports = Marionette.ItemView.extend
 
 
   events:
-    "click .cancel": "cancelAppointment"
+    "click .cancel": "cancelappointment"
 
 
-  cancelAppointment: (e) ->
+  cancelappointment: (e) ->
     e.preventDefault()
-    App.navigate "cancel/" + @options.original.id, trigger: false
+    app.navigate "cancel/" + @options.original.id, trigger: false
     msgBus.reqres.request "schedule:cancel", @options.original.id

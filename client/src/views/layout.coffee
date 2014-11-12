@@ -3,9 +3,8 @@
 ###
 
 Marionette = require "backbone.marionette"
-_ = require "underscore"
 
-module.exports = Marionette.Layout.extend
+class Layout extends Marionette.LayoutView
   template: require "../../templates/layout.hbs"
 
   regions:
@@ -13,4 +12,6 @@ module.exports = Marionette.Layout.extend
     filter: ".trainer-filter"
     navigation: ".navigation"
     content: ".content"
+
+module.exports = Layout
   

@@ -2,21 +2,21 @@
     <fieldset>
         <div>
             <span class="dropdown block white">
-                <span class="option"><%= defaultTrainer %></span>
+                <span class="option">{{defaultTrainer}}</span>
                 <select id="select-trainer" class="select-trainer" name="trainer">
-                    <% _.each(trainers, function(item){ %>
-                        <option value="<%= item.trainerId %>"><%= item.trainerFirstName %> <%= item.trainerLastName %></option>
-                    <% }); %>
+                {{#each trainers}}
+                    <option value="{{trainerId}}">{{trainerFirstName }} {{trainerLastName}}</option>
+                {{/each}}
                 </select>
             </span>
         </div>
         <div>
             <span class="dropdown block white">
-                <span class="option"><%= defaultDuration %></span>
+                <span class="option">{{defaultDuration}}</span>
                 <select id="select-duration" class="select-duration" name="duration">
-                    <% _.each(durations, function(item){ %>
-                    <option value="<%= item.sessionTypeId %>"><%= item.duration %></option>
-                    <% }); %>
+                {{#each durations}}
+                    <option value="{{sessionTypeId}}">{{duration}}</option>
+                {{/each}}
                 </select>
             </span>
         </div>

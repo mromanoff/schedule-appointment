@@ -3,25 +3,24 @@
 ###
 Marionette = require "backbone.marionette"
 Backbone = require "backbone"
-App = require "../app.coffee"
+app = require "../app.coffee"
 View = require "../views/filter/trainer.coffee"
 
-Model = Backbone.Model.extend
+class Model extends Backbone.Model
   defaults:
     durations: null
     trainers: null
 
-model = new Model()
+model = new Model
 view = new View
   model: model
 
-module.exports = Marionette.Controller.extend
-
-    initialize: () ->
+class Controller extends Marionette.Controller
+  init: () ->
     model.set
-        trainers: App.scheduleCriteria.trainers
-        durations: App.scheduleCriteria.durations
+        trainers: app.scheduleCriteria.trainers
+        durations: app.scheduleCriteria.durations
 
-  App.layout.filter.show view
+    app.layout.filter.show view
 
-
+module.exports = Controller

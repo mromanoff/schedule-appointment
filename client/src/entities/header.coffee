@@ -4,7 +4,9 @@
 
 Backbone = require "backbone"
 
-module.exports = Backbone.Model.extend
+class Model extends Backbone.Model
   defaults:
     pageTitle: null
     subTitle: null
+
+module.exports = Model

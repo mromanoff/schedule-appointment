@@ -4,8 +4,6 @@ block content
     div.page.schedule#app-main(data-apps='["schedule"]', data-modules='["data_components"]')
 
 block script
-    script(src="/main.js")
-
     script.
         var scheduleCriteria = {
             trainers: [
@@ -31,3 +29,5 @@ block script
             "pageItem": "",
             "serverName": "090-EQXCORPVM02"
         };
+
+    script(src="/main.js")

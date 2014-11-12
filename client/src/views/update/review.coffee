@@ -4,7 +4,7 @@
 
 Marionette = require "backbone.marionette"
 moment = require "moment"
-App = require "../../app.coffee"
+app = require "../../app.coffee"
 msgBus = require "../../msgbus.coffee"
 
 module.exports = Marionette.ItemView.extend
@@ -47,8 +47,8 @@ module.exports = Marionette.ItemView.extend
       appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
 
       originalShortMonth: originalShortMonth
-      originalAppointmentDate: originalWeekDay + ", " + originalShortMonth + " " + originalDate
-      originalAppointmentTime: originalStartTime + " - " + originalEndTime + " " + originalMeridiemIndicator
+      originalappointmentDate: originalWeekDay + ", " + originalShortMonth + " " + originalDate
+      originalappointmentTime: originalStartTime + " - " + originalEndTime + " " + originalMeridiemIndicator
 
 
 
@@ -63,7 +63,7 @@ module.exports = Marionette.ItemView.extend
 
     update: (e) ->
       e.preventDefault()
-      App.navigate "update/" + @options.original.id, trigger: false
+      app.navigate "update/" + @options.original.id, trigger: false
       msgBus.reqres.request "schedule:update",  @options.original.id
 
 

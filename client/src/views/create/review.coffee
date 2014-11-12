@@ -2,11 +2,12 @@
   * Create Review Module
 ###
 
+_ = require "underscore"
 Marionette = require "backbone.marionette"
 moment = require "moment"
 msgBus = require "../../msgbus.coffee"
 
-module.exports = Marionette.ItemView.extend
+class View extends Marionette.ItemView
   template: require "../../../templates/create/review.hbs"
 
   events:
@@ -39,7 +40,7 @@ module.exports = Marionette.ItemView.extend
       @model.set
         message: @ui.textarea.val()
 
-    msgBus.reqres.request "schedule:create:confirmation", @model
+    msgBus.reqres.request "create:confirmation", @model
 
   countLimit: (e) ->
     e.preventDefault()
@@ -50,3 +51,5 @@ module.exports = Marionette.ItemView.extend
   addMessage: (e) ->
     e.preventDefault()
     @$(".add-message-container").toggleClass "hidden"
+
+module.exports = View

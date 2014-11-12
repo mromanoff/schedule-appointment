@@ -1,97 +1,78 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee":[function(require,module,exports){
 
 /**
-  * App Module
+  * app Module
  */
-var Analytics, App, Backbone, FilterCriteriaModel, Layout, Marionette, Utils, _;
+var $, Backbone, FilterCriteriaModel, Layout, Marionette, Router, app, msgBus, _;
+
+$ = require("jquery");
 
 _ = require("underscore");
 
 Backbone = require("backbone");
 
+Backbone.$ = $;
+
 Marionette = require("backbone.marionette");
 
 Layout = require("./views/layout.coffee");
 
-Utils = require("./components/utils.coffee");
+Router = require("./router.coffee");
+
+msgBus = require("./msgbus.coffee");
 
 FilterCriteriaModel = require("./entities/criteria.coffee");
 
-Analytics = require("./entities/analytics.coffee");
+app = new Marionette.Application;
 
-App = new Marionette.Application();
+app.addRegions({
+  mainRegion: "#app-main"
+});
 
-App.layout = new Layout();
+app.layout = new Layout;
 
-App.utils = new Utils();
+app.mainRegion.show(app.layout);
 
-App.filterCriteria = new FilterCriteriaModel();
+app.filterCriteria = new FilterCriteriaModel;
 
-App.analytics = new Analytics();
-
-App.el = "#app-main";
-
-
-/** update App flow
-   *  @param {string} create, update, cancel, detail
- */
-
-App.flow = null;
-
-
-/**
- *
- * @returns {Backbone.History.fragment|*}
- */
-
-App.getCurrentRoute = function() {
-  return Backbone.history.fragment;
-};
-
-
-/**
- * @param route
- * @param {object} options
- */
-
-App.navigate = function(route, options) {
+app.on("initialize:before", function(options) {
   if (options == null) {
     options = {};
   }
-  return Backbone.history.navigate(route, options);
-};
-
-App.on("initialize:after", function() {
-  if (_.isEmpty(App.scheduleCriteria.trainers)) {
-    window.location.href = "/personal-training/schedule-equifit";
-    return false;
-  }
-  App.filterCriteria.set({
-    sessionTypeId: App.scheduleCriteria.durations[0].sessionTypeId,
-    duration: App.scheduleCriteria.durations[0].duration,
-    trainerId: App.scheduleCriteria.trainers[0].trainerId,
-    trainerName: App.scheduleCriteria.trainers[0].trainerFirstName + " " + App.scheduleCriteria.trainers[0].trainerLastName,
-    silent: true
-  });
-  App.analytics.set({
-    trainerId: App.scheduleCriteria.trainers[0].trainerId
-  });
-  App.addRegions({
-    mainRegion: App.el
-  });
-  return App.mainRegion.show(App.layout);
+  return console.log("init:before", options);
 });
 
-window.App = App;
+app.on("initialize:after", function() {
+  return app.filterCriteria.set({
+    sessionTypeId: app.scheduleCriteria.durations[0].sessionTypeId,
+    duration: app.scheduleCriteria.durations[0].duration,
+    trainerId: app.scheduleCriteria.trainers[0].trainerId,
+    trainerName: app.scheduleCriteria.trainers[0].trainerFirstName + " " + app.scheduleCriteria.trainers[0].trainerLastName,
+    silent: true
+  });
+});
 
-module.exports = App;
+app.addInitializer(function(options) {
+  _.extend(app, options, {
+    appstate: null
+  });
+  new Router();
+  return Backbone.history.start({
+    pushState: true,
+    root: "/personal-training/schedule"
+  });
+});
+
+window.app = app;
+
+module.exports = app;
 
 
 
-},{"./components/utils.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/components/utils.coffee","./entities/analytics.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/analytics.coffee","./entities/criteria.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/criteria.coffee","./views/layout.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/layout.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/components/utils.coffee":[function(require,module,exports){
+},{"./entities/criteria.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/criteria.coffee","./msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","./router.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/router.coffee","./views/layout.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/layout.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/components/utils.coffee":[function(require,module,exports){
 
 /**
-* Utilities Module
+* Utils Module
 *
 * Useful utilities we will use throughout the app
 *
@@ -102,266 +83,165 @@ var Utils, moment;
 
 moment = require("moment");
 
-Utils = function() {
-  this.STARTDATE = moment().add("days", 1).format("YYYY-MM-DD");
-  this.ENDDATE = moment().add("days", 30).format("YYYY-MM-DD");
-  this.TOMORROW = moment().add("days", 1).format("YYYY-MM-DD");
-};
+Utils = (function() {
+  function Utils() {
+    this.STARTDATE = moment().add("days", 1).format("YYYY-MM-DD");
+    this.ENDDATE = moment().add("days", 30).format("YYYY-MM-DD");
+    this.TOMORROW = moment().add("days", 1).format("YYYY-MM-DD");
+  }
 
-Utils.prototype = {
-
-  /**
-  * @name isValidDate
-  * @function
-  * @param {string} date - 2014-05-31 format
-  * @returns {boolean}
-   */
-  isValidDate: function(date) {
+  Utils.prototype.isValidDate = function(date) {
     var isAfter, isBefore, isEnd, isStart;
     isAfter = moment(date).isAfter(this.STARTDATE);
     isBefore = moment(date).isBefore(this.ENDDATE);
     isStart = moment(date).isSame(this.STARTDATE);
     isEnd = moment(date).isSame(this.ENDDATE);
-    console.log('Attr: date', date);
-    console.log('isAfter ', moment(date).isAfter(this.STARTDATE));
-    console.log('isBefore ', moment(date).isBefore(this.ENDDATE));
-    console.log('isSame as Start ', moment(date).isSame(this.STARTDATE));
-    console.log('isSame as End ', moment(date).isSame(this.ENDDATE));
-    console.log('Return', (isAfter && isBefore) || (isStart || isEnd));
+
+    /*
+      console.log 'Attr: date', date
+      console.log 'isAfter ', moment(date).isAfter @STARTDATE
+      console.log 'isBefore ', moment(date).isBefore @ENDDATE
+      console.log 'isSame as Start ', moment(date).isSame @STARTDATE
+      console.log 'isSame as End ', moment(date).isSame @ENDDATE
+      console.log 'Return', (isAfter && isBefore) || (isStart || isEnd)
+     */
     return (isAfter && isBefore) || (isStart || isEnd);
-  }
-};
+  };
+
+  return Utils;
+
+})();
 
 module.exports = Utils;
 
 
 
-},{"moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/app_controller.coffee":[function(require,module,exports){
+},{"moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/_base-controller.coffee":[function(require,module,exports){
 
 /**
- * App Controller Module
- *
- * This is the base controller for the account app. In here, we simply manage
- * the firing of the appropriate sub-controller logic for each page. Note how
- * we do not require all Views, Models, Layouts and Forms on top. Instead, we
- * we load them only when needed via a require() call inside each method. This
- * will ensure the app does not load too much into memory.
- *
- * @augments Backbone.Model
- * @name ScheduleApp
- * @class AppController
- * @return module
+ * _Base Controller Module
  */
-var Marionette;
+var $, Controller, Marionette,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+$ = require("jquery");
 
 Marionette = require("backbone.marionette");
 
-module.exports = Marionette.Controller.extend({
+Controller = (function(_super) {
+  __extends(Controller, _super);
+
+  function Controller() {
+    return Controller.__super__.constructor.apply(this, arguments);
+  }
+
 
   /**
   * render index page for schedule appointment flow
   * @param {string} [date] - date in 2014-05-31 format
    */
-  create: function(date) {
-    var controller, create;
-    controller = require("./create.coffee");
-    return create = new controller().index(date);
-  },
+
+  Controller.prototype.create = function(date) {
+    Controller = require("./create.coffee");
+    return new Controller().index(date);
+  };
+
 
   /**
    * render review page for schedule appointment flow
-   * @param {object} appointment - Selected Appointment model
+   * @param {object} appointment - Selected appointment model
    */
-  createReview: function(appointment) {
-    return require("./create.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.review(appointment);
-    });
-  },
+
+  Controller.prototype.createReview = function(appointment) {
+    Controller = require("./create.coffee");
+    return new Controller().review(appointment);
+  };
+
 
   /**
    * render confirmation page for schedule appointment flow
-   * @param {object} appointment - Selected Appointment model
+   * @param {object} appointment - Selected appointment model
    */
-  createConfirmation: function(appointment) {
-    return require("./create.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.confirmation(appointment);
-    });
-  },
 
-  /**
-  * render index page for cancel appointment flow
-  * @param {id} id - Appointment ID
-   */
-  cancel: function(id) {
-    return require("./cancel.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.index(id);
-    });
-  },
+  Controller.prototype.createConfirmation = function(appointment) {
+    Controller = require("./create.coffee");
+    return new Controller().confirmation(appointment);
+  };
 
-  /**
-  * render review page for cancel appointment flow
-  * @param {object} appointment - Selected Appointment model
-   */
-  cancelReview: function(appointment) {
-    var controller;
-    require("./cancel.coffee", function(Controller) {});
-    controller = new Controller();
-    return controller.review(appointment);
-  },
-
-  /**
-  * render confirmation page for cancel appointment flow
-  * @param {object} appointment - Selected Appointment model
-   */
-  cancelConfirmation: function(appointment) {
-    return require("./cancel.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.confirmation(appointment);
-    });
-  },
-
-  /**
-  * render index page for update appointment flow
-  * @param {string} id - Selected Appointment ID
-   */
-  update: function(id) {
-    return require("./update.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.index(id);
-    });
-  },
-
-  /**
-  * render review page for update appointment flow
-  * @param {object} appointment - Selected Appointment model
-   */
-  updateReview: function(appointment) {
-    return require("./update.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.review(appointment);
-    });
-  },
-
-  /**
-  * render confirmation page for update appointment flow
-  * @param {object} appointment - Selected Appointment model
-   */
-  updateConfirmation: function(appointment) {
-    return require("./update.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.confirmation(appointment);
-    });
-  },
-
-  /**
-   * render index page for detail appointment flow
-   * @param {string} id - Selected Appointment ID
-   */
-  detail: function(id) {
-    return require("./detail.coffee", function(Controller) {
-      var controller;
-      controller = new Controller(id);
-      return controller.index(id);
-    });
-  },
-
-  /**
-   * render calendar component
-   */
-  calendar: function() {
-    return require("./calendar.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.index();
-    });
-  },
-
-  /**
-  * Create calendar navigation component
-  * @param {object} options - Options object
-   */
-  navigation: function(options) {
-    return require("./calendar-navigation.coffee", function(Controller) {
-      var controller;
-      controller = new Controller(options);
-      return controller.index(options);
-    });
-  },
 
   /**
   * Create header component
   * @param {object} options - Options object
    */
-  header: function(options) {
-    var controller;
-    controller = require("./header.coffee");
-    return new controller().init(options);
-  },
+
+  Controller.prototype.header = function(options) {
+    Controller = require("./header.coffee");
+    return new Controller().init(options);
+  };
+
 
   /**
    * Create filter component, filter by Trainer and Duration
    */
-  trainerFilter: function() {
-    return require("./trainer.coffee", function(Controller) {
-      var controller;
-      controller = new Controller();
-      return controller.initialize();
-    });
-  },
+
+  Controller.prototype.trainerFilter = function() {
+    Controller = require("./trainer.coffee");
+    return new Controller().init();
+  };
+
 
   /**
-  * Render an error page
+  * Create calendar navigation component
   * @param {object} options - Options object
    */
-  error: function(options) {
-    return require("./error.coffee", function(Controller) {
-      var controller;
-      controller = new Controller(options);
-      return controller.initialize(options);
-    });
-  },
+
+  Controller.prototype.navigation = function(options) {
+    Controller = require("./calendar-navigation.coffee");
+    return new Controller(options).index(options);
+  };
+
+
+  /**
+   * render calendar component
+   */
+
+  Controller.prototype.calendar = function() {
+    Controller = require("./calendar.coffee");
+    return new Controller().index();
+  };
+
 
   /**
   *   Scroll page to the top.
-  *   TODO: move to helper file
+  *   TODO: move to helper file or marionette behavior
    */
-  scroll: function() {
+
+  Controller.prototype.scroll = function() {
     $(document).scrollTop(0);
-    $("#app-main").css({
+    return $("#app-main").css({
       opacity: 0
     }).animate({
       opacity: 1
     }, 600);
-  },
+  };
 
-  /**
-  *   Route to default page. Full app reload
-   */
-  defaultPage: function() {
-    return Backbone.history.navigate("", {
-      trigger: true
-    });
-  }
-});
+  return Controller;
+
+})(Marionette.Controller);
+
+module.exports = Controller;
 
 
 
-},{"./calendar-navigation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar-navigation.coffee","./calendar.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar.coffee","./cancel.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/cancel.coffee","./create.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/create.coffee","./detail.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/detail.coffee","./error.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/error.coffee","./header.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/header.coffee","./trainer.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/trainer.coffee","./update.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/update.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar-navigation.coffee":[function(require,module,exports){
+},{"./calendar-navigation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar-navigation.coffee","./calendar.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar.coffee","./create.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/create.coffee","./header.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/header.coffee","./trainer.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/trainer.coffee","backbone.marionette":"backbone.marionette","jquery":"jquery"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar-navigation.coffee":[function(require,module,exports){
 
 /**
   * Controller Calendar Navigation Module
  */
-var App, Backbone, Marionette, Model, View, collection, createCollection, moment;
+var Backbone, Controller, Marionette, Model, View, app, collection, createCollection, moment,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Backbone = require("backbone");
 
@@ -369,11 +249,20 @@ Marionette = require("backbone.marionette");
 
 moment = require("moment");
 
-App = require("../app.coffee");
+app = require("../app.coffee");
 
-View = require("../views/calendar/navigation.coffee");
+View = require("../views/calendar-navigation.coffee");
 
-Model = Backbone.Model.extend();
+Model = (function(_super) {
+  __extends(Model, _super);
+
+  function Model() {
+    return Model.__super__.constructor.apply(this, arguments);
+  }
+
+  return Model;
+
+})(Backbone.Model);
 
 collection = new Backbone.Collection();
 
@@ -396,24 +285,37 @@ createCollection = function(startDate) {
   return collection;
 };
 
-module.exports = Marionette.Controller.extend({
-  index: function(options) {
+Controller = (function(_super) {
+  __extends(Controller, _super);
+
+  function Controller() {
+    return Controller.__super__.constructor.apply(this, arguments);
+  }
+
+  Controller.prototype.index = function(options) {
     collection.reset();
     collection = createCollection(options.startDate);
-    return App.layout.navigation.show(new View({
+    return app.layout.navigation.show(new View({
       collection: collection
     }));
-  }
-});
+  };
+
+  return Controller;
+
+})(Marionette.Controller);
+
+module.exports = Controller;
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/calendar/navigation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar/navigation.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/calendar-navigation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar-navigation.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/calendar.coffee":[function(require,module,exports){
 
 /**
   * Controller Calendar Module
  */
-var App, Backbone, Marionette, Model, View, daysHeader, getDates, moment, msgBus;
+var Appointments, Backbone, Controller, Marionette, Model, View, app, daysHeader, getDates, moment, msgBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Backbone = require("backbone");
 
@@ -421,13 +323,24 @@ Marionette = require("backbone.marionette");
 
 moment = require("moment");
 
-App = require("../app.coffee");
+app = require("../app.coffee");
 
 msgBus = require("../msgbus.coffee");
 
 View = require("../views/calendar.coffee");
 
-Model = Backbone.Model.extend();
+Appointments = require("../entities/appointments.coffee");
+
+Model = (function(_super) {
+  __extends(Model, _super);
+
+  function Model() {
+    return Model.__super__.constructor.apply(this, arguments);
+  }
+
+  return Model;
+
+})(Backbone.Model);
 
 daysHeader = new Backbone.Collection();
 
@@ -456,315 +369,168 @@ getDates = function(startDate) {
   return daysHeader;
 };
 
-module.exports = Marionette.Controller.extend({
-  index: function() {
-    var date;
-    date = App.filterCriteria.get("startDate");
-    return require(["entities/appointments"], function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:appointments", date);
-      promise.done(function(appointments) {
-        daysHeader.reset();
-        daysHeader = getDates(date);
-        module.exports = new View({
-          appointments: appointments,
-          dates: daysHeader
-        });
-      });
-      promise.fail(function(model, jqXHR, textStatus) {
-        return msgBus.reqres.request("schedule:error", {
-          error: [model, jqXHR, textStatus]
-        });
-      });
-    });
+Controller = (function(_super) {
+  __extends(Controller, _super);
+
+  function Controller() {
+    return Controller.__super__.constructor.apply(this, arguments);
   }
-});
 
-
-
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/calendar.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/cancel.coffee":[function(require,module,exports){
-
-/**
-  * Controller Cancel Module
- */
-var App, CancelView, ConfirmationView, Marionette, ReviewView, msgBus, view;
-
-Marionette = require("backbone.marionette");
-
-App = require("../app.coffee");
-
-msgBus = require("../msgbus.coffee");
-
-CancelView = require("../views/cancel/index.coffee");
-
-ReviewView = require("../views/cancel/review.coffee");
-
-ConfirmationView = require("../views/cancel/confirmation.coffee");
-
-view = null;
-
-App.flow = "cancel";
-
-module.exports = Marionette.Controller.extend({
-  index: function(id) {
-    msgBus.reqres.request("schedule:header", {
-      pageTitle: "Cancel your session"
-    });
-    return require(["entities/appointment"], function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:appointment", id);
-      promise.done(function(appointment) {
-        view = new CancelView({
-          model: appointment
-        });
-        App.layout.content.show(view);
-        return App.analytics.set({
-          action: "delete-start"
-        });
-      });
-      return promise.fail(function(model, jqXHR, textStatus) {
-        return msgBus.reqres.request("schedule:error", {
-          error: [model, jqXHR, textStatus]
-        });
+  Controller.prototype.index = function() {
+    var date, promise;
+    date = app.filterCriteria.get("startDate");
+    promise = msgBus.reqres.request("entities:appointments", date);
+    promise.done(function(appointments) {
+      daysHeader.reset();
+      daysHeader = getDates(date);
+      module.exports = new View({
+        appointments: appointments,
+        dates: daysHeader
       });
     });
-  },
-  review: function(appointment) {
-    msgBus.reqres.request("schedule:header", {
-      pageTitle: "Cancel your session"
-    });
-    view = new ReviewView({
-      model: appointment
-    });
-    App.layout.content.show(view);
-    return App.analytics.set({
-      action: "delete-review"
-    });
-  },
-  confirmation: function(appointment) {
-    var data;
-    data = _.pick(appointment.toJSON(), "id", "cancelAll", "message");
-    return require(["entities/cancel"], function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:cancel:appointment", data);
-      promise.done(function(response) {
-        appointment.set({
-          id: response.id,
-          APIEndpoint: App.APIEndpoint
-        });
-        msgBus.reqres.request("schedule:header", {
-          pageTitle: "Your session is canceled"
-        });
-        view = new ConfirmationView({
-          model: appointment
-        });
-        App.layout.content.show(view);
-        return App.analytics.set({
-          action: "delete-complete"
-        });
-      });
-      return promise.fail(function(response) {
-        return msgBus.reqres.request("schedule:error", response.responseJSON);
+    return promise.fail(function(model, jqXHR, textStatus) {
+      return msgBus.reqres.request("error", {
+        error: [model, jqXHR, textStatus]
       });
     });
-  }
-});
+  };
+
+  return Controller;
+
+})(Marionette.Controller);
+
+module.exports = Controller;
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/cancel/confirmation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/confirmation.coffee","../views/cancel/index.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/index.coffee","../views/cancel/review.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/review.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/create.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../entities/appointments.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/appointments.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/calendar.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/create.coffee":[function(require,module,exports){
 
 /**
   * Controller Create Module
  */
-var App, ConfirmationView, Marionette, ReviewView, msgBus, view;
+var Controller, Marionette, ReviewView, Utils, app, msgBus, utils, _,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+_ = require("underscore");
 
 Marionette = require("backbone.marionette");
 
-App = require("../app.coffee");
-
 msgBus = require("../msgbus.coffee");
+
+Utils = require("../components/utils.coffee");
+
+app = require("../app.coffee");
+
+require("../entities/create.coffee");
 
 ReviewView = require("../views/create/review.coffee");
 
-ConfirmationView = require("../views/create/confirmation.coffee");
+utils = new Utils;
 
-view = null;
+Controller = (function(_super) {
+  __extends(Controller, _super);
 
-App.flow = "create";
+  function Controller() {
+    return Controller.__super__.constructor.apply(this, arguments);
+  }
 
-module.exports = Marionette.Controller.extend({
-  index: function(date) {
-    console.log("Create: date attr ", date);
-    date = App.utils.isValidDate(date) ? date : App.utils.TOMORROW;
-    msgBus.reqres.request("schedule:header", {
+  Controller.prototype.index = function(date) {
+    date = utils.isValidDate(date) ? date : utils.TOMORROW;
+    msgBus.reqres.request("header:region", {
       pageTitle: "Schedule Training"
     });
-    msgBus.reqres.request("schedule:trainer:filter");
-    msgBus.reqres.request("schedule:calendar:navigation", {
+    msgBus.reqres.request("trainer:filter");
+    msgBus.reqres.request("calendar:navigation", {
       startDate: date
     });
-    App.filterCriteria.set({
+    return app.filterCriteria.set({
       startDate: date
     });
-    return App.analytics.set({
-      action: "add-start"
-    });
-  },
-  review: function(appointment) {
-    msgBus.reqres.request("schedule:header", {
+  };
+
+  Controller.prototype.review = function(appointment) {
+    var view;
+    msgBus.reqres.request("header:region", {
       pageTitle: "Review your session"
     });
     view = new ReviewView({
       model: appointment
     });
-    App.layout.filter.close();
-    App.layout.navigation.close();
-    App.layout.content.show(view);
-    return App.analytics.set({
-      action: "add-review"
-    });
-  },
-  confirmation: function(appointment) {
-    var data;
+    return app.layout.content.show(view);
+  };
+
+  Controller.prototype.confirmation = function(appointment) {
+    var data, promise;
     data = _.pick(appointment.toJSON(), "id", "sessionTypeId", "trainerId", "startDate", "endDate", "message");
-    return require(["entities/create"], function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:create:appointment", data);
-      promise.done(function(response) {
-        appointment.set({
-          id: response.id,
-          APIEndpoint: App.APIEndpoint
-        });
-        msgBus.reqres.request("schedule:header", {
-          pageTitle: "Enjoy your workout."
-        });
-        view = new ConfirmationView({
-          model: appointment
-        });
-        App.layout.navigation.close();
-        App.layout.content.show(view);
-        return App.analytics.set({
-          action: "add-complete"
-        });
+    promise = msgBus.reqres.request("entities:create:appointment", data);
+    promise.done(function(response) {
+      var view;
+      appointment.set({
+        id: response.id,
+        APIEndpoint: app.APIEndpoint
       });
-      return promise.fail(function(response) {
-        return msgBus.reqres.request("schedule:error", response.responseJSON);
+      msgBus.reqres.request("header:region", {
+        pageTitle: "Enjoy your workout."
       });
-    });
-  }
-});
-
-
-
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/create/confirmation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/create/confirmation.coffee","../views/create/review.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/create/review.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/detail.coffee":[function(require,module,exports){
-
-/**
-  * Controller Detail Module
- */
-var App, Marionette, View, msgBus, view;
-
-Marionette = require("backbone.marionette");
-
-App = require("../app.coffee");
-
-msgBus = require("../msgbus.coffee");
-
-View = require("../views/detail/index.coffee");
-
-view = null;
-
-App.flow = "detail";
-
-module.exports = Marionette.Controller.extend({
-  index: function(id) {
-    msgBus.reqres.request("schedule:header", {
-      pageTitle: "Session Detail"
-    });
-    return require(["entities/appointment"], function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:appointment", id);
-      promise.done(function(appointment) {
-        view = new View({
-          model: appointment
-        });
-        return App.layout.content.show(view);
+      view = new ConfirmationView({
+        model: appointment
       });
-      return promise.fail(function(model, jqXHR, textStatus) {
-        return msgBus.reqres.request("schedule:error", {
-          error: [model, jqXHR, textStatus]
-        });
-      });
+      return app.layout.content.show(view);
     });
-  }
-});
-
-
-
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/detail/index.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/detail/index.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/error.coffee":[function(require,module,exports){
-
-/**
-  * Controller Error Module
- */
-var App, Marionette, Model, View, model, msgBus;
-
-Marionette = require("backbone.marionette");
-
-App = require("../app.coffee");
-
-msgBus = require("../msgbus.coffee");
-
-Model = require("../entities/error.coffee");
-
-View = require("../views/error.coffee");
-
-model = new Model();
-
-module.exports = Marionette.Controller.extend({
-  initialize: function(options) {
-    msgBus.reqres.request("schedule:header", {
-      pageTitle: "Error",
-      subTitle: null
+    return promise.fail(function(response) {
+      return msgBus.reqres.request("error", response.responseJSON);
     });
-    App.layout.filter.close();
-    App.layout.navigation.close();
-    model.set(options.error);
-    return App.layout.content.show(new View({
-      model: model
-    }));
-  }
-});
+  };
+
+  return Controller;
+
+})(Marionette.Controller);
+
+module.exports = Controller;
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../entities/error.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/error.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/error.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/error.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/header.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../components/utils.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/components/utils.coffee","../entities/create.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/create.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/create/review.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/create/review.coffee","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/header.coffee":[function(require,module,exports){
 
 /**
   * Controller Header Module
  */
-var App, Marionette, Model, View, model, view;
+var Controller, Marionette, Model, View, app, model, view,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Marionette = require("backbone.marionette");
 
-App = require("../app.coffee");
+app = require("../app.coffee");
 
 Model = require("../entities/header.coffee");
 
 View = require("../views/header.coffee");
 
-model = new Model();
+model = new Model;
 
 view = new View({
   model: model
 });
 
-module.exports = Marionette.Controller.extend({
-  init: function(options) {
-    console.log("in header");
-    model.set(options);
-    return App.layout.header.show(view);
+Controller = (function(_super) {
+  __extends(Controller, _super);
+
+  function Controller() {
+    return Controller.__super__.constructor.apply(this, arguments);
   }
-});
+
+  Controller.prototype.init = function(options) {
+    model.set(options);
+    return app.layout.header.show(view);
+  };
+
+  return Controller;
+
+})(Marionette.Controller);
+
+module.exports = Controller;
 
 
 
@@ -773,214 +539,133 @@ module.exports = Marionette.Controller.extend({
 /**
   * Controller Trainer Module
  */
-var App, Backbone, Marionette, Model, View, model, view;
+var Backbone, Controller, Marionette, Model, View, app, model, view,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Marionette = require("backbone.marionette");
 
 Backbone = require("backbone");
 
-App = require("../app.coffee");
+app = require("../app.coffee");
 
 View = require("../views/filter/trainer.coffee");
 
-Model = Backbone.Model.extend({
-  defaults: {
+Model = (function(_super) {
+  __extends(Model, _super);
+
+  function Model() {
+    return Model.__super__.constructor.apply(this, arguments);
+  }
+
+  Model.prototype.defaults = {
     durations: null,
     trainers: null
-  }
-});
+  };
 
-model = new Model();
+  return Model;
+
+})(Backbone.Model);
+
+model = new Model;
 
 view = new View({
   model: model
 });
 
-module.exports = Marionette.Controller.extend({
-  initialize: function() {}
-}, model.set({
-  trainers: App.scheduleCriteria.trainers,
-  durations: App.scheduleCriteria.durations
-}));
+Controller = (function(_super) {
+  __extends(Controller, _super);
 
-App.layout.filter.show(view);
-
-
-
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/filter/trainer.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/filter/trainer.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/update.coffee":[function(require,module,exports){
-
-/**
-  * Controller Update Module
- */
-var App, ConfirmationView, Marionette, ReviewView, moment, msgBus, originalAppointment, view;
-
-Marionette = require("backbone.marionette");
-
-moment = require("moment");
-
-App = require("../app.coffee");
-
-msgBus = require("../msgbus.coffee");
-
-ReviewView = require("../views/update/review.coffee");
-
-ConfirmationView = require("../views/update/confirmation.coffee");
-
-view = null;
-
-originalAppointment = null;
-
-App.flow = "update";
-
-module.exports = Marionette.Controller.extend({
-  index: function(id) {
-    return require("../entities/appointment.coffee", function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:appointment", id);
-      promise.done(function(appointment) {
-        var date, startDate, uiDate;
-        originalAppointment = appointment;
-        date = appointment.get("startDate");
-        startDate = moment(date).format("YYYY-MM-DD");
-        uiDate = moment(date).format("MMM D @ H A");
-        msgBus.reqres.request("schedule:header", {
-          pageTitle: "Reschedule Training",
-          subTitle: "edit the time for <strong>" + uiDate + "</strong> and notify your trainer"
-        });
-        msgBus.reqres.request("schedule:calendar:navigation", {
-          startDate: startDate
-        });
-        App.filterCriteria.set({
-          startDate: startDate,
-          trainerId: appointment.get("trainerId"),
-          trainerName: appointment.get("trainerFirstName" + " " + appointment.get("trainerLastName")),
-          sessionTypeId: appointment.get("sessionTypeId"),
-          duration: appointment.get("duration")
-        });
-        App.filterCriteria.trigger("change");
-        return App.analytics.set({
-          action: "edit-start"
-        });
-      });
-      promise.fail(function(model, jqXHR, textStatus) {});
-      return msgBus.reqres.request("schedule:error", {
-        error: [model, jqXHR, textStatus]
-      });
-    });
-  },
-  review: function(appointment) {
-    msgBus.reqres.request("schedule:header", {
-      pageTitle: "Review your session",
-      subTitle: null
-    });
-    view = new ReviewView({
-      model: appointment,
-      original: originalAppointment
-    });
-    App.layout.navigation.close();
-    App.layout.content.show(view);
-    return App.analytics.set({
-      action: "edit-review"
-    });
-  },
-  confirmation: function(appointment) {
-    var data;
-    appointment.set({
-      id: originalAppointment.id
-    });
-    data = _.pick(appointment.toJSON(), "id", "sessionTypeId", "trainerId", "startDate", "endDate", "message");
-    require("../entities/update.coffee", function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:update:appointment", data);
-      promise.done(function(response) {});
-      appointment.set({
-        id: response.id,
-        APIEndpoint: App.APIEndpoint
-      });
-      msgBus.reqres.request("schedule:header", {
-        pageTitle: "Enjoy your workout.",
-        subTitle: null
-      });
-      view = new ConfirmationView({
-        model: appointment,
-        original: originalAppointment
-      });
-      App.layout.navigation.close();
-      App.layout.content.show(view);
-      return App.analytics.set({
-        action: "edit-complete"
-      });
-    });
-    return promise.fail(function(response) {
-      return msgBus.reqres.request("schedule:error", response.responseJSON);
-    });
+  function Controller() {
+    return Controller.__super__.constructor.apply(this, arguments);
   }
-});
+
+  Controller.prototype.init = function() {
+    model.set({
+      trainers: app.scheduleCriteria.trainers,
+      durations: app.scheduleCriteria.durations
+    });
+    return app.layout.filter.show(view);
+  };
+
+  return Controller;
+
+})(Marionette.Controller);
+
+module.exports = Controller;
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../entities/appointment.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/appointment.coffee","../entities/update.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/update.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/update/confirmation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/update/confirmation.coffee","../views/update/review.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/update/review.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/analytics.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../views/filter/trainer.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/filter/trainer.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/appointments.coffee":[function(require,module,exports){
 
 /**
-  * Analytics Module
+ * Entities Appointments
+ * @module entities/appointments
  */
-var Backbone;
+var $, API, Appointments, Backbone, DayPart, Loading, app, loadingView, msgBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+$ = require("jquery");
 
 Backbone = require("backbone");
 
-module.exports = Backbone.Model.extend({
-  defaults: {
-    trainerId: "",
-    facilityId: "",
-    timeOffset: "",
-    action: "",
-    availSlots: ""
-  },
-  initialize: function() {
-    return this.on("change:action", this.save, this);
-  },
-  save: function() {
-    return window.tagData.ptSchedule = this.toJSON();
-  }
-});
+app = require("../app.coffee");
 
+msgBus = require('../msgbus.coffee');
 
-
-},{"backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/appointment.coffee":[function(require,module,exports){
-
-/**
-* Entities Appointment Module
- */
-var API, App, Appointment, Loading, loadingView, msgBus;
-
-App = require("../app.coffee");
-
-msgBus = require("../msgbus.coffee");
-
-Loading = require("../views/spinner.coffee");
+Loading = require('../views/spinner.coffee');
 
 loadingView = new Loading();
 
-Appointment = Backbone.Model.extend();
+DayPart = (function(_super) {
+  __extends(DayPart, _super);
+
+  function DayPart() {
+    return DayPart.__super__.constructor.apply(this, arguments);
+  }
+
+  DayPart.prototype.defaults = {
+    morning: null,
+    afternoon: null,
+    evening: null
+  };
+
+  return DayPart;
+
+})(Backbone.Model);
+
+Appointments = (function(_super) {
+  __extends(Appointments, _super);
+
+  function Appointments() {
+    return Appointments.__super__.constructor.apply(this, arguments);
+  }
+
+  Appointments.prototype.model = DayPart;
+
+  return Appointments;
+
+})(Backbone.Collection);
 
 API = {
 
   /**
-     * @name getAppointment
-     * @function
-     * @returns {object} promise object
+   * @name getappointments
+   * @function
+   * @returns {object} promise object
    */
-  getAppointment: function(id) {
-    var appointment, deferred;
-    appointment = new Appointment({
-      id: id
-    });
+  getAppointments: function() {
+    var appointments, deferred;
+    appointments = new Appointments();
     deferred = $.Deferred();
-    App.layout.content.show(loadingView);
-    appointment.urlRoot = function() {
-      return App.APIEndpoint + "/personal-training-schedule/appointments";
+    app.layout.content.show(loadingView);
+    appointments.url = function() {
+      var query;
+      query = '?startDate=' + app.filterCriteria.get('startDate') + '&sessionTypeId=' + app.filterCriteria.get('sessionTypeId') + '&trainerId=' + app.filterCriteria.get('trainerId');
+      return app.APIEndpoint + '/personal-training-schedule/appointments' + query;
     };
-    appointment.fetch({
+    appointments.fetch({
       success: deferred.resolve,
       error: deferred.reject
     });
@@ -988,187 +673,195 @@ API = {
   }
 };
 
-msgBus.reqres.setHandler("entities:appointment", function(id) {
-  return API.getAppointment(id);
+msgBus.reqres.setHandler('entities:appointments', function() {
+  return API.getAppointments();
 });
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/spinner.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/criteria.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/spinner.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee","backbone":"backbone","jquery":"jquery"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/create.coffee":[function(require,module,exports){
+
+/**
+ * Entities Create Appointment
+ * @module entities/create
+ */
+var $, API, Backbone, Loading, Model, app, loadingView, msgBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+$ = require("jquery");
+
+Backbone = require("backbone");
+
+app = require("../app.coffee");
+
+msgBus = require('../msgbus.coffee');
+
+Loading = require('../views/spinner.coffee');
+
+loadingView = new Loading();
+
+Model = (function(_super) {
+  __extends(Model, _super);
+
+  function Model() {
+    return Model.__super__.constructor.apply(this, arguments);
+  }
+
+  Model.prototype.defaults = {
+    trainerId: null,
+    sessionTypeId: null,
+    startDate: null,
+    endDate: null,
+    message: null
+  };
+
+  Model.prototype.url = function() {
+    return app.APIEndpoint + '/create';
+  };
+
+  return Model;
+
+})(Backbone.Model);
+
+API = {
+
+  /**
+  * @name createAppointment
+  * @function
+  * @returns {object} promise object
+   */
+  createAppointment: function(data) {
+    var deferred, model;
+    model = new Model;
+    deferred = $.Deferred();
+    app.layout.content.show(loadingView);
+    model.save(data, {
+      success: deferred.resolve,
+      error: deferred.reject
+    });
+    return deferred.promise();
+  }
+};
+
+msgBus.reqres.setHandler('entities:create:appointment', function(data) {
+  return API.createAppointment(data);
+});
+
+
+
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/spinner.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee","backbone":"backbone","jquery":"jquery"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/criteria.coffee":[function(require,module,exports){
 
 /**
 * Criteria Module
  */
-var Backbone, msgBus;
-
-msgBus = require("../msgbus.coffee");
+var Backbone, Model, msgBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Backbone = require("backbone");
 
-module.exports = Backbone.Model.extend({
-  defaults: {
+msgBus = require("../msgbus.coffee");
+
+Model = (function(_super) {
+  __extends(Model, _super);
+
+  function Model() {
+    return Model.__super__.constructor.apply(this, arguments);
+  }
+
+  Model.prototype.defaults = {
     trainerId: null,
     trainerName: null,
     sessionTypeId: null,
     duration: null,
     startDate: null
-  },
-  initialize: function() {
+  };
+
+  Model.prototype.initialize = function() {
+    console.log("criteria model");
     return this.on("change", this.updateCalendar);
-  },
-  updateCalendar: function() {
-    return msgBus.reqres.request("schedule:calendar", {
+  };
+
+  Model.prototype.updateCalendar = function() {
+    console.log("criteria model change");
+    return msgBus.reqres.request("calendar:show", {
       startDate: this.get("startDate"),
       trainerId: this.get("trainerId"),
       sessionTypeId: this.get("sessionTypeId")
     });
-  }
-});
+  };
+
+  return Model;
+
+})(Backbone.Model);
+
+module.exports = Model;
 
 
 
-},{"../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/error.coffee":[function(require,module,exports){
-define(function(require, exports, module) {
-  var Backbone;
-  Backbone = require('backbone');
-  module.exports = Backbone.Model.extend({
-    defaults: {
-      message: 'Please try again later.',
-      code: null,
-      exception: null,
-      data: null
-    }
-  });
-});
-
-
-
-},{"backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/header.coffee":[function(require,module,exports){
+},{"../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/header.coffee":[function(require,module,exports){
 
 /**
   * Entities Header Module
  */
-var Backbone;
+var Backbone, Model,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Backbone = require("backbone");
 
-module.exports = Backbone.Model.extend({
-  defaults: {
+Model = (function(_super) {
+  __extends(Model, _super);
+
+  function Model() {
+    return Model.__super__.constructor.apply(this, arguments);
+  }
+
+  Model.prototype.defaults = {
     pageTitle: null,
     subTitle: null
-  }
-});
+  };
+
+  return Model;
+
+})(Backbone.Model);
+
+module.exports = Model;
 
 
 
-},{"backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/update.coffee":[function(require,module,exports){
-define(function(require) {
-  var API, App, Loading, Model, loadingView, msgBus;
-  App = require("../app.coffee");
-  msgBus = require('../msgbus.coffee');
-  Loading = require('../views/spinner.coffee');
-  loadingView = new Loading();
-  return Model = Backbone.Model.extend({
-    defaults: {
-      id: null,
-      trainerId: null,
-      startDate: null,
-      endDate: null,
-      sessionTypeId: null,
-      message: null
-    },
-    url: function() {
-      return App.APIEndpoint + 'update';
-    }
-  }, API = {
-
-    /**
-    * @name updateAppointment
-    * @function
-    * @returns {object} promise object
-     */
-    updateAppointment: function(data) {
-      var deferred, model;
-      model = new Model();
-      deferred = $.Deferred();
-      App.layout.content.show(loadingView);
-      model.save(data, {
-        success: deferred.resolve,
-        error: deferred.reject
-      });
-      return deferred.promise();
-    }
-  }, msgBus.reqres.setHandler('entities:update:appointment', function(data) {
-    return API.updateAppointment(data);
-  }));
-});
-
-
-
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/spinner.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/main.coffee":[function(require,module,exports){
+},{"backbone":"backbone"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/main.coffee":[function(require,module,exports){
 
 /**
   * Main Module
  */
-var $, App, Backbone, Router, proxiedSync, _;
+var app, options;
 
-$ = require("jquery");
+app = require("./app.coffee");
 
-_ = require("underscore");
-
-Backbone = require("backbone");
-
-Backbone.$ = $;
-
-App = require("./app.coffee");
-
-Router = require("./router.coffee");
-
-proxiedSync = Backbone.sync;
-
-Backbone.sync = function(method, model, options) {
-  options = options || {};
-  if (!options.crossDomain) {
-    options.crossDomain = true;
-  }
-  if (!options.xhrFields) {
-    options.xhrFields = {
-      withCredentials: true
-    };
-    return proxiedSync(method, model, options);
-  }
+options = {
+  scheduleCriteria: window.scheduleCriteria || {},
+  APIEndpoint: window.APIEndpoint || null,
+  MainDomain: window.MainDomain || null
 };
 
-App.addInitializer(function(options) {
-  App.Router = new Router();
-  App.scheduleCriteria = options.scheduleCriteria;
-  App.APIEndpoint = _.isNull(options.APIEndpoint) ? null : options.APIEndpoint + "/personal-training-schedule/";
-  App.MainDomain = options.MainDomain;
-  return Backbone.history.start({
-    pushState: true,
-    root: options.root
-  });
-});
-
-$(function() {
-  App.start({
-    root: "/personal-training/schedule",
-    scheduleCriteria: window.scheduleCriteria || {},
-    APIEndpoint: window.APIEndpoint || null,
-    MainDomain: window.MainDomain || null
-  });
-});
+app.start(options);
 
 
 
-},{"./app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","./router.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/router.coffee","backbone":"backbone","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee":[function(require,module,exports){
-var AppController, Wreqr, controller, msgBus;
+},{"./app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee":[function(require,module,exports){
+
+/**
+ * MsgBus Module
+ */
+var Controller, Wreqr, controller, msgBus;
 
 Wreqr = require("backbone.wreqr");
 
-AppController = require("./controllers/app_controller.coffee");
+Controller = require("./controllers/_base-controller.coffee");
 
-controller = new AppController();
+controller = new Controller();
 
 msgBus = {
   reqres: new Wreqr.RequestResponse(),
@@ -1180,115 +873,253 @@ msgBus.commands.setHandler("scroll:top", function() {
   return controller.scroll();
 });
 
-msgBus.reqres.setHandler("schedule:calendar:navigation", function(options) {
-  return controller.navigation(options);
-});
-
-msgBus.reqres.setHandler("schedule:header", function(options) {
-  console.log("mesbuz header ", options);
+msgBus.reqres.setHandler("header:region", function(options) {
   return controller.header(options);
 });
 
-msgBus.reqres.setHandler("schedule:trainer:filter", function() {
+msgBus.reqres.setHandler("trainer:filter", function() {
   return controller.trainerFilter();
 });
 
-msgBus.reqres.setHandler("schedule:calendar", function() {
+msgBus.reqres.setHandler("calendar:navigation", function(options) {
+  return controller.navigation(options);
+});
+
+msgBus.reqres.setHandler("calendar:show", function() {
   return controller.calendar();
 });
 
-msgBus.reqres.setHandler("schedule:error", function(options) {
-  return controller.error(options);
-});
-
-msgBus.reqres.setHandler("schedule:create:review", function(id) {
+msgBus.reqres.setHandler("create:review", function(id) {
   return controller.createReview(id);
 });
 
-msgBus.reqres.setHandler("schedule:create:confirmation", function(model) {
+msgBus.reqres.setHandler("create:confirmation", function(model) {
   return controller.createConfirmation(model);
-});
-
-msgBus.reqres.setHandler("schedule:cancel", function(id) {
-  return controller.cancel(id);
-});
-
-msgBus.reqres.setHandler("schedule:cancel:review", function(appointment) {
-  return controller.cancelReview(appointment);
-});
-
-msgBus.reqres.setHandler("schedule:cancel:confirmation", function(appointment) {
-  return controller.cancelConfirmation(appointment);
-});
-
-msgBus.reqres.setHandler("schedule:update", function(id) {
-  return controller.update(id);
-});
-
-msgBus.reqres.setHandler("schedule:update:review", function(appointment) {
-  return controller.updateReview(appointment);
-});
-
-msgBus.reqres.setHandler("schedule:update:confirmation", function(appointment) {
-  return controller.updateConfirmation(appointment);
 });
 
 module.exports = msgBus;
 
 
 
-},{"./controllers/app_controller.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/app_controller.coffee","backbone.wreqr":"backbone.wreqr"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/router.coffee":[function(require,module,exports){
+},{"./controllers/_base-controller.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/_base-controller.coffee","backbone.wreqr":"backbone.wreqr"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/router.coffee":[function(require,module,exports){
 
 /**
   * Router Module
  */
-var AppController, Marionette;
+var Controller, Marionette, Router,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Marionette = require("backbone.marionette");
 
-AppController = require("./controllers/app_controller.coffee");
+Controller = require("./controllers/_base-controller.coffee");
 
-module.exports = Marionette.AppRouter.extend({
-  controller: new AppController(),
-  appRoutes: {
-    "": "create",
-    "create/:date": "create",
-    "cancel/:id": "cancel",
-    "update/:id": "update",
-    "detail/:id": "detail",
-    "error": "error",
-    "*allOthers": "defaultPage"
+Router = (function(_super) {
+  __extends(Router, _super);
+
+  function Router() {
+    return Router.__super__.constructor.apply(this, arguments);
   }
-});
+
+  Router.prototype.controller = new Controller();
+
+  Router.prototype.appRoutes = {
+    "": "create",
+    "create/:date": "create"
+  };
+
+  return Router;
+
+})(Marionette.AppRouter);
+
+module.exports = Router;
 
 
 
-},{"./controllers/app_controller.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/app_controller.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar.coffee":[function(require,module,exports){
+},{"./controllers/_base-controller.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/_base-controller.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar-navigation.coffee":[function(require,module,exports){
 
 /**
-  * Views Calendar Module
+  * View Calendar Navigation Module
  */
-var App, AppointmentsLayout, CalendarHeaderItem, CalendarHeaderView, DayPartView, EmptyItem, Item, Marionette, moment, msgBus;
+var ChildView, Marionette, Utils, View, app, moment, msgBus, utils,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Marionette = require("backbone.marionette");
 
 moment = require("moment");
 
-App = require("../app.coffee");
+app = require("../app.coffee");
 
 msgBus = require("../msgbus.coffee");
 
-Item = Marionette.ItemView.extend({
-  tagName: "li",
-  template: require("../../templates/calendar/item.hbs"),
-  events: {
+Utils = require("../components/utils.coffee");
+
+utils = new Utils;
+
+ChildView = (function(_super) {
+  __extends(ChildView, _super);
+
+  function ChildView() {
+    return ChildView.__super__.constructor.apply(this, arguments);
+  }
+
+  ChildView.prototype.tagName = "li";
+
+  ChildView.prototype.template = require("../../templates/calendar/navigation_item.hbs");
+
+  ChildView.prototype.events = {
+    "click": "updateCalendar"
+  };
+
+  ChildView.prototype.onRender = function() {
+    var date;
+    date = this.model.get("dataDate");
+    if (!utils.isValidDate(date)) {
+      return this.$el.addClass("disabled");
+    }
+  };
+
+  ChildView.prototype.updateCalendar = function(e) {
+    var date;
+    e.preventDefault();
+    date = this.model.get("dataDate");
+    if (utils.isValidDate(date)) {
+      app.filterCriteria.set({
+        startDate: date
+      });
+      return msgBus.reqres.request("calendar:navigation", {
+        startDate: date
+      });
+    }
+  };
+
+  return ChildView;
+
+})(Marionette.ItemView);
+
+View = (function(_super) {
+  __extends(View, _super);
+
+  function View() {
+    return View.__super__.constructor.apply(this, arguments);
+  }
+
+  View.prototype.childView = ChildView;
+
+  View.prototype.className = "classes-calendar";
+
+  View.prototype.template = require("../../templates/calendar/navigation.hbs");
+
+  View.prototype.childViewContainer = "ul";
+
+  View.prototype.initialize = function() {
+    var first, last;
+    this.first = moment(this.collection.at(0).get("dataDate"));
+    this.last = moment(this.collection.at(6).get("dataDate"));
+    first = moment(this.first);
+    last = moment(this.last);
+    this.prevWeek = first.subtract("days", 7).format("YYYY-MM-DD");
+    return this.nextWeek = last.add("days", 1).format("YYYY-MM-DD");
+  };
+
+  View.prototype.events = {
+    "click .icon-left-arrow": "updateCalendarPrevWeek",
+    "click .icon-right-arrow": "updateCalendarNextWeek"
+  };
+
+  View.prototype.ui = {
+    leftArrow: ".icon-left-arrow",
+    rightArrow: ".icon-right-arrow",
+    currentWeek: ".current-week"
+  };
+
+  View.prototype.onRender = function() {
+    this.ui.currentWeek.text(moment(this.first).format("MMM DD") + " - " + moment(this.last).format("MMM DD"));
+    if (moment().add("days", 1).format("W") < this.first.format("W")) {
+      this.ui.leftArrow.show();
+    } else {
+      this.ui.leftArrow.hide();
+    }
+    if (utils.isValidDate(this.nextWeek)) {
+      return this.ui.rightArrow.show();
+    } else {
+      return this.ui.rightArrow.hide();
+    }
+  };
+
+  View.prototype.updateCalendarPrevWeek = function(e) {
+    var date;
+    e.preventDefault();
+    date = this.prevWeek;
+    app.filterCriteria.set({
+      startDate: date
+    });
+    return msgBus.reqres.request("calendar:navigation", {
+      startDate: date
+    });
+  };
+
+  View.prototype.updateCalendarNextWeek = function(e) {
+    var date;
+    e.preventDefault();
+    date = this.nextWeek;
+    app.filterCriteria.set({
+      startDate: date
+    });
+    return msgBus.reqres.request("calendar:navigation", {
+      startDate: date
+    });
+  };
+
+  return View;
+
+})(Marionette.CompositeView);
+
+module.exports = View;
+
+
+
+},{"../../templates/calendar/navigation.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/navigation.hbs","../../templates/calendar/navigation_item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/navigation_item.hbs","../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../components/utils.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/components/utils.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar.coffee":[function(require,module,exports){
+
+/**
+  * Views Calendar Module
+ */
+var AppointmentsLayout, Backbone, CalendarHeaderItem, CalendarHeaderView, DayPartView, EmptyItem, Item, Marionette, app, moment, msgBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Backbone = require("backbone");
+
+Marionette = require("backbone.marionette");
+
+moment = require("moment");
+
+app = require("../app.coffee");
+
+msgBus = require("../msgbus.coffee");
+
+Item = (function(_super) {
+  __extends(Item, _super);
+
+  function Item() {
+    return Item.__super__.constructor.apply(this, arguments);
+  }
+
+  Item.prototype.tagName = "li";
+
+  Item.prototype.template = require("../../templates/calendar/item.hbs");
+
+  Item.prototype.events = {
     "click .available": "selectAppointment"
-  },
-  initialize: function() {
+  };
+
+  Item.prototype.initialize = function() {
     this.addAttribute("data-item", this.model.get("indexOfWeek"));
     return this.addAttribute("data-date", this.model.get("startDate"));
-  },
-  onBeforeRender: function() {
+  };
+
+  Item.prototype.onBeforeRender = function() {
     var endTime, meridiemIndicator, scheduled, startTime;
     startTime = null;
     endTime = null;
@@ -1305,81 +1136,145 @@ Item = Marionette.ItemView.extend({
         scheduled: scheduled
       });
     }
-  },
-  addAttribute: function(attrName, attrValue) {
+  };
+
+  Item.prototype.addAttribute = function(attrName, attrValue) {
     return this.$el.attr(attrName, attrValue);
-  },
-  selectAppointment: function(e) {
+  };
+
+  Item.prototype.selectAppointment = function(e) {
     e.preventDefault();
-    return msgBus.reqres.request("schedule:" + App.flow + ":review", this.options.model);
-  }
-});
+    console.log("select");
+    return msgBus.reqres.request("create:review", this.options.model);
+  };
 
-EmptyItem = Marionette.ItemView.extend({
-  tagName: "li",
-  className: "empty",
-  template: require("../../templates/calendar/empty_item.hbs"),
-  initialize: function() {
+  return Item;
+
+})(Marionette.ItemView);
+
+EmptyItem = (function(_super) {
+  __extends(EmptyItem, _super);
+
+  function EmptyItem() {
+    return EmptyItem.__super__.constructor.apply(this, arguments);
+  }
+
+  EmptyItem.prototype.tagName = "li";
+
+  EmptyItem.prototype.className = "empty";
+
+  EmptyItem.prototype.template = require("../../templates/calendar/empty_item.hbs");
+
+  EmptyItem.prototype.initialize = function() {
     return this.addClass("item-" + this.model.get("indexOfWeek"));
-  },
-  addClass: function(className) {
-    return this.$el.addClass(className);
-  }
-});
+  };
 
-DayPartView = Marionette.CollectionView.extend({
-  tagName: "ul",
-  itemViewOptions: function(model, index) {
+  EmptyItem.prototype.addClass = function(className) {
+    return this.$el.addClass(className);
+  };
+
+  return EmptyItem;
+
+})(Marionette.ItemView);
+
+DayPartView = (function(_super) {
+  __extends(DayPartView, _super);
+
+  function DayPartView() {
+    return DayPartView.__super__.constructor.apply(this, arguments);
+  }
+
+  DayPartView.prototype.tagName = "ul";
+
+  DayPartView.prototype.childViewOptions = function(model, index) {
     return {
       itemIndex: index
     };
-  },
-  getItemView: function(item) {
+  };
+
+  DayPartView.prototype.getChildView = function(item) {
     if (item.get("isAvailable")) {
       return Item;
     } else {
       return EmptyItem;
     }
-  }
-});
+  };
 
-CalendarHeaderItem = Marionette.ItemView.extend({
-  tagName: "li",
-  initialize: function() {
+  return DayPartView;
+
+})(Marionette.CollectionView);
+
+CalendarHeaderItem = (function(_super) {
+  __extends(CalendarHeaderItem, _super);
+
+  function CalendarHeaderItem() {
+    return CalendarHeaderItem.__super__.constructor.apply(this, arguments);
+  }
+
+  CalendarHeaderItem.prototype.tagName = "li";
+
+  CalendarHeaderItem.prototype.template = require("../../templates/calendar/header_item.hbs");
+
+  CalendarHeaderItem.prototype.initialize = function() {
     if (this.model.get("selected")) {
       return this.$el.addClass("selected");
     }
-  },
-  template: require("../../templates/calendar/header_item.hbs")
-});
+  };
 
-CalendarHeaderView = Marionette.CollectionView.extend({
-  tagName: "ul",
-  className: "day-dates",
-  itemView: CalendarHeaderItem
-});
+  return CalendarHeaderItem;
 
-AppointmentsLayout = Marionette.Layout.extend({
-  template: require("../../templates/calendar/index.hbs"),
-  regions: {
+})(Marionette.ItemView);
+
+CalendarHeaderView = (function(_super) {
+  __extends(CalendarHeaderView, _super);
+
+  function CalendarHeaderView() {
+    return CalendarHeaderView.__super__.constructor.apply(this, arguments);
+  }
+
+  CalendarHeaderView.prototype.tagName = "ul";
+
+  CalendarHeaderView.prototype.className = "day-dates";
+
+  CalendarHeaderView.prototype.childView = CalendarHeaderItem;
+
+  return CalendarHeaderView;
+
+})(Marionette.CollectionView);
+
+AppointmentsLayout = (function(_super) {
+  __extends(AppointmentsLayout, _super);
+
+  function AppointmentsLayout() {
+    return AppointmentsLayout.__super__.constructor.apply(this, arguments);
+  }
+
+  AppointmentsLayout.prototype.template = require("../../templates/calendar/index.hbs");
+
+  AppointmentsLayout.prototype.regions = {
     header: ".appointments-header",
     morning: ".morning",
     afternoon: ".afternoon",
     evening: ".evening"
-  },
-  events: {
+  };
+
+  AppointmentsLayout.prototype.events = {
     "click .toggle-day": "toggleDayPart"
-  },
-  toggleDayPart: function(e) {
+  };
+
+  AppointmentsLayout.prototype.toggleDayPart = function(e) {
     e.preventDefault();
     return $(e.currentTarget).next().toggle();
-  }
-});
+  };
+
+  return AppointmentsLayout;
+
+})(Marionette.LayoutView);
 
 module.exports = function(options) {
   var appointmentsLayout;
   appointmentsLayout = new AppointmentsLayout();
-  App.layout.content.show(appointmentsLayout);
+  app.layout.content.show(appointmentsLayout);
   appointmentsLayout.header.show(new CalendarHeaderView({
     collection: options.dates
   }));
@@ -1396,303 +1291,16 @@ module.exports = function(options) {
 
 
 
-},{"../../templates/calendar/empty_item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/empty_item.hbs","../../templates/calendar/header_item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/header_item.hbs","../../templates/calendar/index.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/index.hbs","../../templates/calendar/item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/item.hbs","../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/calendar/navigation.coffee":[function(require,module,exports){
-
-/**
-  * View Calendar Navigation Module
- */
-var App, Item, Marionette, moment, msgBus;
-
-Marionette = require("backbone.marionette");
-
-moment = require("moment");
-
-App = require("../../app.coffee");
-
-msgBus = require("../../msgbus.coffee");
-
-Item = Marionette.ItemView.extend({
-  tagName: "li",
-  template: require("../../../templates/calendar/navigation_item.hbs"),
-  events: {
-    "click": "updateCalendar"
-  },
-  onRender: function() {
-    var date;
-    date = this.model.get("dataDate");
-    if (!App.utils.isValidDate(date)) {
-      return this.$el.addClass("disabled");
-    }
-  },
-  updateCalendar: function(e) {
-    var date;
-    e.preventDefault();
-    date = this.model.get("dataDate");
-    if (App.utils.isValidDate(date)) {
-      App.filterCriteria.set({
-        startDate: date
-      });
-      return msgBus.reqres.request("schedule:calendar:navigation", {
-        startDate: date
-      });
-    }
-  }
-});
-
-module.exports = Marionette.CompositeView.extend({
-  itemView: Item,
-  className: "classes-calendar",
-  template: require("../../../templates/calendar/navigation.hbs"),
-  itemViewContainer: "ul",
-  initialize: function() {
-    var first, last;
-    this.first = moment(this.collection.at(0).attributes.dataDate);
-    this.last = moment(this.collection.at(6).attributes.dataDate);
-    first = moment(this.first);
-    last = moment(this.last);
-    this.prevWeek = first.subtract("days", 7).format("YYYY-MM-DD");
-    return this.nextWeek = last.add("days", 1).format("YYYY-MM-DD");
-  },
-  events: {
-    "click .icon-left-arrow": "updateCalendarPrevWeek",
-    "click .icon-right-arrow": "updateCalendarNextWeek"
-  },
-  ui: {
-    leftArrow: ".icon-left-arrow",
-    rightArrow: ".icon-right-arrow",
-    currentWeek: ".current-week"
-  },
-  onRender: function() {
-    this.ui.currentWeek.text(moment(this.first).format("MMM DD") + " - " + moment(this.last).format("MMM DD"));
-    if (moment().add("days", 1).format("W") < this.first.format("W")) {
-      this.ui.leftArrow.show();
-    } else {
-      this.ui.leftArrow.hide();
-    }
-    if (App.utils.isValidDate(this.nextWeek)) {
-      return this.ui.rightArrow.show();
-    } else {
-      return this.ui.rightArrow.hide();
-    }
-  }
-});
-
-({
-  updateCalendarPrevWeek: function(e) {
-    var date;
-    e.preventDefault();
-    date = this.prevWeek;
-    App.filterCriteria.set({
-      startDate: date
-    });
-    msgBus.reqres.request("schedule:calendar:navigation", {
-      startDate: date
-    });
-    ({
-      updateCalendarNextWeek: function(e) {
-        e.preventDefault();
-        return date = this.nextWeek;
-      }
-    });
-    App.filterCriteria.set({
-      startDate: date
-    });
-    return msgBus.reqres.request("schedule:calendar:navigation", {
-      startDate: date
-    });
-  }
-});
-
-
-
-},{"../../../templates/calendar/navigation.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/navigation.hbs","../../../templates/calendar/navigation_item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/navigation_item.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/confirmation.coffee":[function(require,module,exports){
-
-/**
-  * View Cancel Confirmation Module
- */
-var Marionette, msgBus;
-
-Marionette = require("backbone.marionette");
-
-msgBus = require("../../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/cancel/confirmation.hbs"),
-  initialize: function() {
-    return msgBus.commands.execute("scroll:top");
-  }
-});
-
-
-
-},{"../../../templates/cancel/confirmation.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/cancel/confirmation.hbs","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/index.coffee":[function(require,module,exports){
-
-/**
-  * View Cancel Index Module
- */
-var App, Marionette, moment, msgBus;
-
-Marionette = require("backbone.marionette");
-
-moment = require("moment");
-
-App = require("../../app.coffee");
-
-msgBus = require("../../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/cancel/index.hbs"),
-  events: {
-    "click .cancel-all": "cancelAll",
-    "click .cancel": "cancel",
-    "click .update": "update"
-  },
-  initialize: function() {
-    console.log("cansel");
-    return msgBus.commands.execute("scroll:top");
-  },
-  onBeforeRender: function() {
-    var date, endTime, meridiemIndicator, shortMonth, startTime, weekDay;
-    weekDay = moment(this.model.get("startDate")).format("dddd");
-    shortMonth = moment(this.model.get("startDate")).format("MMM");
-    date = moment(this.model.get("startDate")).format("DD");
-    startTime = moment(this.model.get("startDate")).format("hh:mm");
-    endTime = moment(this.model.get("endDate")).format("hh:mm");
-    meridiemIndicator = moment(this.model.get("endDate")).format("A");
-    return this.model.set({
-      shortMonth: shortMonth,
-      appointmentDate: weekDay + ", " + shortMonth + " " + date,
-      appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
-    });
-  },
-  cancelAll: function(e) {
-    e.preventDefault();
-    this.model.set({
-      cancelAll: true
-    });
-    return msgBus.reqres.request("schedule:cancel:review", this.model);
-  },
-  cancel: function(e) {
-    e.preventDefault();
-    this.model.set({
-      cancelAll: false
-    });
-    return msgBus.reqres.request("schedule:cancel:review", this.model);
-  },
-  update: function(e) {
-    e.preventDefault();
-    App.navigate("update/" + this.model.id, {
-      trigger: false
-    });
-    return msgBus.reqres.request("schedule:update", this.model.id);
-  }
-});
-
-
-
-},{"../../../templates/cancel/index.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/cancel/index.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/review.coffee":[function(require,module,exports){
-
-/**
-  * View Cancel Review Module
- */
-var Marionette, moment, msgBus;
-
-Marionette = require("backbone.marionette");
-
-moment = require("moment");
-
-msgBus = require("../../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/cancel/review.hbs"),
-  events: {
-    "click .cancel": "cancel",
-    "click .add-message": "addMessage",
-    "keyup textarea": "countLimit"
-  },
-  initialize: function() {
-    return msgBus.commands.execute("scroll:top");
-  },
-  ui: {
-    textarea: "textarea"
-  },
-  onBeforeRender: function() {
-    var date, endTime, meridiemIndicator, shortMonth, startTime, weekDay;
-    weekDay = moment(this.model.get("startDate")).format("dddd");
-    shortMonth = moment(this.model.get("startDate")).format("MMM");
-    date = moment(this.model.get("startDate")).format("DD");
-    startTime = moment(this.model.get("startDate")).format("hh:mm");
-    endTime = moment(this.model.get("endDate")).format("hh:mm");
-    meridiemIndicator = moment(this.model.get("endDate")).format("A");
-    this.model.set({
-      shortMonth: shortMonth,
-      appointmentDate: weekDay + ", " + shortMonth + " " + date,
-      appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
-    });
-    return {
-      cancel: function(e) {
-        e.preventDefault();
-        if (!_.isEmpty(this.ui.textarea.val())) {
-          this.model.set({
-            message: this.ui.textarea.val()
-          });
-        }
-        return msgBus.reqres.request("schedule:cancel:confirmation", this.model);
-      },
-      countLimit: function(e) {
-        var count;
-        e.preventDefault();
-        count = 300 - this.ui.textarea.val().length;
-        return this.ui.textarea.next(".char-counter").text(count);
-      },
-      addMessage: function(e) {
-        e.preventDefault();
-        return this.$(".add-message-container").toggleClass("hidden");
-      }
-    };
-  }
-});
-
-
-
-},{"../../../templates/cancel/review.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/cancel/review.hbs","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/create/confirmation.coffee":[function(require,module,exports){
-
-/**
-  * Create Confirmation Module
- */
-var App, Marionette, msgBus;
-
-Marionette = require("backbone.marionette");
-
-App = require("../../app.coffee");
-
-msgBus = require("../../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/create/confirmation.hbs"),
-  initialize: function() {
-    return msgBus.commands.execute("scroll:top");
-  },
-  events: {
-    "click .cancel": "cancelAppointment"
-  },
-  cancelAppointment: function(e) {
-    e.preventDefault();
-    App.navigate("cancel/" + this.model.id, {
-      trigger: false
-    });
-    return msgBus.reqres.request("schedule:cancel", this.model.id);
-  }
-});
-
-
-
-},{"../../../templates/create/confirmation.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/create/confirmation.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/create/review.coffee":[function(require,module,exports){
+},{"../../templates/calendar/empty_item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/empty_item.hbs","../../templates/calendar/header_item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/header_item.hbs","../../templates/calendar/index.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/index.hbs","../../templates/calendar/item.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/item.hbs","../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/create/review.coffee":[function(require,module,exports){
 
 /**
   * Create Review Module
  */
-var Marionette, moment, msgBus;
+var Marionette, View, moment, msgBus, _,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+_ = require("underscore");
 
 Marionette = require("backbone.marionette");
 
@@ -1700,20 +1308,30 @@ moment = require("moment");
 
 msgBus = require("../../msgbus.coffee");
 
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/create/review.hbs"),
-  events: {
+View = (function(_super) {
+  __extends(View, _super);
+
+  function View() {
+    return View.__super__.constructor.apply(this, arguments);
+  }
+
+  View.prototype.template = require("../../../templates/create/review.hbs");
+
+  View.prototype.events = {
     "click .schedule": "schedule",
     "click .add-message": "addMessage",
     "keyup textarea": "countLimit"
-  },
-  initialize: function() {
+  };
+
+  View.prototype.initialize = function() {
     return msgBus.commands.execute("scroll:top");
-  },
-  ui: {
+  };
+
+  View.prototype.ui = {
     textarea: "textarea"
-  },
-  onBeforeRender: function() {
+  };
+
+  View.prototype.onBeforeRender = function() {
     var date, endTime, meridiemIndicator, shortMonth, startTime, weekDay;
     weekDay = moment(this.model.get("startDate")).format("dddd");
     shortMonth = moment(this.model.get("startDate")).format("MMM");
@@ -1726,145 +1344,79 @@ module.exports = Marionette.ItemView.extend({
       appointmentDate: weekDay + ", " + shortMonth + " " + date,
       appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
     });
-  },
-  schedule: function(e) {
+  };
+
+  View.prototype.schedule = function(e) {
     e.preventDefault();
     if (!_.isEmpty(this.ui.textarea.val())) {
       this.model.set({
         message: this.ui.textarea.val()
       });
     }
-    return msgBus.reqres.request("schedule:create:confirmation", this.model);
-  },
-  countLimit: function(e) {
+    return msgBus.reqres.request("create:confirmation", this.model);
+  };
+
+  View.prototype.countLimit = function(e) {
     var count;
     e.preventDefault();
     count = 300 - this.ui.textarea.val().length;
     return this.ui.textarea.next(".char-counter").text(count);
-  },
-  addMessage: function(e) {
+  };
+
+  View.prototype.addMessage = function(e) {
     e.preventDefault();
     return this.$(".add-message-container").toggleClass("hidden");
-  }
-});
+  };
+
+  return View;
+
+})(Marionette.ItemView);
+
+module.exports = View;
 
 
 
-},{"../../../templates/create/review.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/create/review.hbs","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/detail/index.coffee":[function(require,module,exports){
-
-/**
-  * View Detail Module
- */
-var App, Marionette, moment, msgBus;
-
-moment = require("moment");
-
-Marionette = require("backbone.marionette");
-
-App = require("../../app.coffee");
-
-msgBus = require("../../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/detail/index.hbs"),
-  events: {
-    "click .cancel-all": "cancelAll",
-    "click .cancel": "cancel",
-    "click .reschedule": "reschedule"
-  },
-  initialize: function() {
-    return msgBus.commands.execute("scroll:top");
-  },
-  onBeforeRender: function() {
-    var date, endTime, meridiemIndicator, shortMonth, startTime, weekDay;
-    weekDay = moment(this.model.get("startDate")).format("dddd");
-    shortMonth = moment(this.model.get("startDate")).format("MMM");
-    date = moment(this.model.get("startDate")).format("DD");
-    startTime = moment(this.model.get("startDate")).format("hh:mm");
-    endTime = moment(this.model.get("endDate")).format("hh:mm");
-    meridiemIndicator = moment(this.model.get("endDate")).format("A");
-    this.model.set({
-      shortMonth: shortMonth,
-      appointmentDate: weekDay + ", " + shortMonth + " " + date,
-      appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
-    });
-    ({
-      cancelAll: function(e) {
-        e.preventDefault();
-        this.model.set({
-          cancelAll: true
-        });
-        App.navigate("cancel/" + this.model.id);
-        return msgBus.reqres.request("schedule:cancel:review", this.model);
-      },
-      cancel: function(e) {}
-    });
-    e.preventDefault();
-    this.model.set({
-      cancelAll: false
-    });
-    App.navigate("cancel/" + this.model.id);
-    msgBus.reqres.request("schedule:cancel:review", this.model);
-    ({
-      reschedule: function(e) {}
-    });
-    e.preventDefault();
-    App.navigate("update/" + this.model.id);
-    return msgBus.reqres.request("schedule:update", this.model.id);
-  }
-});
-
-
-
-},{"../../../templates/detail/index.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/detail/index.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/error.coffee":[function(require,module,exports){
-
-/**
-  * View Error Module
- */
-var Marionette, msgBus;
-
-Marionette = require("backbone.marionette");
-
-msgBus = require("../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  className: "error",
-  template: require("../../templates/error.hbs"),
-  initialize: function() {
-    return msgBus.commands.execute("scroll:top");
-  }
-});
-
-
-
-},{"../../templates/error.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/error.hbs","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/filter/trainer.coffee":[function(require,module,exports){
+},{"../../../templates/create/review.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/create/review.hbs","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/filter/trainer.coffee":[function(require,module,exports){
 
 /**
   * Views Filter Trainer Module
  */
-var App, Marionette, _;
+var $, Marionette, View, app, _,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+$ = require("jquery");
 
 _ = require("underscore");
 
 Marionette = require("backbone.marionette");
 
-App = require("../../app.coffee");
+app = require("../../app.coffee");
 
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/filter/trainer.hbs"),
-  events: {
+View = (function(_super) {
+  __extends(View, _super);
+
+  function View() {
+    return View.__super__.constructor.apply(this, arguments);
+  }
+
+  View.prototype.template = require("../../../templates/filter/trainer.hbs");
+
+  View.prototype.events = {
     "change .select-duration": "selectDuration",
     "change .select-trainer": "selectTrainer"
-  },
-  onBeforeRender: function() {
+  };
+
+  View.prototype.onBeforeRender = function() {
     this.model.set({
-      defaultTrainer: App.filterCriteria.get("trainerName")
+      defaultTrainer: app.filterCriteria.get("trainerName")
     });
     return this.model.set({
-      defaultDuration: App.filterCriteria.get("duration")
+      defaultDuration: app.filterCriteria.get("duration")
     });
-  },
-  onRender: function() {
+  };
+
+  View.prototype.onRender = function() {
     if (_.isEqual(1, _.size(this.model.get("trainers")))) {
       this.ui.selectTrainer.closest("div").hide();
       return this.ui.selectDuration.closest("div").css({
@@ -1872,94 +1424,139 @@ module.exports = Marionette.ItemView.extend({
         "margin": "0 auto"
       });
     }
-  },
-  ui: {
+  };
+
+  View.prototype.ui = {
     selectDuration: "select.select-duration",
     selectTrainer: "select.select-trainer"
-  },
-  selectTrainer: function() {
+  };
+
+  View.prototype.selectTrainer = function() {
     this.ui.selectTrainer.prev(".option").text($("option:selected", this.ui.selectTrainer).text());
-    return App.filterCriteria.set({
+    return app.filterCriteria.set({
       trainerId: $("option:selected", this.ui.selectTrainer).val()
     });
-  },
-  selectDuration: function() {
+  };
+
+  View.prototype.selectDuration = function() {
     this.ui.selectDuration.prev(".option").text($("option:selected", this.ui.selectDuration).text());
-    return App.filterCriteria.set({
+    return app.filterCriteria.set({
       sessionTypeId: $("option:selected", this.ui.selectDuration).val()
     });
-  }
-});
+  };
+
+  return View;
+
+})(Marionette.ItemView);
+
+module.exports = View;
 
 
 
-},{"../../../templates/filter/trainer.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/filter/trainer.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/header.coffee":[function(require,module,exports){
+},{"../../../templates/filter/trainer.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/filter/trainer.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/header.coffee":[function(require,module,exports){
 
 /**
   * Views Header Module
  */
-var Marionette, _;
-
-_ = require("underscore");
+var Marionette, View,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Marionette = require("backbone.marionette");
 
-module.exports = Marionette.ItemView.extend({
-  initialize: function() {
-    return console.log("view header");
-  },
-  template: _.template("<h1>Hello there</h1>")
-});
+View = (function(_super) {
+  __extends(View, _super);
+
+  function View() {
+    return View.__super__.constructor.apply(this, arguments);
+  }
+
+  View.prototype.template = require("../../templates/header.hbs");
+
+  return View;
+
+})(Marionette.ItemView);
+
+module.exports = View;
 
 
 
-},{"backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/layout.coffee":[function(require,module,exports){
+},{"../../templates/header.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/header.hbs","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/layout.coffee":[function(require,module,exports){
 
 /**
   * Layout Module
  */
-var Marionette, _;
+var Layout, Marionette,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Marionette = require("backbone.marionette");
 
-_ = require("underscore");
+Layout = (function(_super) {
+  __extends(Layout, _super);
 
-module.exports = Marionette.Layout.extend({
-  template: require("../../templates/layout.hbs"),
-  regions: {
+  function Layout() {
+    return Layout.__super__.constructor.apply(this, arguments);
+  }
+
+  Layout.prototype.template = require("../../templates/layout.hbs");
+
+  Layout.prototype.regions = {
     header: ".header",
     filter: ".trainer-filter",
     navigation: ".navigation",
     content: ".content"
-  }
-});
+  };
+
+  return Layout;
+
+})(Marionette.LayoutView);
+
+module.exports = Layout;
 
 
 
-},{"../../templates/layout.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/layout.hbs","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee":[function(require,module,exports){
-var Marionette, Spinner, target;
+},{"../../templates/layout.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/layout.hbs","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee":[function(require,module,exports){
+
+/**
+ * View Spinner
+ * @module views/spinner
+ */
+var Marionette, Spinner, View,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Marionette = require("backbone.marionette");
 
 Spinner = require("spinner");
 
-module.exports = Marionette.ItemView.extend({
-  template: require("../../templates/spinner.hbs"),
-  id: "spinner",
-  initialize: function(options) {
+View = (function(_super) {
+  __extends(View, _super);
+
+  function View() {
+    return View.__super__.constructor.apply(this, arguments);
+  }
+
+  View.prototype.template = require("../../templates/spinner.hbs");
+
+  View.prototype.id = "spinner";
+
+  View.prototype.initialize = function(options) {
     options = options || {};
     this.title = options.title || null;
     return this.message = options.message || null;
-  },
-  serializeData: function() {
+  };
+
+  View.prototype.serializeData = function() {
     return {
       title: this.title,
       message: this.message
     };
-  },
-  onShow: function() {
-    var opts;
-    return opts = {
+  };
+
+  View.prototype.onShow = function() {
+    var opts, target;
+    opts = {
       lines: 13,
       length: 7,
       width: 2,
@@ -1976,128 +1573,19 @@ module.exports = Marionette.ItemView.extend({
       top: "50%",
       left: "50%"
     };
-  }
-}, target = document.getElementById(this.el.id), new Spinner(opts).spin(target));
+    target = document.getElementById(this.el.id);
+    return new Spinner(opts).spin(target);
+  };
+
+  return View;
+
+})(Marionette.ItemView);
+
+module.exports = View;
 
 
 
-},{"../../templates/spinner.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/spinner.hbs","backbone.marionette":"backbone.marionette","spinner":"spinner"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/update/confirmation.coffee":[function(require,module,exports){
-
-/**
-  * View Update Confirmation Module
- */
-var App, Marionette, msgBus;
-
-Marionette = require("backbone.marionette");
-
-App = require("../../app.coffee");
-
-msgBus = require("../../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/update/confirmation.hbs"),
-  initialize: function() {
-    return msgBus.commands.execute("scroll:top");
-  },
-  events: {
-    "click .cancel": "cancelAppointment"
-  },
-  cancelAppointment: function(e) {
-    e.preventDefault();
-    App.navigate("cancel/" + this.options.original.id, {
-      trigger: false
-    });
-    return msgBus.reqres.request("schedule:cancel", this.options.original.id);
-  }
-});
-
-
-
-},{"../../../templates/update/confirmation.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/update/confirmation.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/update/review.coffee":[function(require,module,exports){
-
-/**
-  * View Update Review Module
- */
-var App, Marionette, moment, msgBus;
-
-Marionette = require("backbone.marionette");
-
-moment = require("moment");
-
-App = require("../../app.coffee");
-
-msgBus = require("../../msgbus.coffee");
-
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/update/review.hbs"),
-  events: {
-    "click .schedule": "schedule",
-    "click .update": "update",
-    "click .add-message": "addMessage",
-    "keyup textarea": "countLimit"
-  },
-  initialize: function() {
-    return msgBus.commands.execute("scroll:top");
-  },
-  ui: {
-    textarea: "textarea"
-  },
-  onBeforeRender: function() {
-    var date, endTime, meridiemIndicator, originalDate, originalEndTime, originalMeridiemIndicator, originalShortMonth, originalStartTime, originalWeekDay, shortMonth, startTime, weekDay;
-    weekDay = moment(this.model.get("startDate")).format("dddd");
-    shortMonth = moment(this.model.get("startDate")).format("MMM");
-    date = moment(this.model.get("startDate")).format("DD");
-    startTime = moment(this.model.get("startDate")).format("hh:mm");
-    endTime = moment(this.model.get("endDate")).format("hh:mm");
-    meridiemIndicator = moment(this.model.get("endDate")).format("A");
-    originalWeekDay = moment(this.options.original.get("startDate")).format("dddd");
-    originalShortMonth = moment(this.options.original.get("startDate")).format("MMM");
-    originalDate = moment(this.options.original.get("startDate")).format("DD");
-    originalStartTime = moment(this.options.original.get("startDate")).format("hh:mm");
-    originalEndTime = moment(this.options.original.get("endDate")).format("hh:mm");
-    originalMeridiemIndicator = moment(this.options.original.get("endDate")).format("A");
-    this.model.set({
-      shortMonth: shortMonth,
-      appointmentDate: weekDay + ", " + shortMonth + " " + date,
-      appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator,
-      originalShortMonth: originalShortMonth,
-      originalAppointmentDate: originalWeekDay + ", " + originalShortMonth + " " + originalDate,
-      originalAppointmentTime: originalStartTime + " - " + originalEndTime + " " + originalMeridiemIndicator
-    });
-    return {
-      schedule: function(e) {
-        e.preventDefault();
-        if (!_.isEmpty(this.ui.textarea.val())) {
-          this.model.set({
-            message: this.ui.textarea.val()
-          });
-        }
-        return msgBus.reqres.request("schedule:update:confirmation", this.model);
-      },
-      update: function(e) {
-        e.preventDefault();
-        App.navigate("update/" + this.options.original.id, {
-          trigger: false
-        });
-        return msgBus.reqres.request("schedule:update", this.options.original.id);
-      },
-      countLimit: function(e) {
-        var count;
-        e.preventDefault();
-        count = 300 - this.ui.textarea.val().length;
-        return this.ui.textarea.next(".char-counter").text(count);
-      },
-      addMessage: function(e) {
-        e.preventDefault();
-        return this.$(".add-message-container").toggleClass("hidden");
-      }
-    };
-  }
-});
-
-
-
-},{"../../../templates/update/review.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/update/review.hbs","../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","backbone.marionette":"backbone.marionette","moment":"moment"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/empty_item.hbs":[function(require,module,exports){
+},{"../../templates/spinner.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/spinner.hbs","backbone.marionette":"backbone.marionette","spinner":"spinner"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/empty_item.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -2108,8 +1596,15 @@ module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div>\n    <p><%= date %></p>\n    <span><%= month %> <%= day %></span>\n</div>\n";
-  },"useData":true});
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<div>\n    <p>"
+    + escapeExpression(((helper = (helper = helpers.date || (depth0 != null ? depth0.date : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"date","hash":{},"data":data}) : helper)))
+    + "</p>\n    <span>"
+    + escapeExpression(((helper = (helper = helpers.month || (depth0 != null ? depth0.month : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"month","hash":{},"data":data}) : helper)))
+    + " "
+    + escapeExpression(((helper = (helper = helpers.day || (depth0 != null ? depth0.day : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"day","hash":{},"data":data}) : helper)))
+    + "</span>\n</div>\n";
+},"useData":true});
 
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/index.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
@@ -2121,9 +1616,28 @@ module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/item.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"wrapper <%= className %>\" data-id=\"<%= cid %>\">\n    <p><strong><%= appointment %></strong></p>\n    <p><%= trainerFirstName %> <%= trainerLastName %></p>\n    <p><%= facilityName %></p>\n    <% scheduled && print('<p>Your reservation</p>') %>\n    <% !scheduled && print('<div class=\"add-appointment\"><div class=\"add\">+</div></div>') %>\n</div>";
-  },"useData":true});
+module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partials,data) {
+  return "        <p>Your reservation</p>\n";
+  },"3":function(depth0,helpers,partials,data) {
+  return "        <div class=\"add-appointment\"><div class=\"add\">+</div></div>\n";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div class=\"wrapper "
+    + escapeExpression(((helper = (helper = helpers.className || (depth0 != null ? depth0.className : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"className","hash":{},"data":data}) : helper)))
+    + "\" data-id=\""
+    + escapeExpression(((helper = (helper = helpers.cid || (depth0 != null ? depth0.cid : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"cid","hash":{},"data":data}) : helper)))
+    + "\">\n    <p><strong>"
+    + escapeExpression(((helper = (helper = helpers.appointment || (depth0 != null ? depth0.appointment : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"appointment","hash":{},"data":data}) : helper)))
+    + "</strong></p>\n    <p>"
+    + escapeExpression(((helper = (helper = helpers.trainerFirstName || (depth0 != null ? depth0.trainerFirstName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trainerFirstName","hash":{},"data":data}) : helper)))
+    + " "
+    + escapeExpression(((helper = (helper = helpers.trainerLastName || (depth0 != null ? depth0.trainerLastName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trainerLastName","hash":{},"data":data}) : helper)))
+    + "</p>\n    <p>"
+    + escapeExpression(((helper = (helper = helpers.facilityName || (depth0 != null ? depth0.facilityName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"facilityName","hash":{},"data":data}) : helper)))
+    + "</p>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.scheduled : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "</div>";
+},"useData":true});
 
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/calendar/navigation.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
@@ -2136,64 +1650,84 @@ module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<a href=\"#\" data-date=\"<%= dataDate %>\" class=\"<%= current %>\">\n    <p class=\"is-tablet is-desktop\"><%= date %></p>\n    <p class=\"is-mobile\"><%= dateShort %></p>\n    <small class=\"is-tablet is-desktop\"><%= month %> <%= day %></small>\n</a>\n<div class=\"classes-timeline\"></div>\n";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/cancel/confirmation.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <h3>you're all set.</h3>\n\n    <p>your trainer has been notified of the cancellation</p>\n\n    <nav class=\"buttons\">\n        <a href=\"/personal-training/schedule\" class=\"button black small inline box half-button\">Schedule Session</a>\n    </nav>\n    <p>\n        <a href=\"/calendar\" class=\"underlined-small-link black\">see my calendar</a>\n    </p>\n</section>";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/cancel/index.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <h3 class=\"tier\"><%= trainerTier %></h3>\n\n    <ul class=\"class-detail\">\n        <li class=\"big-font\"><%= appointmentDate %></li>\n        <li class=\"big-font\"><%= appointmentTime %></li>\n        <li class=\"medium-font\">Personal Training</li>\n        <li class=\"medium-font\">w/<%= trainerFirstName %></li>\n        <li class=\"medium-font\"><%= facilityName %></li>\n    </ul>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <% _.each(notes, function(note){ %>\n    <p><%= note %></p>\n    <% }); %>\n\n    <p>Please confirm the details and cancel your session</p>\n\n    <nav class=\"buttons\">\n        <% canCancelAll && print('<a href=\"#\" class=\"button white small half-button box cancel-all\">Cancel all Sessions</a>') %>\n        <a href=\"#\" class=\"button black small half-button box inline cancel\">Cancel this Session</a>\n    </nav>\n\n    <nav class=\"buttons\">\n        <a href=\"#\" class=\"underlined-small-link black update\">reschedule this session</a><br>\n        <a href=\"/personal-training\" class=\"underlined-small-link black\">Back</a>\n    </nav>\n</section>\n\n";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/cancel/review.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <h1 class=\"title\">Are you Sure?</h1>\n    <p><% warningMessage && print(warningMessage); %></p>\n\n    <h3 class=\"tier\"><%= trainerTier %></h3>\n\n    <ul class=\"class-detail\">\n        <li class=\"big-font\"><%= appointmentDate %></li>\n        <li class=\"big-font\"><%= appointmentTime %></li>\n        <li class=\"medium-font\">Personal Training</li>\n        <li class=\"medium-font\">w/<%= trainerFirstName %></li>\n        <li class=\"medium-font\"><%= facilityName %></li>\n    </ul>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <% _.each(notes, function(note){ %>\n    <p><%= note %></p>\n    <% }); %>\n\n\n    <a href=\"#\" class=\"underlined-small-link black add-message\">attach a message</a>\n\n    <div class=\"add-message-container hidden\">\n        <textarea maxlength=\"300\" style=\"resize: none;\"></textarea>\n\n        <div class=\"char-counter\">300</div>\n    </div>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <nav class=\"buttons\">\n        <% cancelAll && print('<a href=\"#\" class=\"button white small half-button box inline cancel\">Cancel all Sessions</a>')%>\n        <% !cancelAll && print('<a href=\"#\" class=\"button black small half-button box inline cancel\">Cancel this Session</a>')%>\n    </nav>\n    <p>\n        <a href=\"/personal-training\" class=\"underlined-small-link black\">Back</a>\n    </p>\n</section>\n";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/create/confirmation.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <h3 class=\"tier\"><%= trainerTier %></h3>\n\n    <ul class=\"class-detail\">\n        <li class=\"big-font\"><%= appointmentDate %></li>\n        <li class=\"big-font\"><%= appointmentTime %></li>\n        <li class=\"medium-font\">Personal Training</li>\n        <li class=\"medium-font\">w/<%= trainerFirstName %></li>\n        <li class=\"medium-font\"><%= facilityName %></li>\n    </ul>\n\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <p>your calendar is updated and your trainer has been notified</p>\n\n    <div class=\"export\">\n        <a target=\"_blank\" class=\"export\" href=\"<%= APIEndpoint %>/ME/CALENDAR/EVENTS/<%= id %>/EXPORT/ICS?exportType=AppointmentInstance\">\n            <span class=\"icon-export\"></span>Export to calendar\n        </a>\n    </div>\n\n    <nav class=\"buttons\" data-id=\"<%= id %>\">\n        <a href=\"#\" class=\"underlined-small-link black cancel\">cancel session</a>\n    </nav>\n</section>\n";
-  },"useData":true});
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<a href=\"#\" data-date=\""
+    + escapeExpression(((helper = (helper = helpers.dataDate || (depth0 != null ? depth0.dataDate : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"dataDate","hash":{},"data":data}) : helper)))
+    + "\" class=\""
+    + escapeExpression(((helper = (helper = helpers.current || (depth0 != null ? depth0.current : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"current","hash":{},"data":data}) : helper)))
+    + "\">\n    <p class=\"is-tablet is-desktop\">"
+    + escapeExpression(((helper = (helper = helpers.date || (depth0 != null ? depth0.date : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"date","hash":{},"data":data}) : helper)))
+    + "</p>\n    <p class=\"is-mobile\">"
+    + escapeExpression(((helper = (helper = helpers.dateShort || (depth0 != null ? depth0.dateShort : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"dateShort","hash":{},"data":data}) : helper)))
+    + "</p>\n    <small class=\"is-tablet is-desktop\">"
+    + escapeExpression(((helper = (helper = helpers.month || (depth0 != null ? depth0.month : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"month","hash":{},"data":data}) : helper)))
+    + " "
+    + escapeExpression(((helper = (helper = helpers.day || (depth0 != null ? depth0.day : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"day","hash":{},"data":data}) : helper)))
+    + "</small>\n</a>\n<div class=\"classes-timeline\"></div>\n";
+},"useData":true});
 
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/create/review.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <h3 class=\"tier\"><%= trainerTier %></h3>\n\n    <ul class=\"class-detail\">\n        <li class=\"big-font\"><%= appointmentDate %></li>\n        <li class=\"big-font\"><%= appointmentTime %></li>\n        <li class=\"medium-font\">Personal Training</li>\n        <li class=\"medium-font\">w/<%= trainerFirstName %></li>\n        <li class=\"medium-font\"><%= facilityName %></li>\n    </ul>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <a href=\"#\" class=\"underlined-small-link black add-message\">attach a message</a>\n\n    <div class=\"add-message-container hidden\">\n        <textarea maxlength=\"300\" style=\"resize: none;\"></textarea>\n\n        <div class=\"char-counter\">300</div>\n    </div>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <nav class=\"buttons\">\n        <a href=\"#\" class=\"button black small box inline half-button schedule\">Schedule Session</a>\n    </nav>\n    <a href=\"/\" class=\"underlined-small-link black\">cancel</a>\n</section>";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/detail/index.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <h3 class=\"tier\"><%= trainerTier %></h3>\n\n    <ul class=\"class-detail\">\n        <li class=\"big-font\"><%= appointmentDate %></li>\n        <li class=\"big-font\"><%= appointmentTime %></li>\n        <li class=\"medium-font\">Personal Training</li>\n        <li class=\"medium-font\">w/<%= trainerFirstName %></li>\n        <li class=\"medium-font\"><%= facilityName %></li>\n    </ul>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <% _.each(notes, function(note){ %>\n    <p><%= note %></p>\n    <% }); %>\n\n<% if(canCancel) { %>\n    <p>Please confirm the details and cancel your session</p>\n\n    <nav class=\"buttons\">\n        <% canCancelAll && print('<a href=\"#\" class=\"button white small half-button box cancel-all\">Cancel all Sessions</a>') %>\n        <a href=\"#\" class=\"button black small inline half-button box cancel\">Cancel this Session</a>\n    </nav>\n\n    <nav class=\"buttons\">\n        <% canReschedule && print('<a href=\"/personal-training/schedule#update/' + id + '\" class=\"underlined-small-link black reschedule\">reschedule this session</a><br>') %>\n        <a href=\"/personal-training\" class=\"underlined-small-link black\">Back</a>\n    </nav>\n<% } %>\n</section>\n";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/error.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"class-module no-padding-bottom no-border-top\">\n    <h2 class=\"title\"><%= message %></h2>\n    <!--<p>Code: <%= code %></p>-->\n    <!--<p><%= exception %></p>-->\n</div>\n";
-  },"useData":true});
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<section class=\"class-module no-padding-bottom\">\n    <h3 class=\"tier\">"
+    + escapeExpression(((helper = (helper = helpers.trainerTier || (depth0 != null ? depth0.trainerTier : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trainerTier","hash":{},"data":data}) : helper)))
+    + "</h3>\n\n    <ul class=\"class-detail\">\n        <li class=\"big-font\">"
+    + escapeExpression(((helper = (helper = helpers.appointmentDate || (depth0 != null ? depth0.appointmentDate : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"appointmentDate","hash":{},"data":data}) : helper)))
+    + "</li>\n        <li class=\"big-font\">"
+    + escapeExpression(((helper = (helper = helpers.appointmentTime || (depth0 != null ? depth0.appointmentTime : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"appointmentTime","hash":{},"data":data}) : helper)))
+    + "</li>\n        <li class=\"medium-font\">Personal Training</li>\n        <li class=\"medium-font\">w/"
+    + escapeExpression(((helper = (helper = helpers.trainerFirstName || (depth0 != null ? depth0.trainerFirstName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trainerFirstName","hash":{},"data":data}) : helper)))
+    + "</li>\n        <li class=\"medium-font\">"
+    + escapeExpression(((helper = (helper = helpers.facilityName || (depth0 != null ? depth0.facilityName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"facilityName","hash":{},"data":data}) : helper)))
+    + "</li>\n    </ul>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <a href=\"#\" class=\"underlined-small-link black add-message\">attach a message</a>\n\n    <div class=\"add-message-container hidden\">\n        <textarea maxlength=\"300\" style=\"resize: none;\"></textarea>\n\n        <div class=\"char-counter\">300</div>\n    </div>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <nav class=\"buttons\">\n        <a href=\"#\" class=\"button black small box inline half-button schedule\">Schedule Session</a>\n    </nav>\n    <a href=\"/\" class=\"underlined-small-link black\">cancel</a>\n</section>";
+},"useData":true});
 
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/filter/trainer.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
+module.exports = HandlebarsCompiler.template({"1":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "                    <option value=\""
+    + escapeExpression(((helper = (helper = helpers.trainerId || (depth0 != null ? depth0.trainerId : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trainerId","hash":{},"data":data}) : helper)))
+    + "\">"
+    + escapeExpression(((helper = (helper = helpers.trainerFirstName || (depth0 != null ? depth0.trainerFirstName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trainerFirstName","hash":{},"data":data}) : helper)))
+    + " "
+    + escapeExpression(((helper = (helper = helpers.trainerLastName || (depth0 != null ? depth0.trainerLastName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"trainerLastName","hash":{},"data":data}) : helper)))
+    + "</option>\n";
+},"3":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "                    <option value=\""
+    + escapeExpression(((helper = (helper = helpers.sessionTypeId || (depth0 != null ? depth0.sessionTypeId : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"sessionTypeId","hash":{},"data":data}) : helper)))
+    + "\">"
+    + escapeExpression(((helper = (helper = helpers.duration || (depth0 != null ? depth0.duration : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"duration","hash":{},"data":data}) : helper)))
+    + "</option>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<form class=\"large white\">\n    <fieldset>\n        <div>\n            <span class=\"dropdown block white\">\n                <span class=\"option\">"
+    + escapeExpression(((helper = (helper = helpers.defaultTrainer || (depth0 != null ? depth0.defaultTrainer : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"defaultTrainer","hash":{},"data":data}) : helper)))
+    + "</span>\n                <select id=\"select-trainer\" class=\"select-trainer\" name=\"trainer\">\n";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.trainers : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  buffer += "                </select>\n            </span>\n        </div>\n        <div>\n            <span class=\"dropdown block white\">\n                <span class=\"option\">"
+    + escapeExpression(((helper = (helper = helpers.defaultDuration || (depth0 != null ? depth0.defaultDuration : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"defaultDuration","hash":{},"data":data}) : helper)))
+    + "</span>\n                <select id=\"select-duration\" class=\"select-duration\" name=\"duration\">\n";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.durations : depth0), {"name":"each","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "                </select>\n            </span>\n        </div>\n    </fieldset>\n</form>\n";
+},"useData":true});
+
+},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/header.hbs":[function(require,module,exports){
+// hbsfy compiled Handlebars template
+var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<form class=\"large white\">\n    <fieldset>\n        <div>\n            <span class=\"dropdown block white\">\n                <span class=\"option\"><%= defaultTrainer %></span>\n                <select id=\"select-trainer\" class=\"select-trainer\" name=\"trainer\">\n                    <% _.each(trainers, function(item){ %>\n                        <option value=\"<%= item.trainerId %>\"><%= item.trainerFirstName %> <%= item.trainerLastName %></option>\n                    <% }); %>\n                </select>\n            </span>\n        </div>\n        <div>\n            <span class=\"dropdown block white\">\n                <span class=\"option\"><%= defaultDuration %></span>\n                <select id=\"select-duration\" class=\"select-duration\" name=\"duration\">\n                    <% _.each(durations, function(item){ %>\n                    <option value=\"<%= item.sessionTypeId %>\"><%= item.duration %></option>\n                    <% }); %>\n                </select>\n            </span>\n        </div>\n    </fieldset>\n</form>\n";
-  },"useData":true});
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "<h1>"
+    + escapeExpression(((helper = (helper = helpers.pageTitle || (depth0 != null ? depth0.pageTitle : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"pageTitle","hash":{},"data":data}) : helper)))
+    + "</h1>\n<div class=\"sub-header\">\n    <a href=\"/personal-training/rules\">see rules</a>\n</div>\n<h3 class=\"title\">"
+    + escapeExpression(((helper = (helper = helpers.subTitle || (depth0 != null ? depth0.subTitle : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"subTitle","hash":{},"data":data}) : helper)))
+    + "</h3>\n\n\n\n";
+},"useData":true});
 
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/layout.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
@@ -2207,20 +1741,6 @@ module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<!-- empty view -->\n";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/update/confirmation.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <h3 class=\"tier\"><%= trainerTier %></h3>\n\n    <ul class=\"class-detail\">\n        <li class=\"big-font\"><%= appointmentDate %></li>\n        <li class=\"big-font\"><%= appointmentTime %></li>\n        <li class=\"medium-font\">Personal Training</li>\n        <li class=\"medium-font\">w/<%= trainerFirstName %></li>\n        <li class=\"medium-font\"><%= facilityName %></li>\n    </ul>\n\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <p>your calendar is updated and your trainer has been notified</p>\n\n    <div class=\"export\">\n        <a target=\"_blank\" class=\"export\" href=\"<%= APIEndpoint %>/ME/CALENDAR/EVENTS/<%= id %>/EXPORT/ICS?exportType=AppointmentInstance\">\n            <span class=\"icon-export\"></span>Export to calendar\n        </a>\n    </div>\n\n    <nav class=\"buttons\" data-id=\"<%= id %>\">\n        <a href=\"#\" class=\"underlined-small-link black cancel\">cancel\n            session</a>\n    </nav>\n</section>\n";
-  },"useData":true});
-
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/templates/update/review.hbs":[function(require,module,exports){
-// hbsfy compiled Handlebars template
-var HandlebarsCompiler = require('hbsfy/runtime');
-module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<section class=\"class-module no-padding-bottom\">\n    <div class=\"original\">\n        <h4>original:</h4>\n        <ul class=\"class-detail\">\n            <li class=\"medium-font\"><%= originalAppointmentDate %></li>\n            <li class=\"medium-font\"><%= originalAppointmentTime %></li>\n        </ul>\n    </div>\n\n    <div>\n        <h4>new:</h4>\n        <h3 class=\"tier\"><%= trainerTier %></h3>\n        <div>Personal Training</div>\n        <ul class=\"class-detail\">\n            <li class=\"big-font\"><%= appointmentDate %></li>\n            <li class=\"big-font\"><%= appointmentTime %></li>\n            <li class=\"medium-font\">w/<%= trainerFirstName %></li>\n            <li class=\"medium-font\"><%= facilityName %></li>\n        </ul>\n    </div>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <a href=\"#\" class=\"underlined-small-link black add-message\">attach a message</a>\n\n    <div class=\"add-message-container hidden\">\n        <textarea maxlength=\"300\" style=\"resize: none;\"></textarea>\n\n        <div class=\"char-counter\">300</div>\n    </div>\n</section>\n\n<section class=\"class-module no-padding-bottom\">\n    <nav class=\"buttons\">\n        <a href=\"\" class=\"button white small half-button box update\">Edit Session</a>\n        <a href=\"\" class=\"button black small half-button box schedule\">Schedule Session</a>\n    </nav>\n    <a href=\"/personal-training/schedule\" class=\"underlined-small-link black\">Back</a>\n</section>\n\n";
   },"useData":true});
 
 },{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars.runtime.js":[function(require,module,exports){

@@ -2,12 +2,13 @@
   * Views Calendar Module
 ###
 
+Backbone = require "backbone"
 Marionette = require "backbone.marionette"
 moment = require "moment"
-App = require "../app.coffee"
+app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 
-Item = Marionette.ItemView.extend
+class Item extends Marionette.ItemView
   tagName: "li"
   template: require "../../templates/calendar/item.hbs"
   events:
@@ -15,8 +16,8 @@ Item = Marionette.ItemView.extend
 
   initialize: () ->
     #@addClass("item-" + @model.get "indexOfWeek"
-    @addAttribute "data-item", this.model.get "indexOfWeek"
-    @addAttribute "data-date", this.model.get "startDate"
+    @addAttribute "data-item", @model.get "indexOfWeek"
+    @addAttribute "data-date", @model.get "startDate"
 
   onBeforeRender: () ->
     startTime = null
@@ -28,7 +29,7 @@ Item = Marionette.ItemView.extend
       startTime = moment(@model.get "startDate").format "hh:mm"
       endTime = moment(@model.get "endDate").format "hh:mm"
       meridiemIndicator = moment(@model.get "endDate").format "A"
-      this.model.set
+      @model.set
         cid: @model.cid #client ID.
         className: if scheduled then "scheduled" else "available"
         appointment: startTime + " - " + endTime + " " + meridiemIndicator
@@ -40,10 +41,11 @@ Item = Marionette.ItemView.extend
 
   selectAppointment: (e) ->
     e.preventDefault()
-    msgBus.reqres.request "schedule:" + App.flow + ":review", @options.model
+    console.log "select"
+    #msgBus.reqres.request "schedule:#{app.flow}:review", @options.model
+    msgBus.reqres.request "create:review", @options.model
 
-
-EmptyItem = Marionette.ItemView.extend
+class EmptyItem extends Marionette.ItemView
   tagName: "li"
   className: "empty"
   template: require "../../templates/calendar/empty_item.hbs"
@@ -55,30 +57,29 @@ EmptyItem = Marionette.ItemView.extend
     @$el.addClass className
 
 
-DayPartView = Marionette.CollectionView.extend
+class DayPartView extends Marionette.CollectionView
   tagName: "ul"
-  itemViewOptions: (model, index) ->
+  childViewOptions: (model, index) ->
     itemIndex: index
 
-
-  getItemView: (item) ->
+  getChildView: (item) ->
     if item.get "isAvailable" then Item else EmptyItem
 
-CalendarHeaderItem = Marionette.ItemView.extend
+class CalendarHeaderItem  extends Marionette.ItemView
   tagName: "li"
-
+  template: require "../../templates/calendar/header_item.hbs"
   initialize: () ->
     if @model.get "selected"
-      @$el.addClass "selected"
+        @$el.addClass "selected"
 
-  template: require "../../templates/calendar/header_item.hbs"
 
-CalendarHeaderView = Marionette.CollectionView.extend
+class CalendarHeaderView extends Marionette.CollectionView
   tagName: "ul"
   className: "day-dates"
-  itemView: CalendarHeaderItem
+  childView: CalendarHeaderItem
 
-AppointmentsLayout = Marionette.Layout.extend
+
+class AppointmentsLayout extends Marionette.LayoutView
     template: require "../../templates/calendar/index.hbs"
     regions:
       header: ".appointments-header"
@@ -96,7 +97,7 @@ AppointmentsLayout = Marionette.Layout.extend
 module.exports = (options) ->
   appointmentsLayout = new AppointmentsLayout()
 
-  App.layout.content.show appointmentsLayout
+  app.layout.content.show appointmentsLayout
 
   appointmentsLayout.header.show new CalendarHeaderView
     collection: options.dates

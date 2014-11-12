@@ -3,12 +3,12 @@
 ###
 
 Marionette = require "backbone.marionette"
-App = require "../app.coffee"
+app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 View = require "../views/detail/index.coffee"
 view = null
 
-App.flow = "detail"
+app.flow = "detail"
 
 module.exports = Marionette.Controller.extend
 
@@ -21,7 +21,7 @@ module.exports = Marionette.Controller.extend
         view = new View
           model: appointment
 
-        App.layout.content.show view
+        app.layout.content.show view
 
       promise.fail (model, jqXHR, textStatus) ->
         msgBus.reqres.request "schedule:error", error: [model, jqXHR, textStatus]

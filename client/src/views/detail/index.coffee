@@ -4,7 +4,7 @@
 
 moment = require "moment"
 Marionette = require "backbone.marionette"
-App = require "../../app.coffee"
+app = require "../../app.coffee"
 msgBus = require "../../msgbus.coffee"
 
 
@@ -40,7 +40,7 @@ module.exports = Marionette.ItemView.extend
       @model.set
         cancelAll: true
       #update URL address
-      App.navigate "cancel/" + @model.id
+      app.navigate "cancel/" + @model.id
       msgBus.reqres.request "schedule:cancel:review", @model
 
 
@@ -49,10 +49,10 @@ module.exports = Marionette.ItemView.extend
     @model.set
       cancelAll: false
     #update URL address
-    App.navigate "cancel/" + @model.id
+    app.navigate "cancel/" + @model.id
     msgBus.reqres.request "schedule:cancel:review", @model
 
     reschedule: (e) ->
     e.preventDefault()
-    App.navigate "update/" + @model.id
+    app.navigate "update/" + @model.id
     msgBus.reqres.request "schedule:update", @model.id

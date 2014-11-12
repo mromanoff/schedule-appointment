@@ -2,10 +2,11 @@
 * Criteria Module
 ###
 
-msgBus = require "../msgbus.coffee"
 Backbone = require "backbone"
+msgBus = require "../msgbus.coffee"
 
-module.exports = Backbone.Model.extend
+
+class Model extends Backbone.Model
   defaults:
     trainerId: null
     trainerName: null
@@ -13,17 +14,18 @@ module.exports = Backbone.Model.extend
     duration: null
     startDate: null
 
-
   initialize: () ->
+    console.log "criteria model"
     @on "change", @updateCalendar
 
-
   updateCalendar: () ->
-    msgBus.reqres.request "schedule:calendar",
-      startDate: this.get "startDate"
-      trainerId: this.get "trainerId"
-      sessionTypeId: this.get "sessionTypeId"
+    console.log "criteria model change"
 
+    msgBus.reqres.request "calendar:show",
+      startDate: @get "startDate"
+      trainerId: @get "trainerId"
+      sessionTypeId: @get "sessionTypeId"
 
+module.exports = Model
 
 

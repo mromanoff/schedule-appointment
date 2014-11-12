@@ -1,29 +1,29 @@
 ###*
-* Entities Appointment Module
+* Entities appointment Module
 ###
 
-App = require "../app.coffee"
+app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 Loading = require "../views/spinner.coffee"
 
 loadingView = new Loading()
-Appointment = Backbone.Model.extend()
+appointment = Backbone.Model.extend()
 
 API =
   ###*
-     * @name getAppointment
+     * @name getappointment
      * @function
      * @returns {object} promise object
   ###
-  getAppointment: (id) ->
-    appointment = new Appointment
+  getappointment: (id) ->
+    appointment = new appointment
       id: id
     deferred = $.Deferred()
 
-    App.layout.content.show loadingView
+    app.layout.content.show loadingView
 
     appointment.urlRoot = () ->
-      App.APIEndpoint + "/personal-training-schedule/appointments"
+      app.APIEndpoint + "/personal-training-schedule/appointments"
 
     appointment.fetch
       success: deferred.resolve
@@ -33,4 +33,4 @@ API =
 
 
 msgBus.reqres.setHandler "entities:appointment", (id) ->
-  API.getAppointment id
+  API.getappointment id

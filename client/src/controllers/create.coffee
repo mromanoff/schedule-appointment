@@ -2,76 +2,78 @@
   * Controller Create Module
 ###
 
+_ = require "underscore"
 Marionette = require "backbone.marionette"
-App = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
+Utils = require "../components/utils.coffee"
+app = require "../app.coffee"
+require "../entities/create.coffee"
+
 ReviewView = require "../views/create/review.coffee"
-ConfirmationView = require "../views/create/confirmation.coffee"
-view = null
+#ConfirmationView = require "../views/create/confirmation.coffee"
+#view = null
+utils =  new Utils
 
-App.flow = "create"
+#app.flow = "create"
 
-module.exports = Marionette.Controller.extend
-
+class Controller extends Marionette.Controller
   index: (date) ->
-    console.log "Create: date attr ", date
+    date = if utils.isValidDate date  then date else utils.TOMORROW
 
-    date = if App.utils.isValidDate date  then date else App.utils.TOMORROW
-
-    msgBus.reqres.request "schedule:header",
+    msgBus.reqres.request "header:region",
       pageTitle: "Schedule Training"
 
-    msgBus.reqres.request "schedule:trainer:filter"
+    msgBus.reqres.request "trainer:filter"
 
-    msgBus.reqres.request "schedule:calendar:navigation",
+    msgBus.reqres.request "calendar:navigation",
       startDate: date
 
-    App.filterCriteria.set
+    app.filterCriteria.set
       startDate: date
 
-    App.analytics.set
-      action: "add-start"
-
+    #app.analytics.set
+      #action: "add-start"
 
   review: (appointment) ->
-    msgBus.reqres.request "schedule:header",
+    msgBus.reqres.request "header:region",
       pageTitle: "Review your session"
 
     view = new ReviewView
       model: appointment
 
-    App.layout.filter.close()
-    App.layout.navigation.close()
-    App.layout.content.show view
+    #app.layout.filter.close()
+    #app.layout.navigation.close()
+    app.layout.content.show view
 
-    App.analytics.set
-      action: "add-review"
-
+    #app.analytics.set
+      #action: "add-review"
 
   confirmation: (appointment) ->
     #pick data.
     data = _.pick appointment.toJSON(), "id", "sessionTypeId", "trainerId", "startDate", "endDate", "message"
 
-    require ["entities/create"], () ->
-      promise = msgBus.reqres.request "entities:create:appointment", data
-      promise.done (response) ->
+    promise = msgBus.reqres.request "entities:create:appointment", data
+    promise.done (response) ->
 
-        #update model with new id and pass APIEndpoint
-        appointment.set
-          id: response.id
-          APIEndpoint: App.APIEndpoint
+      #update model with new id and pass APIEndpoint
+      appointment.set
+        id: response.id
+        APIEndpoint: app.APIEndpoint
 
-        msgBus.reqres.request "schedule:header",
-          pageTitle: "Enjoy your workout."
+      msgBus.reqres.request "header:region",
+        pageTitle: "Enjoy your workout."
 
-        view = new ConfirmationView
-          model: appointment
+      view = new ConfirmationView
+        model: appointment
 
-        App.layout.navigation.close()
-        App.layout.content.show view
+      #app.layout.navigation.close()
+      app.layout.content.show view
 
-        App.analytics.set
-          action: "add-complete"
+      #app.analytics.set
+        #action: "add-complete"
 
-      promise.fail (response) ->
-        msgBus.reqres.request "schedule:error", response.responseJSON
+    promise.fail (response) ->
+      msgBus.reqres.request "error", response.responseJSON
+
+
+module.exports = Controller

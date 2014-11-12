@@ -3,7 +3,7 @@
 ###
 
 Marionette  = require "backbone.marionette"
-App = require "../../app.coffee"
+app = require "../../app.coffee"
 msgBus = require "../../msgbus.coffee"
 
 module.exports = Marionette.ItemView.extend
@@ -13,12 +13,12 @@ module.exports = Marionette.ItemView.extend
     msgBus.commands.execute "scroll:top"
 
   events:
-    "click .cancel": "cancelAppointment"
+    "click .cancel": "cancelappointment"
 
 
-  cancelAppointment: (e) ->
+  cancelappointment: (e) ->
     e.preventDefault()
-    App.navigate "cancel/" + @model.id,
+    app.navigate "cancel/" + @model.id,
       trigger: false
 
     msgBus.reqres.request "schedule:cancel", @model.id

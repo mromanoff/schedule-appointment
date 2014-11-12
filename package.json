@@ -41,7 +41,7 @@
     "backbone": "./client/vendor/bower_components/backbone/backbone.js",
     "backbone.wreqr": "./client/vendor/bower_components/backbone.wreqr/backbone.wreqr.js",
     "backbone.babysitter": "./client/vendor/bower_components/backbone.babysitter/backbone.babysitter.js",
-    "backbone.marionette": "./client/vendor/bower_components/backbone.marionette/backbone.marionette.js",
+    "backbone.marionette": "./client/vendor/bower_components/marionette/backbone.marionette.js",
     "moment": "./client/vendor/bower_components/momentjs/moment.js",
     "spinner": "./client/vendor/bower_components/spin.js/spin.js"
   }

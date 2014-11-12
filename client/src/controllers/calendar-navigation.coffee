@@ -5,14 +5,15 @@
 Backbone = require "backbone"
 Marionette = require "backbone.marionette"
 moment = require "moment"
-App = require "../app.coffee"
-View = require "../views/calendar/navigation.coffee"
+app = require "../app.coffee"
+View = require "../views/calendar-navigation.coffee"
 
-Model = Backbone.Model.extend()
+class Model extends Backbone.Model
+
 collection = new Backbone.Collection()
 
 createCollection = (startDate) ->
-  date = moment(startDate)
+  date = moment startDate
   model
 
   for i in [0..6] by 1
@@ -29,12 +30,14 @@ createCollection = (startDate) ->
 
   collection
 
-module.exports = Marionette.Controller.extend
-  index: (options) ->
 
+class Controller extends Marionette.Controller
+  index: (options) ->
     #reset collection
     collection.reset()
     collection = createCollection options.startDate
 
-    App.layout.navigation.show new View
+    app.layout.navigation.show new View
       collection: collection
+
+module.exports = Controller

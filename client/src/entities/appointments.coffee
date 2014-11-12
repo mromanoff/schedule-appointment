@@ -1,48 +1,50 @@
 ###*
+ * Entities Appointments
  * @module entities/appointments
 ###
 
-define (require) ->
+$ = require "jquery"
+Backbone = require "backbone"
+app = require "../app.coffee"
+msgBus = require '../msgbus.coffee'
+Loading = require '../views/spinner.coffee'
 
-  App = require "../app.coffee"
-  msgBus = require '../msgbus.coffee'
-  Loading = require '../views/spinner.coffee'
+loadingView = new Loading()
 
-  loadingView = new Loading()
-  DayPart = Backbone.Model.extend
-    defaults:
-      morning: null
-      afternoon: null
-      evening: null
+class DayPart extends Backbone.Model
+  defaults:
+    morning: null
+    afternoon: null
+    evening: null
 
-  Appointments = Backbone.Collection.extend
-    model: DayPart
+class Appointments extends Backbone.Collection
+  model: DayPart
 
-  API =
-    ###*
-     * @name getAppointments
-     * @function
-     * @returns {object} promise object
-    ###
-    getAppointments: () ->
-      appointments = new Appointments()
-      deferred = $.Deferred()
+API =
+  ###*
+   * @name getappointments
+   * @function
+   * @returns {object} promise object
+  ###
+  getAppointments: () ->
+    appointments = new Appointments()
+    deferred = $.Deferred()
 
-      App.layout.content.show loadingView
+    app.layout.content.show loadingView
 
-      appointments.url = () ->
-        query = '?startDate=' + App.filterCriteria.get('startDate') + '&sessionTypeId=' + App.filterCriteria.get('sessionTypeId') + '&trainerId=' + App.filterCriteria.get('trainerId')
-        App.APIEndpoint + 'appointments' + query
+    appointments.url = () ->
+      query = '?startDate=' + app.filterCriteria.get('startDate') + '&sessionTypeId=' + app.filterCriteria.get('sessionTypeId') + '&trainerId=' + app.filterCriteria.get('trainerId')
+      app.APIEndpoint + '/personal-training-schedule/appointments' + query
 
-      #setTimeout () ->
-      appointments.fetch
-        success: deferred.resolve
-        error: deferred.reject
-      #, 2000
+    #setTimeout () ->
+    appointments.fetch
+      success: deferred.resolve
+      error: deferred.reject
+    #, 2000
 
-      deferred.promise()
+    deferred.promise()
 
-  msgBus.reqres.setHandler 'entities:appointments', () ->
-    API.getAppointments()
+msgBus.reqres.setHandler 'entities:appointments', () ->
+  API.getAppointments()
 
-  return
+

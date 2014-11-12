@@ -1,76 +1,52 @@
 ###*
-  * App Module
+  * app Module
 ###
+
+$ = require "jquery"
 _ = require "underscore"
 Backbone = require "backbone"
+Backbone.$  = $
 Marionette = require "backbone.marionette"
 Layout = require "./views/layout.coffee"
-Utils = require "./components/utils.coffee"
+Router = require "./router.coffee"
+msgBus = require "./msgbus.coffee"
 FilterCriteriaModel = require "./entities/criteria.coffee"
-Analytics = require "./entities/analytics.coffee"
 
-App = new Marionette.Application()
-App.layout = new Layout()
-App.utils = new Utils()
-App.filterCriteria = new FilterCriteriaModel()
-App.analytics = new Analytics()
-App.el = "#app-main"
+app = new Marionette.Application
 
-###* update App flow
-   *  @param {string} create, update, cancel, detail
-###
-App.flow = null;
+app.addRegions
+  mainRegion: "#app-main"
 
-###*
- *
- * @returns {Backbone.History.fragment|*}
-###
-App.getCurrentRoute = () ->
-  Backbone.history.fragment
+app.layout = new Layout
+app.mainRegion.show app.layout
+
+app.filterCriteria = new FilterCriteriaModel
 
 
-###*
- * @param route
- * @param {object} options
-###
-App.navigate = (route, options = {}) ->
-  Backbone.history.navigate(route, options)
+app.on "initialize:before", (options={}) ->
+  console.log "init:before", options
 
 
-App.on "initialize:after", () ->
-  #TODO: temp fix. if member don"t have a trainer. don"t start App. redirect
-  if _.isEmpty App.scheduleCriteria.trainers
-    window.location.href = "/personal-training/schedule-equifit"
-    return false
-
-
-  #all the core meat goes here
-  #create global App {} mimic legacy app.
-  #window.App =
-    #Components: {}
-
-
-  #require ["components"]
-  #require ["helpers"]
-
-  App.filterCriteria.set
-    sessionTypeId: App.scheduleCriteria.durations[0].sessionTypeId # first duration in the list is default session. 60 Min
-    duration: App.scheduleCriteria.durations[0].duration
-    trainerId: App.scheduleCriteria.trainers[0].trainerId  # first trainer in the list is default trainer
-    trainerName: App.scheduleCriteria.trainers[0].trainerFirstName + " " + App.scheduleCriteria.trainers[0].trainerLastName
-    ,
+app.on "initialize:after", () ->
+  app.filterCriteria.set
+    sessionTypeId: app.scheduleCriteria.durations[0].sessionTypeId # first duration in the list is default session. 60 Min
+    duration: app.scheduleCriteria.durations[0].duration
+    trainerId: app.scheduleCriteria.trainers[0].trainerId  # first trainer in the list is default trainer
+    trainerName: app.scheduleCriteria.trainers[0].trainerFirstName + " " + app.scheduleCriteria.trainers[0].trainerLastName
+      ,
     silent: true
 
 
-  App.analytics.set
-    trainerId: App.scheduleCriteria.trainers[0].trainerId  # first trainer in the list is default trainer
+app.addInitializer (options) ->
+  _.extend app, options,
+      appstate: null
 
-  App.addRegions
-    mainRegion: App.el
+  new Router()
+  Backbone.history.start
+    pushState: true
+    root: "/personal-training/schedule"
 
-  App.mainRegion.show App.layout
 
+window.app = app
 
-window.App = App
-
-module.exports = App
+module.exports = app
