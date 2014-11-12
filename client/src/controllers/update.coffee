@@ -25,7 +25,7 @@ module.exports = Marionette.Controller.extend
         startDate = moment(date).format "YYYY-MM-DD"
         uiDate = moment(date).format "MMM D @ H A"
 
-        msgBus.reqres.request "schedule:header",
+        msgBus.reqres.request "header:region",
           pageTitle: "Reschedule Training"
           subTitle: "edit the time for <strong>" + uiDate + "</strong> and notify your trainer"
 
@@ -48,12 +48,12 @@ module.exports = Marionette.Controller.extend
           action: "edit-start"
 
       promise.fail (model, jqXHR, textStatus) ->
-      msgBus.reqres.request "schedule:error",
+      msgBus.reqres.request "error",
         error: [model, jqXHR, textStatus]
 
 
   review: (appointment) ->
-    msgBus.reqres.request "schedule:header",
+    msgBus.reqres.request "header:region",
         pageTitle: "Review your session"
         subTitle: null
 
@@ -87,7 +87,7 @@ module.exports = Marionette.Controller.extend
         APIEndpoint: app.APIEndpoint
 
 
-      msgBus.reqres.request "schedule:header",
+      msgBus.reqres.request "header:region",
         pageTitle: "Enjoy your workout."
         subTitle: null
 
@@ -105,4 +105,4 @@ module.exports = Marionette.Controller.extend
 
 
     promise.fail (response) ->
-      msgBus.reqres.request "schedule:error", response.responseJSON
+      msgBus.reqres.request "error", response.responseJSON

@@ -2,20 +2,20 @@
     <div class="original">
         <h4>original:</h4>
         <ul class="class-detail">
-            <li class="medium-font"><%= originalAppointmentDate %></li>
-            <li class="medium-font"><%= originalAppointmentTime %></li>
+            <li class="medium-font">{{originalAppointmentDate}}</li>
+            <li class="medium-font">{{originalAppointmentTime}}</li>
         </ul>
     </div>
 
     <div>
         <h4>new:</h4>
-        <h3 class="tier"><%= trainerTier %></h3>
+        <h3 class="tier">{{trainerTier}}</h3>
         <div>Personal Training</div>
         <ul class="class-detail">
-            <li class="big-font"><%= appointmentDate %></li>
-            <li class="big-font"><%= appointmentTime %></li>
-            <li class="medium-font">w/<%= trainerFirstName %></li>
-            <li class="medium-font"><%= facilityName %></li>
+            <li class="big-font">{{appointmentDate}}</li>
+            <li class="big-font">{{appointmentTime}}</li>
+            <li class="medium-font">w/{{trainerFirstName}}</li>
+            <li class="medium-font">{{facilityName}}</li>
         </ul>
     </div>
 </section>

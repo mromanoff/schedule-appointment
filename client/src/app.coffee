@@ -19,8 +19,14 @@ app.addRegions
 
 app.layout = new Layout
 app.mainRegion.show app.layout
-
 app.filterCriteria = new FilterCriteriaModel
+
+###*
+ * @param route
+ * @param {object} options
+###
+app.navigate = (route, options = {}) ->
+  Backbone.history.navigate(route, options)
 
 
 app.on "initialize:before", (options={}) ->

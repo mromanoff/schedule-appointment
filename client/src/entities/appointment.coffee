@@ -1,12 +1,14 @@
 ###*
-* Entities appointment Module
+* Entities Appointment Module
 ###
 
+$ = require "jquery"
+Backbone = require "backbone"
 app = require "../app.coffee"
 msgBus = require "../msgbus.coffee"
 Loading = require "../views/spinner.coffee"
 
-loadingView = new Loading()
+loadingView = new Loading
 appointment = Backbone.Model.extend()
 
 API =
@@ -15,7 +17,7 @@ API =
      * @function
      * @returns {object} promise object
   ###
-  getappointment: (id) ->
+  getAppointment: (id) ->
     appointment = new appointment
       id: id
     deferred = $.Deferred()
@@ -31,6 +33,5 @@ API =
 
     deferred.promise()
 
-
 msgBus.reqres.setHandler "entities:appointment", (id) ->
-  API.getappointment id
+  API.getAppointment id

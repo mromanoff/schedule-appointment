@@ -1,12 +1,14 @@
-define (require, exports, module) ->
+###*
+* Entities Error Module
+###
 
-  Backbone = require 'backbone'
+Backbone = require "backbone"
 
-  module.exports = Backbone.Model.extend(
-    defaults:
-      message: 'Please try again later.'
-      code: null
-      exception: null
-      data: null
-  )
-  return
+class Model extends Backbone.Model
+  defaults:
+    message: "Please try again later."
+    code: null
+    exception: null
+    data: null
+
+module.exports = Model

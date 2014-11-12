@@ -1,5 +1,5 @@
 ###*
-  * Create Confirmation Module
+  * View Create Confirmation Module
 ###
 
 Marionette  = require "backbone.marionette"
@@ -13,10 +13,10 @@ module.exports = Marionette.ItemView.extend
     msgBus.commands.execute "scroll:top"
 
   events:
-    "click .cancel": "cancelappointment"
+    "click .cancel": "cancelAppointment"
 
 
-  cancelappointment: (e) ->
+  cancelAppointment: (e) ->
     e.preventDefault()
     app.navigate "cancel/" + @model.id,
       trigger: false

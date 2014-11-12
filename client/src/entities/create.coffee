@@ -6,8 +6,8 @@
 $ = require "jquery"
 Backbone = require "backbone"
 app = require "../app.coffee"
-msgBus = require '../msgbus.coffee'
-Loading = require '../views/spinner.coffee'
+msgBus = require "../msgbus.coffee"
+Loading = require "../views/spinner.coffee"
 
 loadingView = new Loading()
 
@@ -20,7 +20,7 @@ class Model extends Backbone.Model
     message: null
 
   url: () ->
-    app.APIEndpoint + '/create'
+    app.APIEndpoint + "/personal-training-schedule/create"
 
 API =
   ###*
@@ -42,7 +42,7 @@ API =
     #}, 2000);
     deferred.promise()
 
-msgBus.reqres.setHandler 'entities:create:appointment', (data) ->
+msgBus.reqres.setHandler "entities:create:appointment", (data) ->
   API.createAppointment data
 
 

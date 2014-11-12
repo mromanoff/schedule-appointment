@@ -8,12 +8,11 @@ msgBus = require "../msgbus.coffee"
 Model = require "../entities/error.coffee"
 View = require "../views/error.coffee"
 
-model = new Model()
+model = new Model
 
-module.exports = Marionette.Controller.extend
-
-  initialize: (options) ->
-    msgBus.reqres.request "schedule:header",
+class Controller extends Marionette.Controller
+  init: (options) ->
+    msgBus.reqres.request "header:region",
       pageTitle: "Error"
       subTitle: null
 
@@ -28,3 +27,5 @@ module.exports = Marionette.Controller.extend
 
     app.layout.content.show new View
       model: model
+
+  module.exports = Controller

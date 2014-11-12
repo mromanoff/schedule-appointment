@@ -8,6 +8,7 @@ msgBus = require "../msgbus.coffee"
 CancelView = require "../views/cancel/index.coffee"
 ReviewView = require "../views/cancel/review.coffee"
 ConfirmationView = require "../views/cancel/confirmation.coffee"
+require "../entities/appointment.coffee"
 
 view = null
 
@@ -15,27 +16,26 @@ app.flow = "cancel"
 
 module.exports = Marionette.Controller.extend
     index: (id) ->
-      msgBus.reqres.request "schedule:header",
+      msgBus.reqres.request "header:region",
         pageTitle: "Cancel your session"
 
-      require ["entities/appointment"], () ->
-        promise = msgBus.reqres.request "entities:appointment", id
-        promise.done (appointment) ->
-          view = new CancelView
-            model: appointment
+      promise = msgBus.reqres.request "entities:appointment", id
+      promise.done (appointment) ->
+        view = new CancelView
+          model: appointment
 
-          app.layout.content.show view
+        app.layout.content.show view
 
-          app.analytics.set
-            action: "delete-start"
+        app.analytics.set
+          action: "delete-start"
 
 
-        promise.fail (model, jqXHR, textStatus) ->
-          msgBus.reqres.request "schedule:error",
-            error: [model, jqXHR, textStatus]
+      promise.fail (model, jqXHR, textStatus) ->
+        msgBus.reqres.request "error",
+          error: [model, jqXHR, textStatus]
 
     review: (appointment) ->
-      msgBus.reqres.request "schedule:header",
+      msgBus.reqres.request "header:region",
         pageTitle: "Cancel your session"
 
       view = new ReviewView
@@ -61,7 +61,7 @@ module.exports = Marionette.Controller.extend
             APIEndpoint: app.APIEndpoint
 
 
-          msgBus.reqres.request "schedule:header",
+          msgBus.reqres.request "header:region",
             pageTitle: "Your session is canceled"
 
           view = new ConfirmationView
@@ -73,4 +73,4 @@ module.exports = Marionette.Controller.extend
             action: "delete-complete"
 
         promise.fail (response) ->
-          msgBus.reqres.request "schedule:error", response.responseJSON
+          msgBus.reqres.request "error", response.responseJSON

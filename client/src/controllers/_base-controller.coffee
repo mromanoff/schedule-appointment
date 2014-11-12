@@ -61,6 +61,54 @@ class Controller extends Marionette.Controller
     new Controller().index()
 
   ###*
+  * render index page for cancel appointment flow
+  * @param {id} id - appointment ID
+  ###
+  cancel: (id) ->
+    Controller = require "./cancel.coffee"
+    new Controller().index id
+
+  ###*
+  * render index page for update appointment flow
+  * @param {string} id - Selected appointment ID
+  ###
+  update: (id) ->
+    Controller = require "./update.coffee"
+    new Controller().index id
+
+  ###*
+  * render review page for update appointment flow
+  * @param {object} appointment - Selected appointment model
+  ###
+  updateReview: (appointment) ->
+    Controller = require "./update.coffee"
+    new Controller().review appointment
+
+  ###*
+  * render confirmation page for update appointment flow
+  * @param {object} appointment - Selected appointment model
+  ###
+  updateConfirmation: (appointment) ->
+    Controller = require "./update.coffee"
+    new Controller().confirmation appointment
+
+  ###*
+  * render index page for detail appointment flow
+  * @param {string} id - Selected appointment ID
+  ###
+  detail: (id) ->
+    Controller = require "./detail.coffee"
+    new Controller().index id
+
+  ###*
+  * Render an error page
+  * @param {object} options - Options object
+  ###
+  error: (options) ->
+    Controller = require "./error.coffee"
+    new Controller(options).init options
+
+  ###*
   *   Scroll page to the top.
   *   TODO: move to helper file or marionette behavior
   ###
@@ -72,5 +120,12 @@ class Controller extends Marionette.Controller
       opacity: 1
     , 600
     )
+
+  ###*
+  *   Route to default page. Full app reload
+  ###
+  defaultPage: () ->
+    #update url if there is route doesn"t exist. go to schedule default page
+    Backbone.history.navigate "",  trigger: true
 
 module.exports = Controller

@@ -14,6 +14,6 @@ Frontend: CoffeeScript, BackboneJS, MarionetteJS, Handlebars, SASS, SUSY
 
 
 ####TODO:
-[x] Update to latest MarionetteJS
-[] Unit Tests
-[] Move mackup data to MongoDB.
++ Update to latest MarionetteJS
++ Unit Tests
++ Move mackup data to MongoDB.

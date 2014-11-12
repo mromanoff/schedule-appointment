@@ -10,7 +10,8 @@ app = require "../app.coffee"
 require "../entities/create.coffee"
 
 ReviewView = require "../views/create/review.coffee"
-#ConfirmationView = require "../views/create/confirmation.coffee"
+ConfirmationView = require "../views/create/confirmation.coffee"
+
 #view = null
 utils =  new Utils
 
