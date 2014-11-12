@@ -759,12 +759,15 @@ Controller = (function(_super) {
   }
 
   Controller.prototype.init = function(options) {
+    if (options == null) {
+      options = {};
+    }
     msgBus.reqres.request("header:region", {
       pageTitle: "Error",
       subTitle: null
     });
-    app.layout.filter.close();
-    app.layout.navigation.close();
+    app.layout.removeRegion("filter");
+    app.layout.removeRegion("navigation");
     model.set(options.error);
     return app.layout.content.show(new View({
       model: model
@@ -1205,7 +1208,7 @@ msgBus.reqres.setHandler("entities:create:appointment", function(data) {
 },{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/spinner.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee","backbone":"backbone","jquery":"jquery"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/criteria.coffee":[function(require,module,exports){
 
 /**
-* Criteria Module
+* Entities Criteria Module
  */
 var Backbone, Model, msgBus,
   __hasProp = {}.hasOwnProperty,
@@ -1231,12 +1234,10 @@ Model = (function(_super) {
   };
 
   Model.prototype.initialize = function() {
-    console.log("criteria model");
     return this.on("change", this.updateCalendar);
   };
 
   Model.prototype.updateCalendar = function() {
-    console.log("criteria model change");
     return msgBus.reqres.request("calendar:show", {
       startDate: this.get("startDate"),
       trainerId: this.get("trainerId"),

@@ -11,17 +11,16 @@ View = require "../views/error.coffee"
 model = new Model
 
 class Controller extends Marionette.Controller
-  init: (options) ->
+  init: (options = {}) ->
     msgBus.reqres.request "header:region",
       pageTitle: "Error"
       subTitle: null
 
+    #remove filter region
+    app.layout.removeRegion("filter");
 
-    #close filters if it was open before
-    app.layout.filter.close()
-
-    #close navigation if it was open before
-    app.layout.navigation.close()
+    #remove navigation if it was open before
+    app.layout.removeRegion("navigation");
 
     model.set options.error
 

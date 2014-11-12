@@ -1,10 +1,9 @@
 ###*
-* Criteria Module
+* Entities Criteria Module
 ###
 
 Backbone = require "backbone"
 msgBus = require "../msgbus.coffee"
-
 
 class Model extends Backbone.Model
   defaults:
@@ -15,11 +14,9 @@ class Model extends Backbone.Model
     startDate: null
 
   initialize: () ->
-    console.log "criteria model"
     @on "change", @updateCalendar
 
   updateCalendar: () ->
-    console.log "criteria model change"
 
     msgBus.reqres.request "calendar:show",
       startDate: @get "startDate"
