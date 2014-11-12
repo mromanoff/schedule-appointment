@@ -10,10 +10,10 @@ schedule-appointment
 
 Backend: NodeJS, Express
 
-Frontend: CoffeeScript, BackboneJS, MarionetteJS, SASS, SUSY
+Frontend: CoffeeScript, BackboneJS, MarionetteJS, Handlebars, SASS, SUSY
 
 
 ####TODO:
-+ Update to latest MarionetteJS
-+ Unit Tests
-+ Move mackup data to MongoDB.
+[x] Update to latest MarionetteJS
+[] Unit Tests
+[] Move mackup data to MongoDB.
