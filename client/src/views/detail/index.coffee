@@ -8,7 +8,7 @@ app = require "../../app.coffee"
 msgBus = require "../../msgbus.coffee"
 
 
-module.exports = Marionette.ItemView.extend
+class View extends Marionette.ItemView
   template: require "../../../templates/detail/index.hbs"
 
   events:
@@ -16,12 +16,10 @@ module.exports = Marionette.ItemView.extend
     "click .cancel": "cancel"
     "click .reschedule": "reschedule"
 
-
   initialize: () ->
     msgBus.commands.execute "scroll:top"
 
-
-  onBeforeRender: () ->
+  onBeforeRender: ->
     weekDay = moment(@model.get "startDate").format "dddd"
     shortMonth = moment(@model.get "startDate").format "MMM"
     date = moment(@model.get "startDate").format "DD"
@@ -40,19 +38,21 @@ module.exports = Marionette.ItemView.extend
       @model.set
         cancelAll: true
       #update URL address
-      app.navigate "cancel/" + @model.id
+      app.navigate "cancel/#{@model.id}"
       msgBus.reqres.request "schedule:cancel:review", @model
 
 
     cancel: (e) ->
-    e.preventDefault()
-    @model.set
-      cancelAll: false
-    #update URL address
-    app.navigate "cancel/" + @model.id
-    msgBus.reqres.request "schedule:cancel:review", @model
+      e.preventDefault()
+      @model.set
+        cancelAll: false
+      #update URL address
+      app.navigate "cancel/#{@model.id}"
+      msgBus.reqres.request "schedule:cancel:review", @model
 
     reschedule: (e) ->
-    e.preventDefault()
-    app.navigate "update/" + @model.id
-    msgBus.reqres.request "schedule:update", @model.id
+      e.preventDefault()
+      app.navigate "update/#{@model.id}"
+      msgBus.reqres.request "schedule:update", @model.id
+
+module.exports = View

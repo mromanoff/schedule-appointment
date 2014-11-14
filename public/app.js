@@ -36,6 +36,13 @@ app.mainRegion.show(app.layout);
 app.filterCriteria = new FilterCriteriaModel;
 
 
+/** update app flow
+   *  @param {string} create, update, cancel, detail
+ */
+
+app.flow = null;
+
+
 /**
  * @param route
  * @param {object} options
@@ -233,6 +240,28 @@ Controller = (function(_super) {
   Controller.prototype.cancel = function(id) {
     Controller = require("./cancel.coffee");
     return new Controller().index(id);
+  };
+
+
+  /**
+  * render review page for cancel appointment flow
+  * @param {object} appointment - Selected appointment model
+   */
+
+  Controller.prototype.cancelReview = function(appointment) {
+    Controller = require("./cancel.coffee");
+    return new Controller().review(appointment);
+  };
+
+
+  /**
+  * render confirmation page for cancel appointment flow
+  * @param {object} appointment - Selected appointment model
+   */
+
+  Controller.prototype.cancelConfirmation = function(appointment) {
+    Controller = require("./cancel.coffee");
+    return new Controller().confirmation(appointment);
   };
 
 
@@ -514,6 +543,8 @@ ConfirmationView = require("../views/cancel/confirmation.coffee");
 
 require("../entities/appointment.coffee");
 
+require("../entities/cancel.coffee");
+
 view = null;
 
 app.flow = "cancel";
@@ -529,10 +560,7 @@ module.exports = Marionette.Controller.extend({
       view = new CancelView({
         model: appointment
       });
-      app.layout.content.show(view);
-      return app.analytics.set({
-        action: "delete-start"
-      });
+      return app.layout.content.show(view);
     });
     return promise.fail(function(model, jqXHR, textStatus) {
       return msgBus.reqres.request("error", {
@@ -547,48 +575,42 @@ module.exports = Marionette.Controller.extend({
     view = new ReviewView({
       model: appointment
     });
-    app.layout.content.show(view);
-    return app.analytics.set({
-      action: "delete-review"
-    });
+    return app.layout.content.show(view);
   },
   confirmation: function(appointment) {
-    var data;
+    var data, promise;
     data = _.pick(appointment.toJSON(), "id", "cancelAll", "message");
-    return require(["entities/cancel"], function() {
-      var promise;
-      promise = msgBus.reqres.request("entities:cancel:appointment", data);
-      promise.done(function(response) {
-        appointment.set({
-          id: response.id,
-          APIEndpoint: app.APIEndpoint
-        });
-        msgBus.reqres.request("header:region", {
-          pageTitle: "Your session is canceled"
-        });
-        view = new ConfirmationView({
-          model: appointment
-        });
-        app.layout.content.show(view);
-        return app.analytics.set({
-          action: "delete-complete"
-        });
+    promise = msgBus.reqres.request("entities:cancel:appointment", data);
+    promise.done(function(response) {
+      appointment.set({
+        id: response.id,
+        APIEndpoint: app.APIEndpoint
       });
-      return promise.fail(function(response) {
-        return msgBus.reqres.request("error", response.responseJSON);
+      msgBus.reqres.request("header:region", {
+        pageTitle: "Your session is canceled"
       });
+      view = new ConfirmationView({
+        model: appointment
+      });
+      app.layout.content.show(view);
+      return app.analytics.set({
+        action: "delete-complete"
+      });
+    });
+    return promise.fail(function(response) {
+      return msgBus.reqres.request("error", response.responseJSON);
     });
   }
 });
 
 
 
-},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../entities/appointment.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/appointment.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/cancel/confirmation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/confirmation.coffee","../views/cancel/index.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/index.coffee","../views/cancel/review.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/review.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/create.coffee":[function(require,module,exports){
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../entities/appointment.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/appointment.coffee","../entities/cancel.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/cancel.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/cancel/confirmation.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/confirmation.coffee","../views/cancel/index.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/index.coffee","../views/cancel/review.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/cancel/review.coffee","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/controllers/create.coffee":[function(require,module,exports){
 
 /**
   * Controller Create Module
  */
-var ConfirmationView, Controller, Marionette, ReviewView, Utils, app, msgBus, utils, _,
+var ConfirmationView, Controller, Marionette, ReviewView, Utils, app, msgBus, utils, view, _,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -608,7 +630,11 @@ ReviewView = require("../views/create/review.coffee");
 
 ConfirmationView = require("../views/create/confirmation.coffee");
 
+view = null;
+
 utils = new Utils;
+
+app.flow = "create";
 
 Controller = (function(_super) {
   __extends(Controller, _super);
@@ -622,8 +648,8 @@ Controller = (function(_super) {
     msgBus.reqres.request("header:region", {
       pageTitle: "Schedule Training"
     });
-    msgBus.reqres.request("trainer:filter");
-    msgBus.reqres.request("calendar:navigation", {
+    msgBus.reqres.request("filter:region");
+    msgBus.reqres.request("calendar:navigation:region", {
       startDate: date
     });
     return app.filterCriteria.set({
@@ -632,13 +658,14 @@ Controller = (function(_super) {
   };
 
   Controller.prototype.review = function(appointment) {
-    var view;
     msgBus.reqres.request("header:region", {
       pageTitle: "Review your session"
     });
     view = new ReviewView({
       model: appointment
     });
+    app.layout.filter.empty();
+    app.layout.navigation.empty();
     return app.layout.content.show(view);
   };
 
@@ -647,7 +674,6 @@ Controller = (function(_super) {
     data = _.pick(appointment.toJSON(), "id", "sessionTypeId", "trainerId", "startDate", "endDate", "message");
     promise = msgBus.reqres.request("entities:create:appointment", data);
     promise.done(function(response) {
-      var view;
       appointment.set({
         id: response.id,
         APIEndpoint: app.APIEndpoint
@@ -658,6 +684,7 @@ Controller = (function(_super) {
       view = new ConfirmationView({
         model: appointment
       });
+      app.layout.navigation.empty();
       return app.layout.content.show(view);
     });
     return promise.fail(function(response) {
@@ -1117,8 +1144,8 @@ API = {
     app.layout.content.show(loadingView);
     appointments.url = function() {
       var query;
-      query = '?startDate=' + app.filterCriteria.get('startDate') + '&sessionTypeId=' + app.filterCriteria.get('sessionTypeId') + '&trainerId=' + app.filterCriteria.get('trainerId');
-      return app.APIEndpoint + '/personal-training-schedule/appointments' + query;
+      query = "?startDate=" + (app.filterCriteria.get("startDate")) + "&sessionTypeId=" + (app.filterCriteria.get("sessionTypeId")) + "&trainerId=" + (app.filterCriteria.get("trainerId"));
+      return "" + app.APIEndpoint + "/personal-training-schedule/appointments" + query;
     };
     appointments.fetch({
       success: deferred.resolve,
@@ -1131,6 +1158,77 @@ API = {
 msgBus.reqres.setHandler('entities:appointments', function() {
   return API.getAppointments();
 });
+
+
+
+},{"../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","../msgbus.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/msgbus.coffee","../views/spinner.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/views/spinner.coffee","backbone":"backbone","jquery":"jquery"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/entities/cancel.coffee":[function(require,module,exports){
+
+/**
+ * Entities Cancel
+ * @module entities/cancel
+ */
+var $, Backbone, Loading, Model, app, loadingView, msgBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+$ = require("jquery");
+
+Backbone = require("backbone");
+
+app = require("../app.coffee");
+
+msgBus = require('../msgbus.coffee');
+
+Loading = require('../views/spinner.coffee');
+
+loadingView = new Loading;
+
+Model = (function(_super) {
+  var API;
+
+  __extends(Model, _super);
+
+  function Model() {
+    return Model.__super__.constructor.apply(this, arguments);
+  }
+
+  Model.prototype.defaults = {
+    id: null,
+    cancelAll: null,
+    message: null
+  };
+
+  Model.prototype.url = function() {
+    return "" + app.APIEndpoint + "/personal-training-schedule/cancel";
+  };
+
+  API = {
+
+    /**
+     * @name cancelappointment
+     * @function
+     * @returns {object} promise object
+     */
+    cancelappointment: function(data) {
+      var deferred, model;
+      model = new Model();
+      deferred = $.Deferred();
+      app.layout.content.show(loadingView);
+      model.save(data, {
+        success: deferred.resolve,
+        error: deferred.reject
+      });
+      return deferred.promise();
+    }
+  };
+
+  msgBus.reqres.setHandler('entities:cancel:appointment', function(data) {
+    return API.cancelappointment(data);
+  });
+
+  return Model;
+
+})(Backbone.Model);
 
 
 
@@ -1407,11 +1505,11 @@ msgBus.reqres.setHandler("header:region", function(options) {
   return controller.header(options);
 });
 
-msgBus.reqres.setHandler("trainer:filter", function() {
+msgBus.reqres.setHandler("filter:region", function() {
   return controller.trainerFilter();
 });
 
-msgBus.reqres.setHandler("calendar:navigation", function(options) {
+msgBus.reqres.setHandler("calendar:navigation:region", function(options) {
   return controller.navigation(options);
 });
 
@@ -1425,6 +1523,18 @@ msgBus.reqres.setHandler("create:review", function(id) {
 
 msgBus.reqres.setHandler("create:confirmation", function(model) {
   return controller.createConfirmation(model);
+});
+
+msgBus.reqres.setHandler("cancel", function(id) {
+  return controller.cancel(id);
+});
+
+msgBus.reqres.setHandler("cancel:review", function(appointment) {
+  return controller.cancelReview(appointment);
+});
+
+msgBus.reqres.setHandler("cancel:confirmation", function(appointment) {
+  return controller.cancelConfirmation(appointment);
 });
 
 module.exports = msgBus;
@@ -1679,8 +1789,7 @@ Item = (function(_super) {
 
   Item.prototype.selectAppointment = function(e) {
     e.preventDefault();
-    console.log("select");
-    return msgBus.reqres.request("create:review", this.options.model);
+    return msgBus.reqres.request("" + app.flow + ":review", this.options.model);
   };
 
   return Item;
@@ -1869,7 +1978,6 @@ module.exports = Marionette.ItemView.extend({
     "click .update": "update"
   },
   initialize: function() {
-    console.log("cansel");
     return msgBus.commands.execute("scroll:top");
   },
   onBeforeRender: function() {
@@ -1891,21 +1999,21 @@ module.exports = Marionette.ItemView.extend({
     this.model.set({
       cancelAll: true
     });
-    return msgBus.reqres.request("schedule:cancel:review", this.model);
+    return msgBus.reqres.request("cancel:review", this.model);
   },
   cancel: function(e) {
     e.preventDefault();
     this.model.set({
       cancelAll: false
     });
-    return msgBus.reqres.request("schedule:cancel:review", this.model);
+    return msgBus.reqres.request("cancel:review", this.model);
   },
   update: function(e) {
     e.preventDefault();
     app.navigate("update/" + this.model.id, {
       trigger: false
     });
-    return msgBus.reqres.request("schedule:update", this.model.id);
+    return msgBus.reqres.request("update", this.model.id);
   }
 });
 
@@ -1958,7 +2066,7 @@ module.exports = Marionette.ItemView.extend({
             message: this.ui.textarea.val()
           });
         }
-        return msgBus.reqres.request("schedule:cancel:confirmation", this.model);
+        return msgBus.reqres.request("cancel:confirmation", this.model);
       },
       countLimit: function(e) {
         var count;
@@ -1999,10 +2107,10 @@ module.exports = Marionette.ItemView.extend({
   },
   cancelAppointment: function(e) {
     e.preventDefault();
-    app.navigate("cancel/" + this.model.id, {
+    app.navigate("#cancel/" + this.model.id, {
       trigger: false
     });
-    return msgBus.reqres.request("schedule:cancel", this.model.id);
+    return msgBus.reqres.request("cancel", this.model.id);
   }
 });
 
@@ -2058,8 +2166,8 @@ View = (function(_super) {
     meridiemIndicator = moment(this.model.get("endDate")).format("A");
     return this.model.set({
       shortMonth: shortMonth,
-      appointmentDate: weekDay + ", " + shortMonth + " " + date,
-      appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
+      appointmentDate: "" + weekDay + ", " + shortMonth + " " + date,
+      appointmentTime: "" + startTime + " - " + endTime + " " + meridiemIndicator
     });
   };
 
@@ -2098,7 +2206,9 @@ module.exports = View;
 /**
   * View Detail Module
  */
-var Marionette, app, moment, msgBus;
+var Marionette, View, app, moment, msgBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 moment = require("moment");
 
@@ -2108,17 +2218,26 @@ app = require("../../app.coffee");
 
 msgBus = require("../../msgbus.coffee");
 
-module.exports = Marionette.ItemView.extend({
-  template: require("../../../templates/detail/index.hbs"),
-  events: {
+View = (function(_super) {
+  __extends(View, _super);
+
+  function View() {
+    return View.__super__.constructor.apply(this, arguments);
+  }
+
+  View.prototype.template = require("../../../templates/detail/index.hbs");
+
+  View.prototype.events = {
     "click .cancel-all": "cancelAll",
     "click .cancel": "cancel",
     "click .reschedule": "reschedule"
-  },
-  initialize: function() {
+  };
+
+  View.prototype.initialize = function() {
     return msgBus.commands.execute("scroll:top");
-  },
-  onBeforeRender: function() {
+  };
+
+  View.prototype.onBeforeRender = function() {
     var date, endTime, meridiemIndicator, shortMonth, startTime, weekDay;
     weekDay = moment(this.model.get("startDate")).format("dddd");
     shortMonth = moment(this.model.get("startDate")).format("MMM");
@@ -2131,7 +2250,7 @@ module.exports = Marionette.ItemView.extend({
       appointmentDate: weekDay + ", " + shortMonth + " " + date,
       appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
     });
-    ({
+    return {
       cancelAll: function(e) {
         e.preventDefault();
         this.model.set({
@@ -2140,22 +2259,27 @@ module.exports = Marionette.ItemView.extend({
         app.navigate("cancel/" + this.model.id);
         return msgBus.reqres.request("schedule:cancel:review", this.model);
       },
-      cancel: function(e) {}
-    });
-    e.preventDefault();
-    this.model.set({
-      cancelAll: false
-    });
-    app.navigate("cancel/" + this.model.id);
-    msgBus.reqres.request("schedule:cancel:review", this.model);
-    ({
-      reschedule: function(e) {}
-    });
-    e.preventDefault();
-    app.navigate("update/" + this.model.id);
-    return msgBus.reqres.request("schedule:update", this.model.id);
-  }
-});
+      cancel: function(e) {
+        e.preventDefault();
+        this.model.set({
+          cancelAll: false
+        });
+        app.navigate("cancel/" + this.model.id);
+        return msgBus.reqres.request("schedule:cancel:review", this.model);
+      },
+      reschedule: function(e) {
+        e.preventDefault();
+        app.navigate("update/" + this.model.id);
+        return msgBus.reqres.request("schedule:update", this.model.id);
+      }
+    };
+  };
+
+  return View;
+
+})(Marionette.ItemView);
+
+module.exports = View;
 
 
 

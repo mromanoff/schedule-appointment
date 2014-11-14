@@ -10,13 +10,12 @@ router.get('/appointments', function(req, res) {
 });
 
 /* GET appointment. */
-//router.get('/appointments/123', function(req, res) {
-//    'use strict';
-//    var json = require('../public/v1/personal-training-schedule/appointment');
-//    console.warn('GET. Server response: ' + res.statusCode);
-//    console.dir(json);
-//    res.send(JSON.stringify(json));
-//});
+router.get('/appointments/*', function(req, res) {
+    var json = require('../public/v1/personal-training-schedule/appointment');
+    console.warn('GET. Server response: ' + res.statusCode);
+    console.dir(json);
+    res.send(JSON.stringify(json));
+});
 
 router.put('/update', function(req, res) {
     console.info('PUT schedule. Server response: ' + res.statusCode);

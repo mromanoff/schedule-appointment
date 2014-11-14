@@ -16,17 +16,15 @@ module.exports = Marionette.ItemView.extend
       "click .update": "update"
 
     initialize: () ->
-      console.log "cansel"
-
       msgBus.commands.execute "scroll:top"
 
     onBeforeRender: () ->
-      weekDay = moment(@model.get("startDate")).format "dddd"
-      shortMonth = moment(@model.get("startDate")).format "MMM"
-      date = moment(@model.get("startDate")).format "DD"
-      startTime = moment(@model.get("startDate")).format "hh:mm"
-      endTime = moment(@model.get("endDate")).format "hh:mm"
-      meridiemIndicator = moment(@model.get("endDate")).format "A"
+      weekDay = moment(@model.get "startDate").format "dddd"
+      shortMonth = moment(@model.get "startDate").format "MMM"
+      date = moment(@model.get "startDate").format "DD"
+      startTime = moment(@model.get "startDate").format "hh:mm"
+      endTime = moment(@model.get "endDate").format "hh:mm"
+      meridiemIndicator = moment(@model.get "endDate").format "A"
 
       @model.set
         shortMonth: shortMonth,
@@ -38,7 +36,7 @@ module.exports = Marionette.ItemView.extend
       e.preventDefault()
       @model.set
         cancelAll: true
-      msgBus.reqres.request "schedule:cancel:review", @model
+      msgBus.reqres.request "cancel:review", @model
 
 
     cancel: (e) ->
@@ -46,10 +44,10 @@ module.exports = Marionette.ItemView.extend
       @model.set
         cancelAll: false
 
-      msgBus.reqres.request "schedule:cancel:review", @model
+      msgBus.reqres.request "cancel:review", @model
 
 
     update: (e) ->
       e.preventDefault()
       app.navigate "update/" + @model.id, trigger: false
-      msgBus.reqres.request "schedule:update", @model.id
+      msgBus.reqres.request "update", @model.id

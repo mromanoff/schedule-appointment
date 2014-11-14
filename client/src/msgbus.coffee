@@ -18,10 +18,10 @@ msgBus.commands.setHandler "scroll:top", () ->
 msgBus.reqres.setHandler "header:region", (options) ->
   controller.header options
 
-msgBus.reqres.setHandler "trainer:filter",  () ->
+msgBus.reqres.setHandler "filter:region",  () ->
   controller.trainerFilter()
 
-msgBus.reqres.setHandler "calendar:navigation", (options) ->
+msgBus.reqres.setHandler "calendar:navigation:region", (options) ->
   controller.navigation options
 
 msgBus.reqres.setHandler "calendar:show", ()   ->
@@ -32,5 +32,16 @@ msgBus.reqres.setHandler "create:review", (id) ->
 
 msgBus.reqres.setHandler "create:confirmation", (model) ->
   controller.createConfirmation(model)
+
+msgBus.reqres.setHandler "cancel", (id) ->
+  controller.cancel id
+
+
+msgBus.reqres.setHandler "cancel:review", (appointment) ->
+  controller.cancelReview appointment
+
+
+msgBus.reqres.setHandler "cancel:confirmation", (appointment) ->
+  controller.cancelConfirmation appointment
 
 module.exports = msgBus;

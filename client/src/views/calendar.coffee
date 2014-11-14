@@ -14,12 +14,12 @@ class Item extends Marionette.ItemView
   events:
     "click .available": "selectAppointment"
 
-  initialize: () ->
+  initialize: ->
     #@addClass("item-" + @model.get "indexOfWeek"
     @addAttribute "data-item", @model.get "indexOfWeek"
     @addAttribute "data-date", @model.get "startDate"
 
-  onBeforeRender: () ->
+  onBeforeRender: ->
     startTime = null
     endTime = null
     meridiemIndicator = null
@@ -41,16 +41,14 @@ class Item extends Marionette.ItemView
 
   selectAppointment: (e) ->
     e.preventDefault()
-    console.log "select"
-    #msgBus.reqres.request "schedule:#{app.flow}:review", @options.model
-    msgBus.reqres.request "create:review", @options.model
+    msgBus.reqres.request "#{app.flow}:review", @options.model
 
 class EmptyItem extends Marionette.ItemView
   tagName: "li"
   className: "empty"
   template: require "../../templates/calendar/empty_item.hbs"
 
-  initialize: () ->
+  initialize: ->
     @addClass "item-" + @model.get "indexOfWeek"
 
   addClass: (className) ->
@@ -68,7 +66,7 @@ class DayPartView extends Marionette.CollectionView
 class CalendarHeaderItem  extends Marionette.ItemView
   tagName: "li"
   template: require "../../templates/calendar/header_item.hbs"
-  initialize: () ->
+  initialize: ->
     if @model.get "selected"
         @$el.addClass "selected"
 

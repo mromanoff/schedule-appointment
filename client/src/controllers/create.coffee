@@ -12,10 +12,10 @@ require "../entities/create.coffee"
 ReviewView = require "../views/create/review.coffee"
 ConfirmationView = require "../views/create/confirmation.coffee"
 
-#view = null
+view = null
 utils =  new Utils
 
-#app.flow = "create"
+app.flow = "create"
 
 class Controller extends Marionette.Controller
   index: (date) ->
@@ -24,9 +24,9 @@ class Controller extends Marionette.Controller
     msgBus.reqres.request "header:region",
       pageTitle: "Schedule Training"
 
-    msgBus.reqres.request "trainer:filter"
+    msgBus.reqres.request "filter:region"
 
-    msgBus.reqres.request "calendar:navigation",
+    msgBus.reqres.request "calendar:navigation:region",
       startDate: date
 
     app.filterCriteria.set
@@ -42,8 +42,8 @@ class Controller extends Marionette.Controller
     view = new ReviewView
       model: appointment
 
-    #app.layout.filter.close()
-    #app.layout.navigation.close()
+    app.layout.filter.empty()
+    app.layout.navigation.empty()
     app.layout.content.show view
 
     #app.analytics.set
@@ -67,7 +67,7 @@ class Controller extends Marionette.Controller
       view = new ConfirmationView
         model: appointment
 
-      #app.layout.navigation.close()
+      app.layout.navigation.empty()
       app.layout.content.show view
 
       #app.analytics.set

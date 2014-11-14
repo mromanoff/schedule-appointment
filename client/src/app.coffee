@@ -21,6 +21,12 @@ app.layout = new Layout
 app.mainRegion.show app.layout
 app.filterCriteria = new FilterCriteriaModel
 
+###* update app flow
+   *  @param {string} create, update, cancel, detail
+###
+## TODO: create appstate model and keep all app state related data there.
+app.flow = null;
+
 ###*
  * @param route
  * @param {object} options

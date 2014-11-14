@@ -19,22 +19,19 @@ module.exports = Marionette.ItemView.extend
 
   ui: 
     textarea: "textarea"
-  
 
   onBeforeRender: () ->
-    weekDay = moment(@model.get("startDate")).format "dddd"
-    shortMonth = moment(@model.get("startDate")).format "MMM"
-    date = moment(@model.get("startDate")).format "DD"
-    startTime = moment(@model.get("startDate")).format "hh:mm"
-    endTime = moment(@model.get("endDate")).format "hh:mm"
-    meridiemIndicator = moment(@model.get("endDate")).format "A"
+    weekDay = moment(@model.get "startDate").format "dddd"
+    shortMonth = moment(@model.get "startDate").format "MMM"
+    date = moment(@model.get "startDate").format "DD"
+    startTime = moment(@model.get "startDate").format "hh:mm"
+    endTime = moment(@model.get "endDate").format "hh:mm"
+    meridiemIndicator = moment(@model.get "endDate").format "A"
     
     @model.set
       shortMonth: shortMonth
       appointmentDate: weekDay + ", " + shortMonth + " " + date
       appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
-
-
 
     cancel: (e) ->
       e.preventDefault()
@@ -42,8 +39,7 @@ module.exports = Marionette.ItemView.extend
         @model.set
           message: @ui.textarea.val()
 
-      msgBus.reqres.request "schedule:cancel:confirmation", @model
-
+      msgBus.reqres.request "cancel:confirmation", @model
 
     countLimit: (e) ->
       e.preventDefault()

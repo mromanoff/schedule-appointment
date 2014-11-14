@@ -69,6 +69,23 @@ class Controller extends Marionette.Controller
     new Controller().index id
 
   ###*
+  * render review page for cancel appointment flow
+  * @param {object} appointment - Selected appointment model
+  ###
+  cancelReview: (appointment) ->
+    Controller = require "./cancel.coffee"
+    new Controller().review appointment
+
+
+  ###*
+  * render confirmation page for cancel appointment flow
+  * @param {object} appointment - Selected appointment model
+  ###
+  cancelConfirmation: (appointment) ->
+    Controller = require "./cancel.coffee"
+    new Controller().confirmation appointment
+
+  ###*
   * render index page for update appointment flow
   * @param {string} id - Selected appointment ID
   ###

@@ -9,6 +9,7 @@ CancelView = require "../views/cancel/index.coffee"
 ReviewView = require "../views/cancel/review.coffee"
 ConfirmationView = require "../views/cancel/confirmation.coffee"
 require "../entities/appointment.coffee"
+require "../entities/cancel.coffee"
 
 view = null
 
@@ -26,8 +27,8 @@ module.exports = Marionette.Controller.extend
 
         app.layout.content.show view
 
-        app.analytics.set
-          action: "delete-start"
+        #app.analytics.set
+          #action: "delete-start"
 
 
       promise.fail (model, jqXHR, textStatus) ->
@@ -43,34 +44,33 @@ module.exports = Marionette.Controller.extend
 
       app.layout.content.show view
 
-      app.analytics.set
-        action: "delete-review"
+      #app.analytics.set
+        #action: "delete-review"
 
 
     confirmation: (appointment) ->
       #pick data.
       data = _.pick appointment.toJSON(), "id", "cancelAll", "message"
 
-      require ["entities/cancel"], () ->
-        promise = msgBus.reqres.request "entities:cancel:appointment", data
-        promise.done (response) ->
+      promise = msgBus.reqres.request "entities:cancel:appointment", data
+      promise.done (response) ->
 
-          #update model with new id and pass APIEndpoint
-          appointment.set
-            id: response.id
-            APIEndpoint: app.APIEndpoint
+        #update model with new id and pass APIEndpoint
+        appointment.set
+          id: response.id
+          APIEndpoint: app.APIEndpoint
 
 
-          msgBus.reqres.request "header:region",
-            pageTitle: "Your session is canceled"
+        msgBus.reqres.request "header:region",
+          pageTitle: "Your session is canceled"
 
-          view = new ConfirmationView
-            model: appointment
+        view = new ConfirmationView
+          model: appointment
 
-          app.layout.content.show view
+        app.layout.content.show view
 
-          app.analytics.set
-            action: "delete-complete"
+        app.analytics.set
+          action: "delete-complete"
 
-        promise.fail (response) ->
-          msgBus.reqres.request "error", response.responseJSON
+      promise.fail (response) ->
+        msgBus.reqres.request "error", response.responseJSON

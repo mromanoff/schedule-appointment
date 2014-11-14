@@ -33,8 +33,8 @@ API =
     app.layout.content.show loadingView
 
     appointments.url = () ->
-      query = '?startDate=' + app.filterCriteria.get('startDate') + '&sessionTypeId=' + app.filterCriteria.get('sessionTypeId') + '&trainerId=' + app.filterCriteria.get('trainerId')
-      app.APIEndpoint + '/personal-training-schedule/appointments' + query
+      query = "?startDate=#{app.filterCriteria.get "startDate"}&sessionTypeId=#{app.filterCriteria.get "sessionTypeId"}&trainerId=#{app.filterCriteria.get "trainerId"}"
+      "#{app.APIEndpoint}/personal-training-schedule/appointments#{query}"
 
     #setTimeout () ->
     appointments.fetch

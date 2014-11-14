@@ -1,18 +1,24 @@
-define (require) ->
+###*
+ * Entities Cancel
+ * @module entities/cancel
+###
 
-  app = require "../app.coffee"
-  msgBus = require '../msgbus.coffee'
-  Loading = require '../views/spinner.coffee'
+$ = require "jquery"
+Backbone = require "backbone"
+app = require "../app.coffee"
+msgBus = require '../msgbus.coffee'
+Loading = require '../views/spinner.coffee'
 
-  loadingView = new Loading()
-  Model = Backbone.Model.extend
-    defaults:
-      id: null #"BC494EF7-60E8-4AF0-8A19-5786D2ABAE62",
-      cancelAll: null #true|false
-      message: null
+loadingView = new Loading
 
-    url: () ->
-      app.APIEndpoint + 'cancel'
+class Model extends Backbone.Model
+  defaults:
+    id: null #"BC494EF7-60E8-4AF0-8A19-5786D2ABAE62",
+    cancelAll: null #true|false
+    message: null
+
+  url: () ->
+    "#{app.APIEndpoint}/personal-training-schedule/cancel"
 
   API =
     ###*

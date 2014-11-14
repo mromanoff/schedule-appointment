@@ -18,6 +18,7 @@ class Controller extends Marionette.Controller
 
     #remove filter region
     app.layout.removeRegion("filter");
+    #app.layout.filter.empty();
 
     #remove navigation if it was open before
     app.layout.removeRegion("navigation");

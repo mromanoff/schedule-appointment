@@ -31,8 +31,8 @@ class View extends Marionette.ItemView
 
     @model.set
       shortMonth: shortMonth
-      appointmentDate: weekDay + ", " + shortMonth + " " + date
-      appointmentTime: startTime + " - " + endTime + " " + meridiemIndicator
+      appointmentDate: "#{weekDay}, #{shortMonth} #{date}"
+      appointmentTime: "#{startTime} - #{endTime} #{meridiemIndicator}"
 
   schedule: (e) ->
     e.preventDefault()

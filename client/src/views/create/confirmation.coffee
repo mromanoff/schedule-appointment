@@ -18,7 +18,7 @@ module.exports = Marionette.ItemView.extend
 
   cancelAppointment: (e) ->
     e.preventDefault()
-    app.navigate "cancel/" + @model.id,
+    app.navigate "#cancel/#{@model.id}",
       trigger: false
 
-    msgBus.reqres.request "schedule:cancel", @model.id
+    msgBus.reqres.request "cancel", @model.id
