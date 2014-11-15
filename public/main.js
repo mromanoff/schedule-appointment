@@ -19165,21 +19165,22 @@ app.navigate = function(route, options) {
   return Backbone.history.navigate(route, options);
 };
 
-app.on("initialize:before", function(options) {
+app.on("before:start", function(options) {
   if (options == null) {
     options = {};
   }
-  return console.log("init:before", options);
-});
-
-app.on("initialize:after", function() {
   return app.filterCriteria.set({
-    sessionTypeId: app.scheduleCriteria.durations[0].sessionTypeId,
-    duration: app.scheduleCriteria.durations[0].duration,
-    trainerId: app.scheduleCriteria.trainers[0].trainerId,
-    trainerName: app.scheduleCriteria.trainers[0].trainerFirstName + " " + app.scheduleCriteria.trainers[0].trainerLastName,
+    sessionTypeId: options.scheduleCriteria.durations[0].sessionTypeId,
+    duration: options.scheduleCriteria.durations[0].duration,
+    trainerId: options.scheduleCriteria.trainers[0].trainerId,
+    trainerName: "" + options.scheduleCriteria.trainers[0].trainerFirstName + " " + options.scheduleCriteria.trainers[0].trainerLastName
+  }, {
     silent: true
   });
+});
+
+app.on("start", function() {
+  return console.log("start");
 });
 
 app.addInitializer(function(options) {

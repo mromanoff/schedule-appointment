@@ -1,7 +1,6 @@
 ###*
   * app Module
 ###
-
 $ = require "jquery"
 _ = require "underscore"
 Backbone = require "backbone"
@@ -34,20 +33,17 @@ app.flow = null;
 app.navigate = (route, options = {}) ->
   Backbone.history.navigate(route, options)
 
-
-app.on "initialize:before", (options={}) ->
-  console.log "init:before", options
-
-
-app.on "initialize:after", () ->
+app.on "before:start", (options={}) ->
   app.filterCriteria.set
-    sessionTypeId: app.scheduleCriteria.durations[0].sessionTypeId # first duration in the list is default session. 60 Min
-    duration: app.scheduleCriteria.durations[0].duration
-    trainerId: app.scheduleCriteria.trainers[0].trainerId  # first trainer in the list is default trainer
-    trainerName: app.scheduleCriteria.trainers[0].trainerFirstName + " " + app.scheduleCriteria.trainers[0].trainerLastName
-      ,
+    sessionTypeId: options.scheduleCriteria.durations[0].sessionTypeId # first duration in the list is default session. 60 Min
+    duration: options.scheduleCriteria.durations[0].duration
+    trainerId: options.scheduleCriteria.trainers[0].trainerId  # first trainer in the list is default trainer
+    trainerName: "#{options.scheduleCriteria.trainers[0].trainerFirstName} #{options.scheduleCriteria.trainers[0].trainerLastName}"
+  ,
     silent: true
 
+app.on "start", () ->
+  console.log "start"
 
 app.addInitializer (options) ->
   _.extend app, options,

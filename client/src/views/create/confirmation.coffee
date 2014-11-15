@@ -15,7 +15,6 @@ module.exports = Marionette.ItemView.extend
   events:
     "click .cancel": "cancelAppointment"
 
-
   cancelAppointment: (e) ->
     e.preventDefault()
     app.navigate "#cancel/#{@model.id}",

@@ -1,7 +1,6 @@
 ###*
   * Main Module
 ###
-
 app = require "./app.coffee"
 
 options =
