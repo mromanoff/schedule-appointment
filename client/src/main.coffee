@@ -1,6 +1,11 @@
 ###*
   * Main Module
 ###
+
+# start the marionette inspector
+if window.__agent
+  window.__agent.start Backbone, Marionette
+
 app = require "./app.coffee"
 
 options =
