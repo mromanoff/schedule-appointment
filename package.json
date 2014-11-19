@@ -9,7 +9,7 @@
     "url": "https://github.com/mromanoff/schedule-appointment"
   },
   "scripts": {
-    "start": "nodemon app.js  --ignore node_modules/ --ignore tests/"
+    "start": "nodemon ./bin/www  --ignore node_modules/ --ignore tests/"
   },
   "dependencies": {
     "body-parser": "~1.8.1",

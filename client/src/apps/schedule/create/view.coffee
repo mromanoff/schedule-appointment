@@ -1,11 +1,11 @@
 ###*
-  * Layout Module
+  * Schedule Create Layout View
 ###
 
 Marionette = require "backbone.marionette"
 
 class Layout extends Marionette.LayoutView
-  template: require "../../templates/layout.hbs"
+  template: require "./templates/layout.hbs"
 
   regions:
     header: ".header"
@@ -13,9 +13,4 @@ class Layout extends Marionette.LayoutView
     navigation: ".navigation"
     content: ".content"
 
-  onShow: ->
-    console.log "onShow"
-
-
 module.exports = Layout
-  
