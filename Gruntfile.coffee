@@ -12,7 +12,9 @@ module.exports = ->
 
   @registerTask "default", [
     "clean"
-    "coffee:build"
+    "browserify:vendor"
+    "browserify:client"
+    "concat"
   ]
 
 
