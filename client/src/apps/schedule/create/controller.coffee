@@ -12,9 +12,9 @@ class Controller extends Marionette.Controller
     @layout.on "show", =>
       console.log "show layout"
 
-    #console.log 'app', app
+    console.log "app", app
 
-    #app.mainReqion.show @layout
+    app.mainReqion.show @layout
 
   getLayoutView: ->
     Layout = require "./view.coffee"
