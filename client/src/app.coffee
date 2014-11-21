@@ -24,7 +24,7 @@ app.on "start", () ->
     Backbone.history.start()
 
   view = new Marionette.ItemView.extend()
-  
+
   app.mainRegion.show view
 
 
