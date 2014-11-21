@@ -1,9 +1,9 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/app.coffee":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee":[function(require,module,exports){
 
 /**
   * app Module
  */
-var $, Backbone, Marionette, app, _;
+var $, Application, Backbone, Marionette, app, _;
 
 $ = require("jquery");
 
@@ -15,10 +15,18 @@ Backbone.$ = $;
 
 Marionette = require("backbone.marionette");
 
+Application = require("./config/application.coffee");
+
 app = new Marionette.Application;
 
+app.VERSION = "0.0.0";
+
+app.rootRoute = "create";
+
 app.addRegions({
-  mainRegion: "#app-main"
+  headerRegion: "#header-region",
+  mainRegion: "#main-region",
+  footerRegion: "#footer-region"
 });
 
 app.on("before:start", function(options) {
@@ -33,20 +41,24 @@ app.addInitializer(function(options) {
 });
 
 app.on("start", function() {
-  var view;
-  console.log("start");
+  console.log("start app");
   if (Backbone.history) {
     Backbone.history.start();
+    if (this.getCurrentRoute() === "") {
+      return this.navigate(this.rootRoute, {
+        trigger: true
+      });
+    }
   }
-  view = new Marionette.ItemView.extend();
-  return app.mainRegion.show(view);
 });
+
+window.app = app;
 
 module.exports = app;
 
 
 
-},{"./apps/schedule/app.coffee":"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/app.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/app.coffee":[function(require,module,exports){
+},{"./apps/schedule/app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/app.coffee","./config/application.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/config/application.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/app.coffee":[function(require,module,exports){
 
 /**
   * Schedule App
@@ -110,7 +122,7 @@ app.addInitializer(function() {
 
 
 
-},{"../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/app.coffee","./create/controller.coffee":"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/create/controller.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/create/controller.coffee":[function(require,module,exports){
+},{"../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","./create/controller.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/create/controller.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/create/controller.coffee":[function(require,module,exports){
 
 /**
   * Controller Create Module
@@ -134,11 +146,13 @@ Controller = (function(_super) {
 
   Controller.prototype.createAppointment = function() {
     this.layout = this.getLayoutView();
-    return this.layout.on("show", (function(_this) {
+    this.layout.on("show", (function(_this) {
       return function() {
         return console.log("show layout");
       };
     })(this));
+    console.log("app", app);
+    return app.mainReqion.show(this.layout);
   };
 
   Controller.prototype.getLayoutView = function() {
@@ -155,14 +169,14 @@ module.exports = Controller;
 
 
 
-},{"../../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/app.coffee","./view.coffee":"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/create/view.coffee","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/create/templates/layout.hbs":[function(require,module,exports){
+},{"../../../app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee","./view.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/create/view.coffee","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/create/templates/layout.hbs":[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var HandlebarsCompiler = require('hbsfy/runtime');
 module.exports = HandlebarsCompiler.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<header class=\"header\"></header>\n<div class=\"trainer-filter\"></div>\n<div class=\"navigation\"></div>\n<div class=\"content\"></div>\n";
   },"useData":true});
 
-},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/create/view.coffee":[function(require,module,exports){
+},{"hbsfy/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/create/view.coffee":[function(require,module,exports){
 
 /**
   * Schedule Create Layout View
@@ -197,7 +211,37 @@ module.exports = Layout;
 
 
 
-},{"./templates/layout.hbs":"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/apps/schedule/create/templates/layout.hbs","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/main.coffee":[function(require,module,exports){
+},{"./templates/layout.hbs":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/create/templates/layout.hbs","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/config/application.coffee":[function(require,module,exports){
+
+/**
+  * Application Config Module
+ */
+var Backbone, Marionette, _;
+
+_ = require("underscore");
+
+Backbone = require("backbone");
+
+Marionette = require("backbone.marionette");
+
+module.exports = _.extend(Backbone.Marionette.Application.prototype, {
+  navigate: function(route, options) {
+    if (options == null) {
+      options = {};
+    }
+    if (route.charAt(0) === "/") {
+      route = "#" + route;
+    }
+    return Backbone.history.navigate(route, options);
+  },
+  getCurrentRoute: function() {
+    return Backbone.history.fragment;
+  }
+});
+
+
+
+},{"backbone":"backbone","backbone.marionette":"backbone.marionette","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/main.coffee":[function(require,module,exports){
 
 /**
   * Main Module
@@ -216,7 +260,7 @@ app.start(options);
 
 
 
-},{"./app.coffee":"/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/app.coffee"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars.runtime.js":[function(require,module,exports){
+},{"./app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/app.coffee"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars.runtime.js":[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -252,7 +296,7 @@ Handlebars.create = create;
 Handlebars['default'] = Handlebars;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/base.js","./handlebars/exception":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/exception.js","./handlebars/runtime":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/runtime.js","./handlebars/safe-string":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/safe-string.js","./handlebars/utils":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/base.js":[function(require,module,exports){
+},{"./handlebars/base":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/base.js","./handlebars/exception":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/exception.js","./handlebars/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/runtime.js","./handlebars/safe-string":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/safe-string.js","./handlebars/utils":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/base.js":[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -484,7 +528,7 @@ var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/exception.js":[function(require,module,exports){
+},{"./exception":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/exception.js":[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -513,7 +557,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/runtime.js":[function(require,module,exports){
+},{}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/runtime.js":[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -707,7 +751,7 @@ exports.noop = noop;function initData(context, data) {
   }
   return data;
 }
-},{"./base":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/base.js","./exception":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/safe-string.js":[function(require,module,exports){
+},{"./base":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/base.js","./exception":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/exception.js","./utils":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/utils.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/safe-string.js":[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -719,7 +763,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/utils.js":[function(require,module,exports){
+},{}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/utils.js":[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -808,12 +852,12 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars/safe-string.js"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/runtime.js":[function(require,module,exports){
+},{"./safe-string":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars/safe-string.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/runtime.js":[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime');
 
-},{"./dist/cjs/handlebars.runtime":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/dist/cjs/handlebars.runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/hbsfy/runtime.js":[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/dist/cjs/handlebars.runtime.js"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/hbsfy/runtime.js":[function(require,module,exports){
 module.exports = require("handlebars/runtime")["default"];
 
-},{"handlebars/runtime":"/Users/mromanoff/Sites/equinox-schedule-appointment/node_modules/handlebars/runtime.js"}]},{},["/Users/mromanoff/Sites/equinox-schedule-appointment/client/src/main.coffee"]);
+},{"handlebars/runtime":"/Users/mromanoff/Sites/equinox-schedule-coffee/node_modules/handlebars/runtime.js"}]},{},["/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/main.coffee"]);
