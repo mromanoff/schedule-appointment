@@ -1,13 +1,17 @@
 ###*
   * app Module
 ###
+
+
 $ = require "jquery"
 _ = require "underscore"
 Backbone = require "backbone"
 Backbone.$  = $
 Marionette = require "backbone.marionette"
 
-Application = require "./config/application.coffee"
+require "./config/application.coffee"
+require "./apps/footer/footer-app.coffee"
+
 #//= require backbone/app
 #//= require_tree ./backbone/controllers
 #//= require_tree ./backbone/views
@@ -15,33 +19,47 @@ Application = require "./config/application.coffee"
 #//= require_tree ./backbone/components
 #//= require_tree ./backbone/apps
 
+#require "./apps/footer/footer-app.coffee"
 
-app = new Marionette.Application
 
-app.VERSION = "0.0.0"
+App = new Marionette.Application
 
-#app = new Marionette.Application
+App.VERSION = "0.0.0"
 
-app.rootRoute = "create"
+#App = new Marionette.Application
 
-app.addRegions
+App.rootRoute = "create"
+
+App.addRegions
   headerRegion: "#header-region"
   mainRegion: "#main-region"
   footerRegion: "#footer-region"
 
-app.on "before:start", (options = {}) ->
+App.on "before:start", (options = {}) ->
   require "./apps/schedule/app.coffee"
 
-app.addInitializer (options) ->
-  _.extend app, options
+App.addInitializer (options) ->
+  _.extend App, options
 
-app.on "start", () ->
-  console.log "start app"
+
+
+CustomModule = Marionette.Module.extend
+  #Custom module properties
+
+
+App.module "FooterApp",
+  #moduleClass: require "./apps/footer/footer-app.coffee"
+  #container: app.layout.overlay
+
+
+
+App.on "start", () ->
+  console.log "start App"
   if Backbone.history
     Backbone.history.start()
     @navigate(@rootRoute, trigger:true ) if @getCurrentRoute() is ""
 
 
-window.app = app
+window.App = App
 
-module.exports = app
+module.exports = App

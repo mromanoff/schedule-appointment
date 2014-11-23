@@ -3,7 +3,7 @@
 /**
   * app Module
  */
-var $, Application, Backbone, Marionette, app, _;
+var $, App, Backbone, CustomModule, Marionette, _;
 
 $ = require("jquery");
 
@@ -15,33 +15,37 @@ Backbone.$ = $;
 
 Marionette = require("backbone.marionette");
 
-Application = require("./config/application.coffee");
+require("./config/application.coffee");
 
-app = new Marionette.Application;
+require("./apps/footer/footer-app.coffee");
 
-app.VERSION = "0.0.0";
+App = new Marionette.Application;
 
-app.rootRoute = "create";
+App.VERSION = "0.0.0";
 
-app.addRegions({
+App.rootRoute = "create";
+
+App.addRegions({
   headerRegion: "#header-region",
   mainRegion: "#main-region",
   footerRegion: "#footer-region"
 });
 
-app.on("before:start", function(options) {
+App.on("before:start", function(options) {
   if (options == null) {
     options = {};
   }
   return require("./apps/schedule/app.coffee");
 });
 
-app.addInitializer(function(options) {
-  return _.extend(app, options);
+App.addInitializer(function(options) {
+  return _.extend(App, options);
 });
 
-app.on("start", function() {
-  console.log("start app");
+CustomModule = Marionette.Module.extend;
+
+App.module("FooterApp", App.on("start", function() {
+  console.log("start App");
   if (Backbone.history) {
     Backbone.history.start();
     if (this.getCurrentRoute() === "") {
@@ -50,15 +54,42 @@ app.on("start", function() {
       });
     }
   }
+}));
+
+window.App = App;
+
+module.exports = App;
+
+
+
+},{"./apps/footer/footer-app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/footer/footer-app.coffee","./apps/schedule/app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/app.coffee","./config/application.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/config/application.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/footer/footer-app.coffee":[function(require,module,exports){
+var Backbone, Marionette;
+
+console.log("footer");
+
+Marionette = require("backbone.marionette");
+
+Backbone = require("backbone");
+
+({
+  API: {
+    showFooter: function() {
+      var ShowController, controller;
+      ShowController = require("./show/show-controller.coffee");
+      controller = new ShowController;
+      return controller.showFooter();
+    }
+  }
 });
 
-window.app = app;
-
-module.exports = app;
 
 
+},{"./show/show-controller.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/footer/show/show-controller.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/footer/show/show-controller.coffee":[function(require,module,exports){
+console.log("show controller");
 
-},{"./apps/schedule/app.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/app.coffee","./config/application.coffee":"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/config/application.coffee","backbone":"backbone","backbone.marionette":"backbone.marionette","jquery":"jquery","underscore":"underscore"}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/app.coffee":[function(require,module,exports){
+
+
+},{}],"/Users/mromanoff/Sites/equinox-schedule-coffee/client/src/apps/schedule/app.coffee":[function(require,module,exports){
 
 /**
   * Schedule App
@@ -151,8 +182,7 @@ Controller = (function(_super) {
         return console.log("show layout");
       };
     })(this));
-    console.log("app", app);
-    return app.mainReqion.show(this.layout);
+    return console.log("app", app);
   };
 
   Controller.prototype.getLayoutView = function() {
@@ -246,9 +276,9 @@ module.exports = _.extend(Backbone.Marionette.Application.prototype, {
 /**
   * Main Module
  */
-var app, options;
+var App, options;
 
-app = require("./app.coffee");
+App = require("./app.coffee");
 
 options = {
   scheduleCriteria: window.scheduleCriteria || {},
@@ -256,7 +286,7 @@ options = {
   MainDomain: window.MainDomain || null
 };
 
-app.start(options);
+App.start(options);
 
 
 
